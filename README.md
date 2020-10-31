@@ -9,7 +9,7 @@
 
 <!-- PROJECT LOGO -->
 <p align="center">
-  <img src="./res/investment_image_1.png" alt="Size Limit CLI" width="738">
+  <img src="./res/investment_image_1.jpg" alt="Size Limit CLI" width="738">
 </p>
 
 
