@@ -31,7 +31,7 @@
 ## About The Project
 
 
-Portfolio engineer is an application for monitoring portfolio performance and conducting portfolio analytics. The app pulls existing portfolio allocations from [Questrade](https://www.questrade.com/home) account and displays it in a detailed report. The user has the option o
+Portfolio engineer is an application for monitoring portfolio performance and conducting portfolio analytics. The app pulls existing portfolio allocations from [Questrade](https://www.questrade.com/home) account and displays it in a detailed report.
 
 Instrument coverage:
 * Equities
