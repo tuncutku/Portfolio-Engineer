@@ -4,7 +4,6 @@ from src.db import database
 from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
 
 
-
 @dataclass
 class User(object):
     email: str
@@ -14,27 +13,24 @@ class User(object):
     @classmethod
     def find_by_email(cls, email: str) -> "User":
         user = database.find_user_by_email(email)
-        if database.find_user_by_email(email):
+        if user:
             return cls(*user)
         else:
             raise UserNotFoundError('A user with this e-mail was not found.')
-    
-    # @classmethod
-    # def is_login_valid(cls, email: str, password: str) -> bool:
-    #     """
-    #     This method verifies that an e-mail/password combo (as sent by the site forms) is valid or not.
-    #     Checks that the e-mail exists, and that the password associated to that e-mail is correct.
-    #     :param email: The user's email
-    #     :param password: The password
-    #     :return: True if valid, an exception otherwise
-    #     """
-    #     user = cls.find_by_email(email)
 
-    #     if not Utils.check_hashed_password(password, user.password):
-    #         # Tell the user that their password is wrong
-    #         raise IncorrectPasswordError("Your password was wrong.")
-
-    #     return True
+    @classmethod
+    def is_login_valid(cls, email: str, password: str) -> bool:
+        """
+        This method verifies that an e-mail/password combo (as sent by the site forms) is valid or not.
+        Checks that the e-mail exists, and that the password associated to that e-mail is correct.
+        :param email: The user's email
+        :param password: The password
+        :return: True if valid, an exception otherwise
+        """
+        user = cls.find_by_email(email)
+        if not credential_check.check_hashed_password(password, user.password):
+            raise IncorrectPasswordError("Your password was wrong.")
+        return True
 
 
     @classmethod
@@ -51,7 +47,7 @@ class User(object):
             user = cls.find_by_email(email)
             raise UserAlreadyRegisteredError("The e-mail you used to register already exists.")
         except UserNotFoundError:
-            database.add_user(email, password)
+            database.add_user(email, credential_check.hash_password(password))
         return True
     
     @staticmethod
