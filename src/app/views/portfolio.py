@@ -22,11 +22,9 @@ def portfolio_list():
         except UserError as e:
             return e.message
     
-    
-    
     # if the user needs to provide token to access Questrade account, render_template "provide Questrade token.html"
-    if:
-        render_template("portfolio/questrade_token")
+    # if:
+    #     render_template("portfolio/questrade_token")
     # else 
     return render_template("portfolio/list.html")
 

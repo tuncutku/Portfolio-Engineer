@@ -1,10 +1,31 @@
 import logging
 import yaml
+import os
+import configparser
 
-log = logging.getLogger(__name__)  # pylint: disable=C0103
 
+TOKEN_URL = (
+    "https://login.questrade.com/oauth2/token?grant_type=refresh_token&refresh_token="
+)
 
-def get_access_token_yaml(token_yaml):
+def _read_config(fpath):
+        config = configparser.ConfigParser()
+        with open(os.path.expanduser(fpath)) as f:
+            config.read_file(f)
+        return config
+
+def _save_token_to_yaml(access_token, yaml_path="access_token.yml"):
+    """This method saves the token payload as a yaml-file
+    Parameters
+    ----------
+    yaml_path: str, optional
+        Path of the yaml-file. If the file already exists, it will be overwritten. Defaults to
+        access_token.yml
+    """
+    with open(yaml_path, "w") as yaml_file:
+        yaml.dump(access_token, yaml_file)
+
+def _get_access_token_yaml(token_yaml):
     """Utility function to read in access token yaml
     Parameters
     ----------
@@ -17,13 +38,11 @@ def get_access_token_yaml(token_yaml):
     """
     try:
         with open(token_yaml) as yaml_file:
-            log.debug("Loading access token from yaml...")
             token_yaml = yaml.load(yaml_file, Loader=yaml.FullLoader)
     except Exception:
-        log.error("Error loading access token from yaml...")
         raise
 
-    validate_access_token(**token_yaml)
+    # validate_access_token(**token_yaml)
     return token_yaml
 
 
@@ -54,7 +73,6 @@ def validate_access_token(
     Exception
         If any of the inputs is None.
     """
-    log.debug("Validating access token...")
     if access_token is None:
         raise Exception("Access token was not provided.")
     if api_server is None:

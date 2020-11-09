@@ -1,10 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="jumbotron">
-        <h1 class="display-4">Portfolio Engineer<h1>
-        <p class="lead">This is an app for portfolio performance monitoring and analysis.</p>
-        <hr class="my-4">
-        <p>Just sign up, and get started by linking your Questrade account. We'll do the rest!</p>
-        <p><a class="btn btn-primary btn-lg" href="{{ url_for('users.register_user') }}" role="button">Get started</a></p>
+    <main>
+    <div class="container text-center mt-5 pt-5">
+        <h1 class="display-1">Welcome!</h1>
+        <p class="lead font-italic">Portfolio Engineer is an app that allows investors to make informed investment decisions. </p>
     </div>
+    <div>
+        <img class="rounded mx-auto d-block" src="static/home_logo.png" alt="" width="500" height="500">
+    </div>
+    <div class="container text-muted text-center">
+        <div class="row">
+            <div class="col-md-6 col-lg-3">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Portfolio Performance Monitoring
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Monitor various key performance indicators such as Treynor, Sharpe, and Jensen ratios and observe portfolio allocations.</p>
+                        <a href="#" class="btn bg-warning text-white">More Information</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Risk Analysis
+                    </div>
+                    <div class="card-body">
+                    <p class="card-text">Observe VaR of the overall portfolio and conduct backtesting for a given period of time plus analyse other risk attributes.</p>
+                    <a href="#" class="btn bg-warning text-white">More Information</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Scenario Analysis
+                    </div>
+                    <div class="card-body">
+                    <p class="card-text">Add or remove a financial instrument to the existing portfolio and observe how the performance indicators would behave.</p>
+                    <a href="#" class="btn bg-warning text-white">More Information</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 text-center">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        Factor Analysis 
+                    </div>
+                    <div class="card-body">
+                    <p class="card-text">Investigate variable relationships for complex concepts such as socioeconomic status, dietary patterns, or psychological scales.</p>
+                    <a href="#" class="btn bg-warning text-white">More Information</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </main>
 {% endblock %}

@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from src.db import create_tables
 from src.app.views import user_blueprint, portfolio_blueprint
 
-app = Flask(__name__, template_folder='src/app/templates')
+app = Flask(__name__, template_folder="src/app/templates", static_folder="src/app/templates/static")
 
 app.secret_key = os.urandom(64)
 app.config.update(ADMIN=os.environ.get("ADMIN"))

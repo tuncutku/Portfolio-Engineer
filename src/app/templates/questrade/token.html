@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="form">
+    <form action="{{ url_for('questrade.insert_token') }}" method="post">
+        <div class="form-group">
+            <label for="email">Access Token</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+        <button type="submit" class="btn btn-primary">Log in</button>
+    </form>
+</div>
+{% endblock %}
