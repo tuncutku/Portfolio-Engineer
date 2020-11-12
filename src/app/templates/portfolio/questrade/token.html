@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container position-absolute top-50 left-50 translate-middle">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col">
+            <img class="rounded mx-auto d-block" src="../../static/questrade_logo.png" alt="" width="300" height="120">
+            <form action="{{ url_for('questrade.insert_refresh_token') }}" method="post">
+                <div class="mb-6 mt-3">
+                    <label for="token" class="form-label">Please insert refresh token for</label>
+                    <a class="link-secondary text-success" href="https://www.questrade.com/home">Questrade</a>
+                    <input type="text" class="form-control" id="token" name="token" placeholder="Refresh Token">
+                </div>
+                {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        Invalid token!
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-success mt-3">Submit Token</button>
+            </form>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+{% endblock %}

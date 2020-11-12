@@ -16,7 +16,7 @@ class User(object):
         if user:
             return cls(*user)
         else:
-            raise UserNotFoundError('A user with this e-mail was not found.')
+            raise UserNotFoundError("A user with this e-mail was not found.")
 
     @classmethod
     def is_login_valid(cls, email: str, password: str) -> bool:
