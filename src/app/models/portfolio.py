@@ -1,11 +1,15 @@
 from dataclasses import dataclass
 
+from src.db import database
+from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
+
+
 @dataclass
 class Portfolio:
-    portfolio_name: str
-    user: str
-    questrade_name: str
-    balance: float
-    positions: list
-
-    _id: int = None
+    accountType: str
+    number: str
+    status: str
+    clientAccountType: str
+    userId: int
+ 
+    

@@ -29,8 +29,7 @@ def requires_questrade_access(f: Callable) -> Callable:
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         q = Questrade()
-#        if not q.access_status():
-        if True:
+        if not q.access_status():
             return redirect(url_for("questrade.insert_refresh_token"))
         return f(*args, **kwargs)
     return decorated_function

@@ -1,11 +1,10 @@
 import os
 from flask import Flask, render_template
-from dotenv import load_dotenv
+import inspect
 
 from src.db import create_tables
 from src.app.views import *
 
-load_dotenv()
 
 app = Flask(__name__, template_folder="src/app/templates", static_folder="src/app/templates/static")
 

@@ -2,13 +2,14 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 
 from src.app.models import User
 from src.app.models.utils import UserError, requires_login, requires_questrade_access
+from lib.questrade.questrade import Questrade
 
 portfolio_blueprint = Blueprint("portfolio", __name__)
 
 @portfolio_blueprint.route("/list", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login
 @requires_questrade_access
-def portfolio_list():
+def account_list():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
@@ -18,12 +19,16 @@ def portfolio_list():
                 return redirect(url_for(".portfolio"))
         except UserError as e:
             return e.message
-    return render_template("portfolio/list.html")
+    
+    q = Questrade()
+    portfolioList = User.portfolio_list(q)
+    return render_template("portfolio/portfolio_list.html", portfolioList = portfolioList)
 
 
 @portfolio_blueprint.route("/summary", methods=["GET", "POST"])
 @requires_login
-def portfolio_summary():
+@requires_questrade_access
+def portfolio_overview():
     # if request.method == "POST":
     #     email = request.form["email"]
     #     password = request.form["password"]
@@ -34,4 +39,4 @@ def portfolio_summary():
     #             return redirect(url_for(".portfolio"))
     #     except UserError as e:
     #         return e.message
-    return render_template("portfolio/summary.html")
+    return render_template("portfolio/portfolio_overview.html")

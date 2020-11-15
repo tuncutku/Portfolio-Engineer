@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
+from lib.questrade import Questrade
 from src.db import database
+from src.app.models.portfolio import Portfolio
 from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
 
 
@@ -50,6 +52,21 @@ class User(object):
             database.add_user(email, credential_check.hash_password(password))
         return True
     
+    @staticmethod
+    def portfolio_list(q: Questrade):
+        portfolioList = list()
+        accounts = q.accounts
+        for account in accounts["accounts"]:
+            portfolio = Portfolio(
+                account["type"],
+                account["number"],
+                account["status"],
+                account["clientAccountType"],
+                accounts["userId"]
+            )
+            portfolioList.append(portfolio)
+        return portfolioList
+        
     @staticmethod
     def logout():
         pass

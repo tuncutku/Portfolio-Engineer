@@ -20,7 +20,7 @@ class Auth:
 
     def _read_token(self):
         with open(self.token_path) as yaml_file:
-            token_yaml_payload = yaml.load(yaml_file)
+            token_yaml_payload = yaml.safe_load(yaml_file)
         return token_yaml_payload
     
     def _read_valid_token(self):
@@ -41,6 +41,7 @@ class Auth:
             token["expires_at"] = str(req_time + token["expires_in"])
             self._write_token(token)
         
+    # TODO Token is stored in a yml file. It could be stored as an environment variable    
     def _write_token(self, token):
         with open(self.token_path, "w") as yaml_file:
             yaml.dump(token, yaml_file)
