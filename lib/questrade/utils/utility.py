@@ -10,6 +10,7 @@ def _read_config(fpath):
             config.read_file(f)
         return config
 
+# TODO this is not used, valide request payload with this function.
 def _validate_access_token(
     access_token=None,
     api_server=None,

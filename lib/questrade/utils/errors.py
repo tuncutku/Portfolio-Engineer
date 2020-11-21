@@ -1,3 +1,4 @@
+# TODO add error handling for Questrade
 class QtradeError(Exception):
     def __init__(self, message):
         self.message = message

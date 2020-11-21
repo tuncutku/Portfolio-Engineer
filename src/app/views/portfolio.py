@@ -25,18 +25,10 @@ def account_list():
     return render_template("portfolio/portfolio_list.html", portfolioList = portfolioList)
 
 
-@portfolio_blueprint.route("/summary", methods=["GET", "POST"])
+@portfolio_blueprint.route("/summary/<string:portfolio_id>/overview", methods=["GET"])
 @requires_login
 @requires_questrade_access
-def portfolio_overview():
-    # if request.method == "POST":
-    #     email = request.form["email"]
-    #     password = request.form["password"]
-
-    #     try:
-    #         if User.register_user(email, password):
-    #             session["email"] = email
-    #             return redirect(url_for(".portfolio"))
-    #     except UserError as e:
-    #         return e.message
-    return render_template("portfolio/portfolio_overview.html")
+def portfolio_overview(portfolio_id):
+    p = Portfolio(int(portfolio_id))
+    report = generate_portfolio_summary(p)
+    return render_template("portfolio/portfolio_overview.html", report=report)

@@ -3,8 +3,8 @@ from src.app.models import User
 from src.app.models.utils import UserError
 
 
+# TODO integrate "LoginManager() for managing logins"
 user_blueprint = Blueprint("users", __name__)
-
 
 @user_blueprint.route("/login", methods=["GET", "POST"])
 def login_user():
@@ -34,3 +34,9 @@ def register_user():
         except UserError as e:
             return e.message
     return render_template("users/register.html")
+
+
+@user_blueprint.route("/logout", methods=["GET"])
+def log_out_user():
+    return render_template("home.html")
+

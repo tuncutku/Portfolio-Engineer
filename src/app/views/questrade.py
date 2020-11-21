@@ -7,7 +7,6 @@ from lib.questrade import Questrade
 
 questrade_blueprint = Blueprint("questrade", __name__)
 
-
 @questrade_blueprint.route("/access_code", methods=["GET", "POST"])
 def insert_refresh_token():
     error_message = None
