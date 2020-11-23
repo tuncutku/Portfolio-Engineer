@@ -13,9 +13,9 @@
                     Questrade
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Portfolio ID: {{ portfolio.number }}</h5>
-                    <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.accountType }}.</p>
-                    <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio.number) }}" class="btn bg-warning">Portfolio Summary</a>
+                    <h5 class="card-title">Portfolio ID: {{ portfolio["number"] }}</h5>
+                    <p class="card-text">Account status is {{ portfolio["status"] }} and type is {{ portfolio["account_type"] }}.</p>
+                    <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-warning">Portfolio Summary</a>
                 </div>
             </div>
         </div>

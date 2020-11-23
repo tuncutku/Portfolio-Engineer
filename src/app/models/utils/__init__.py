@@ -9,5 +9,5 @@ from src.app.models.utils.user_errors import (
 from src.app.models.utils.decorators import (
     requires_admin,
     requires_login,
-    requires_questrade_access
+    requires_questrade_access,
 )

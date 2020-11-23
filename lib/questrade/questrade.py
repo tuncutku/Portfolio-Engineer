@@ -1,8 +1,9 @@
 import requests
 import os
+from datetime import datetime, timedelta
 
 from lib.questrade.utils import _read_config
-from lib.questrade.auth import Auth
+from src.app.models.auth import Auth
 
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "questrade.cfg")
 
@@ -11,14 +12,10 @@ class Questrade:
     def __init__(self):
         self.session = requests.Session()
         self.config = _read_config(CONFIG_PATH)
-        self.auth = Auth(self.config, self.session, self.config)
+        self.auth = Auth(self.config)
 
     def access_status(self) -> bool:
-        try:
-            self.time
-            return True
-        except:
-            return False
+        self.time
 
     def submit_refresh_token(self, refresh_token):
         self.auth._refresh_token(refresh_token)
@@ -62,6 +59,15 @@ class Questrade:
         return self._request(self.config["API"]["AccountExecutions"].format(id), kwargs)
 
     def account_orders(self, id, **kwargs):
+        """Get account orders
+        Parameters:
+            id (int): Account Id
+            kwargs: startTime, endTime, ids
+            
+        Returns:
+            list: orders
+
+        """
         if "ids" in kwargs:
             kwargs["ids"] = kwargs["ids"].replace(" ", "")
         return self._request(self.config["API"]["AccountOrders"].format(id), kwargs)

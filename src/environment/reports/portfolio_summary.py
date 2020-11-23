@@ -1,5 +1,13 @@
-from src.app.models.portfolio import Portfolio
+from dataclasses import dataclass
 
-def generate_portfolio_summary(portfolio: Portfolio):
-    
-    pass
+from src.app.models.portfolio import Portfolio
+from src.environment.reports.base import Report
+
+@dataclass
+def portfolio_summary(Report):
+    portfolio: Portfolio
+
+    @abstractmethod
+    def create_img:
+        pass
+

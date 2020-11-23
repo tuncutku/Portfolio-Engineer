@@ -2,15 +2,13 @@ from dataclasses import dataclass
 
 from lib.questrade import Questrade
 from src.db import database
-from src.app.models.portfolio import Portfolio
 from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
-
+from src.app.models.auth import Auth
 
 @dataclass
 class User(object):
     email: str
-    password: str
-    _id: int = None    
+    password: str  
     
     @classmethod
     def find_by_email(cls, email: str) -> "User":
@@ -34,7 +32,6 @@ class User(object):
             raise IncorrectPasswordError("Your password was wrong.")
         return True
 
-
     @classmethod
     def register_user(cls, email: str, password: str) -> bool:
         """
@@ -53,27 +50,22 @@ class User(object):
         return True
     
     @staticmethod
+    def logout():
+        pass
+
+    
+    @staticmethod
     def portfolio_list(q: Questrade):
         portfolioList = list()
         accounts = q.accounts
         for account in accounts["accounts"]:
-            portfolio = Portfolio(
-                account["type"],
-                account["number"],
-                account["status"],
-                account["clientAccountType"],
-                accounts["userId"]
-            )
+            portfolio = {
+                "port_type": account["type"],
+                "number": account["number"],
+                "status": account["status"],
+                "account_type": account["clientAccountType"],
+                "userId": accounts["userId"],
+            }
             portfolioList.append(portfolio)
         return portfolioList
-        
-    @staticmethod
-    def logout():
-        pass
 
-    def json(self):
-        return {
-            "_id": self._id,
-            "email": self.email,
-            "password": self.password,
-        }
