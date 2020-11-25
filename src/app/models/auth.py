@@ -22,9 +22,9 @@ class Auth:
     
     def _read_valid_token(self):
         """ Function to check if previous access token is still valid. If not, use refresh token to claim a new access token. """
-        if self._read_token() is None:
-            raise TokenNotFoundError("Currently no token found.")
         self.token_data = self._read_token()
+        if self.token_data is None:
+            raise TokenNotFoundError("Currently no token found.")
         if time.time() + 60 > int(self.token_data["expires_at"]):
             self._refresh_token(self.token_data["refresh_token"])
             self.token_data = self._read_token()

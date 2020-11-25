@@ -37,7 +37,7 @@ def register_user():
 
 
 @user_blueprint.route("/guest", methods=["GET", "POST"])
-def register_user():
+def guest():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
