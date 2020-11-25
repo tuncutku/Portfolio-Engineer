@@ -16,7 +16,7 @@ def insert_refresh_token():
         q = Questrade()
         try:
             q.submit_refresh_token(token)
-            return redirect(url_for("questrade.account_list"))
+            return redirect(url_for("portfolio.account_list"))
         except WrongTokenError as e:
             return render_template("portfolio/questrade/token.html", error_message=e.message)
     return render_template("portfolio/questrade/token.html", error_message=None)

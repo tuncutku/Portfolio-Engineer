@@ -36,6 +36,19 @@ def register_user():
     return render_template("users/register.html")
 
 
+@user_blueprint.route("/guest", methods=["GET", "POST"])
+def register_user():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        try:
+            if User.register_user(email, password):
+                session["email"] = email
+                return redirect(url_for("portfolio.account_list"))
+        except UserError as e:
+            return e.message
+    return render_template("users/register.html")
+
 @user_blueprint.route("/logout", methods=["GET"])
 def log_out_user():
     return render_template("home.html")
