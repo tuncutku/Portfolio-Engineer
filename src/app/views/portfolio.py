@@ -1,6 +1,6 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 
-from src.app.models import User, Portfolio
+from src.app.models import User #Portfolio
 from src.app.models.utils import UserError, requires_login, requires_questrade_access
 from lib.questrade.questrade import Questrade
 
@@ -20,5 +20,5 @@ def account_list():
 # @requires_questrade_access
 def portfolio_overview(portfolio_id):
     p = Portfolio(int(portfolio_id))
-    report = generate_portfolio_summary(p)
-    return render_template("portfolio/portfolio_overview.html", report=report)
+    #report = generate_portfolio_summary(p)
+    return render_template("portfolio/portfolio_overview.html")# report=report)

@@ -6,7 +6,7 @@ from src.app.models.utils import credential_check, UserAlreadyRegisteredError, U
 from lib.questrade import Questrade
 
 @dataclass
-class Portfolio:
+class QuestradePortfolio:
     _id: str
     user: str
     q: Questrade
@@ -36,5 +36,10 @@ class Portfolio:
         # TODO return a class of 
         # order = q.account_order(orders[0])
         pass
+
+@dataclass
+class QuestradePortfolio:
+    _id = str
+
 
     
