@@ -26,9 +26,3 @@ def decrypt_token(encrypted_token: str) -> str:
 
     return decrypted_message.decode()
 
-token = encrypt_token("hello world")
-message = decrypt_token(token)
-
-key = generate_key()
-
-a = 1
