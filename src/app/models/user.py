@@ -48,7 +48,7 @@ class User(object):
         except UserNotFoundError:
             database.add_user(email, credential_check.hash_password(password))
         return True
-    
+
     @staticmethod
     def logout():
         pass
@@ -68,4 +68,3 @@ class User(object):
             }
             portfolioList.append(portfolio)
         return portfolioList
-

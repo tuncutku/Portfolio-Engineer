@@ -1,20 +1,21 @@
-
-import os
 import json
 import time
 import requests
-import yaml
+import configparser
 from flask import session
+from dataclasses import dataclass
 
 from src.db import database
 from lib.questrade.utils import TokenNotFoundError, WrongTokenError, InternalServerError
 
-# TODO use Cryptography Library to store token in Postgres
 # TODO implement signin in as a guest.
-class Auth:
-    def __init__(self, config):
+@dataclass
+class Auth(object):
+
+    config: configparser.ConfigParser
+
+    def __post_init__(self):
         self.user_email = session.get("email")
-        self.config = config
     
     @property
     def token(self):
@@ -30,7 +31,7 @@ class Auth:
             self.token_data = self._read_token()
         return self.token_data
 
-    def _refresh_token(self, refresh_token):
+    def _refresh_token(self, refresh_token: str):
         req_time = int(time.time())
         payload = requests.get(self.config["Auth"]["RefreshURL"].format(refresh_token))
         if payload.status_code == 200:

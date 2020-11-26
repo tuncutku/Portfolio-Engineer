@@ -66,7 +66,6 @@ class Questrade:
             
         Returns:
             list: orders
-
         """
         if "ids" in kwargs:
             kwargs["ids"] = kwargs["ids"].replace(" ", "")
