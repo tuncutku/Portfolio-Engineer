@@ -25,4 +25,3 @@ def decrypt_token(encrypted_token: str) -> str:
     decrypted_message = f.decrypt(encrypted_token.encode("utf-8"))
 
     return decrypted_message.decode()
-

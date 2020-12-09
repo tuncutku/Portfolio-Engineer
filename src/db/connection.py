@@ -6,8 +6,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 database_uri = os.environ["DATABASE_URI"]
-connection = psycopg2.connect(database_uri)
+# connection = psycopg2.connect(database_uri)
 
+connection = psycopg2.connect(
+    dbname = "hello_flask_dev",
+    user = "postgres",
+    host = "db",
+    password = "postgres",
+)
 
 @contextmanager
 def get_cursor():
