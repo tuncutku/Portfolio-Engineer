@@ -1,0 +1,60 @@
+from dataclasses import dataclass
+from typing import List
+
+from src.db import database
+from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError, PortfolioNotFoundError
+from lib.questrade import Questrade
+
+@dataclass
+class Portfolio:
+    name: str
+    source: str
+    status: str
+    portfolio_type: str
+    email: str
+    portfolio_id: int
+    questrade_id: int = None
+
+    @classmethod
+    def find_all(cls, email: str) -> List["Portfolio"]:
+        port_list = database.get_portfolio_list(email)
+        if port_list is None:
+            raise PortfolioNotFoundError("No portfolio exist in the database. Add a custom portfolio or update with Questrade.")
+        return [cls(*port) for port in port_list]
+
+    @classmethod
+    def find_by_name(cls, name: str, email: str) -> "Portfolio":
+        database.get_portfolio(name, email)
+
+    @property
+    def tags(self):
+        """Porperty that generates tags from orders which will be used for filtering news."""
+        pass
+
+    @property
+    def positions(self) -> List[dict]:
+        return self.q.account_positions(int(self._id))["positions"]
+    
+    @property
+    def balances(self) -> dict:
+        return self.q.account_balances(int(self._id))
+
+    @property
+    def activities(self):
+        # activities = q.account_activities(int(portfolio_id))
+        pass
+
+    @property
+    def executions(self):
+        # executions = q.account_executions(portfolio_id)
+        pass
+
+    @property
+    def order(self):
+        # TODO return a class of 
+        # order = q.account_order(orders[0])
+        pass
+
+
+
+    

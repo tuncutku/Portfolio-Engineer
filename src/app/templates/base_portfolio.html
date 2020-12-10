@@ -13,14 +13,15 @@
     <header>
         <nav class="navbar navbar-default navbar-static-top navbar-expand-lg bg-success">
             <div class="container">
-                <a class="navbar-brand text-white" href="{{ url_for('home') }}">Portfolio Engineer</a>
+                <a class="navbar-brand text-white" href="">Portfolio Engineer</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        <a class="nav-item nav-link text-white" href="{{ url_for('portfolio.account_list') }}">My Portfolios</a>
-                        <a class="nav-item nav-link text-white" href="">My Alerts</a>
+                        <a class="nav-item nav-link text-white" href="{{ url_for('account.portfolio_list') }}">My Portfolios</a>
+                        <a class="nav-item nav-link text-white" href="{{ url_for('account.update_portfolio_list') }}">Update portfolios</a>
+                        <a class="nav-item nav-link text-white" href="">Add custom portfolio</a>
                         <a class="nav-item nav-link text-white" href="">Log out</a>
                     </div>
                 </div>
@@ -31,6 +32,11 @@
         {% block content %}
 
         {% endblock %}
+        <footer class="footer">
+            <div class="container fixed-bottom mt-5">
+                <span class="text-muted"> Portfolio Engineer</span>
+            </div>
+        </footer>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>  
     </body>
 </html>

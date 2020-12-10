@@ -5,7 +5,7 @@ class TokenError(Exception):
 class TokenNotFoundError(TokenError):
     pass
 
-class WrongTokenError(TokenError):
+class InvalidTokenError(TokenError):
     pass
 
 class InternalServerError(TokenError):

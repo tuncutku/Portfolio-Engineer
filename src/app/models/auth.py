@@ -6,7 +6,7 @@ from flask import session
 from dataclasses import dataclass
 
 from src.db import database
-from lib.questrade.utils import TokenNotFoundError, WrongTokenError, InternalServerError
+from lib.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
 # TODO implement signin in as a guest.
 @dataclass
@@ -44,7 +44,7 @@ class Auth(object):
         elif payload.status_code == 500:
             raise InternalServerError("Cannot acces to Questrade, internal server error.")
         else:
-            raise WrongTokenError("Wrong token provided, access denied.")
+            raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
         
     def _read_token(self):
         return database.find_token_by_user_email(self.user_email)

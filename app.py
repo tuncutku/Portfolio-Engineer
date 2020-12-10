@@ -13,6 +13,7 @@ app.secret_key = os.urandom(64)
 app.config.update(ADMIN=os.environ.get("ADMIN"))
 
 app.register_blueprint(user_blueprint, url_prefix="/users")
+app.register_blueprint(account_blueprint, url_prefix="/account")
 app.register_blueprint(portfolio_blueprint, url_prefix="/portfolio")
 app.register_blueprint(questrade_blueprint, url_prefix="/questrade")
 
@@ -22,5 +23,5 @@ def home():
 
 
 if __name__ == "__main__":
-    # create_tables()
+    create_tables()
     app.run(debug=True, host="0.0.0.0", port=5000)

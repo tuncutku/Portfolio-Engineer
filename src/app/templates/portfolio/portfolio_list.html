@@ -6,16 +6,20 @@
         </h2>
     </div>
 
-    {% for portfolio in portfolioList %}
+    {% for portfolio in port_list %}
         <div class="container mt-5">
             <div class="card">
                 <div class="card-header">
-                    Questrade
+                    {{ portfolio.source }}
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Portfolio ID: {{ portfolio["number"] }}</h5>
-                    <p class="card-text">Account status is {{ portfolio["status"] }} and type is {{ portfolio["account_type"] }}.</p>
+                    <h5 class="card-title">Portfolio name: {{ portfolio.name }}</h5>
+                    <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.portfolio_type }}.</p>
                     <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-warning">Portfolio Summary</a>
+                    {% if portfolio.source == "Custom" %}
+                    <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-info">Edit Portfolio</a>
+                    {% endif %}
+                    <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-danger text-white">Delete Portfolio</a>
                 </div>
             </div>
         </div>

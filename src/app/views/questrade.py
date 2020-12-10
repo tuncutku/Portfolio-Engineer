@@ -2,7 +2,7 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 
 from src.app.models.auth import Auth
 from src.app.models.utils import UserError, requires_login
-from lib.questrade.utils import WrongTokenError
+from lib.questrade.utils import InvalidTokenError
 from lib.questrade import Questrade
 
 
@@ -16,7 +16,7 @@ def insert_refresh_token():
         q = Questrade()
         try:
             q.submit_refresh_token(token)
-            return redirect(url_for("portfolio.account_list"))
-        except WrongTokenError as e:
+            return redirect(url_for("account.portfolio_list"))
+        except InvalidTokenError as e:
             return render_template("portfolio/questrade/token.html", error_message=e.message)
     return render_template("portfolio/questrade/token.html", error_message=None)

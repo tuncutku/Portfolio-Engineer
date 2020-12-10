@@ -1,9 +1,9 @@
 import functools
 from typing import Callable
-from flask import session, flash, redirect, url_for, request, current_app
+from flask import session, flash, redirect, url_for, request, current_app, render_template
 
 from lib.questrade.questrade import Questrade
-from lib.questrade.utils import TokenNotFoundError
+from lib.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
 from src.app.models.auth import Auth
 
 
@@ -33,7 +33,10 @@ def requires_questrade_access(f: Callable) -> Callable:
         q = Questrade()
         try:
             q.access_status()
-        except TokenNotFoundError:
-            return redirect(url_for("questrade.insert_refresh_token"))
+        except (TokenNotFoundError, InvalidTokenError) as e:
+            return render_template("portfolio/questrade/token.html", error_message=e.message)
+        # TODO add the error message to the webpage
+        except InternalServerError as e:
+            return redirect(url_for("account.portfolio_list"))
         return f(*args, **kwargs)
     return decorated_function

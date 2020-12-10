@@ -18,8 +18,7 @@ CREATE_USER_TOKEN = """CREATE TABLE IF NOT EXISTS user_token (
     token_type TEXT,
     email TEXT,
     FOREIGN KEY (email) REFERENCES users (email),
-    id SERIAL PRIMARY KEY
-);"""
+    id SERIAL PRIMARY KEY);"""
 INSERT_TOKEN = """INSERT INTO user_token (
     access_token,
     api_server,
@@ -45,14 +44,59 @@ SELECT_TOKEN_BY_USER_EMAIL = """SELECT
     FROM user_token WHERE email = %s;"""
 
 # SQL Portfolio commands
-CREATE_PORTFOLIO = ""
-INSERT_PORTFOLIO = ""
+CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
+    name TEXT,
+    source TEXT,
+    status TEXT,
+    type TEXT,
+    email TEXT,
+    questrade_id INT,
+    FOREIGN KEY (email) REFERENCES users (email),
+    id SERIAL PRIMARY KEY);"""
+INSERT_PORTFOLIO = """INSERT INTO portfolio (
+    name,
+    source,
+    status,
+    type,
+    email,
+    questrade_id
+    )
+    VALUES (%s, %s, %s, %s, %s, %s);"""
+UPDATE_PORTFOLIO = """UPDATE portfolio SET
+    name = %s,
+    source = %s,
+    status = %s,
+    type = %s;"""
+SELECT_PORTFOLIOS_BY_USER_EMAIL = """SELECT
+    name,
+    source,
+    status,
+    type,
+    email,
+    id,
+    questrade_id
+    FROM portfolio WHERE email = %s;"""
+SELECT_PORTFOLIO = """SELECT
+    name,
+    source,
+    status,
+    type,
+    email,
+    id,
+    questrade_id
+    FROM portfolio WHERE email = %s AND name = %s;"""
 
+# SQL Order commands
+CREATE_ORDER = ""
+INSERT_ORDER = ""
+UPDATE_ORDER = ""
+DELETE_ORDER = ""
 
 def create_tables():
     with get_cursor() as cursor:
         cursor.execute(CREATE_USERS)
         cursor.execute(CREATE_USER_TOKEN)
+        cursor.execute(CREATE_PORTFOLIO)
 
 # -- users --
 def add_user(email, password):
@@ -89,4 +133,21 @@ def find_token_by_user_email(email):
         return token
 
 # -- portfolios --
+def get_portfolio_list(email):
+    with get_cursor() as cursor:
+        cursor.execute(SELECT_PORTFOLIOS_BY_USER_EMAIL, (email,))
+        return cursor.fetchall()
 
+def get_portfolio(name, email):
+    with get_cursor() as cursor:
+        cursor.execute(SELECT_PORTFOLIO, (name, email))
+        return cursor.fetchone()
+
+def add_portfolio():
+    pass
+
+def update_portfolio(_id):
+    pass
+
+def delete_portfolio(_id):
+    pass
