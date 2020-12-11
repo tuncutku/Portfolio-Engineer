@@ -63,10 +63,9 @@ INSERT_PORTFOLIO = """INSERT INTO portfolio (
     )
     VALUES (%s, %s, %s, %s, %s, %s);"""
 UPDATE_PORTFOLIO = """UPDATE portfolio SET
-    name = %s,
-    source = %s,
     status = %s,
-    type = %s;"""
+    type = %s
+    WHERE name = %s;"""
 SELECT_PORTFOLIOS_BY_USER_EMAIL = """SELECT
     name,
     source,
@@ -109,7 +108,6 @@ def find_user_by_email(email):
         cursor.execute(SELECT_USER_BY_EMAIL, (email,))
         return cursor.fetchone()
 
-
 # -- user tokens --
 def add_user_token(access_token, api_server, expires_at, refresh_token, token_type, email):
     access_token = encrypt_token(access_token)
@@ -143,10 +141,16 @@ def get_portfolio(name, email):
         cursor.execute(SELECT_PORTFOLIO, (name, email))
         return cursor.fetchone()
 
-def add_portfolio():
-    pass
+def add_portfolio(name, source, status, portfolio_type, email, questrade_id) -> None:
+    with get_cursor() as cursor:
+        cursor.execute(INSERT_PORTFOLIO, (name, source, status, portfolio_type, email, questrade_id))
 
-def update_portfolio(_id):
+def update_portfolio(status, portfolio_type, name):
+    with get_cursor() as cursor:
+        cursor.execute(UPDATE_PORTFOLIO, (status, portfolio_type, name))
+
+
+def update_portfolio_name():
     pass
 
 def delete_portfolio(_id):

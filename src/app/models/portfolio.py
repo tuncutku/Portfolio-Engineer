@@ -26,6 +26,18 @@ class Portfolio:
     def find_by_name(cls, name: str, email: str) -> "Portfolio":
         database.get_portfolio(name, email)
 
+    @staticmethod
+    def add_portfolio(name: str, source: str, status: str, portfolio_type: str, email: str, portfolio_id: int) -> None:
+        database.add_portfolio(name, source, status, portfolio_type, email, portfolio_id)
+    
+    @staticmethod
+    def update_portfolio(status: str, portfolio_type: str, name: str) -> None:
+        database.update_portfolio(status, portfolio_type, name)
+    
+    def delete(self) -> None:
+        database.delete_portfolio(self.email, self.name)
+
+
     @property
     def tags(self):
         """Porperty that generates tags from orders which will be used for filtering news."""
@@ -50,8 +62,8 @@ class Portfolio:
         pass
 
     @property
-    def order(self):
-        # TODO return a class of 
+    def orders(self):
+        # TODO return a list of Order class
         # order = q.account_order(orders[0])
         pass
 
