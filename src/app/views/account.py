@@ -41,7 +41,7 @@ def update_portfolio_list():
         else:
             add_portfolio(port_questrade, session["email"])
     
-    #TODO: add functionality to delete portfolios if database portfolio doestn exist on Questrade
+    #TODO: add functionality to delete portfolios if it doesn't exist on Questrade
 
     return redirect(url_for("account.portfolio_list"))
 
