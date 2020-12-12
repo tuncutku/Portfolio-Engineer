@@ -8,9 +8,9 @@ from lib.questrade.questrade import Questrade
 
 account_blueprint = Blueprint("account", __name__)
 
-@account_blueprint.route("/list", methods=["GET", "POST", "PUT", "DELETE"])
+@account_blueprint.route("/portfolio_list", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login
-def portfolio_list():
+def list_portfolios():
     try:
         port_list = Portfolio.find_all(session["email"])
         return render_template("portfolio/portfolio_list.html", port_list = port_list, error_message = None)
@@ -18,7 +18,7 @@ def portfolio_list():
         port_list = None
         return render_template("portfolio/portfolio_list.html", port_list = port_list, error_message = e.message)
 
-@account_blueprint.route("/update", methods=["GET", "POST", "PUT", "DELETE"])
+@account_blueprint.route("/update", methods=["GET"])
 @requires_login
 @requires_questrade_access
 def update_portfolio_list():
@@ -43,12 +43,16 @@ def update_portfolio_list():
     
     #TODO: add functionality to delete portfolios if it doesn't exist on Questrade
 
-    return redirect(url_for("account.portfolio_list"))
+    return redirect(url_for("account.list_portfolios"))
 
-@account_blueprint.route("/update", methods=["GET", "POST", "PUT", "DELETE"])
+@account_blueprint.route("/update", methods=["GET", "PUT"])
 @requires_login
 def edit_portfolio():
     pass
+
+
+
+
 
 @account_blueprint.route("/update", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login

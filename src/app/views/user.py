@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, request, session, url_for, render_template, redirect
 from src.app.models import User
 from src.app.models.utils import UserError
@@ -15,7 +17,7 @@ def login_user():
         try:
             if User.is_login_valid(email, password):
                 session["email"] = email
-                return redirect(url_for("account.portfolio_list"))
+                return redirect(url_for("account.list_portfolios"))
         except UserError as e:
             error_message = e.message
             return render_template("users/login.html", error_message=error_message)
@@ -30,7 +32,7 @@ def register_user():
         try:
             if User.register_user(email, password):
                 session["email"] = email
-                return redirect(url_for("account.portfolio_list"))
+                return redirect(url_for("account.list_portfolios"))
         except UserError as e:
             return e.message
     return render_template("users/register.html")
@@ -38,16 +40,8 @@ def register_user():
 
 @user_blueprint.route("/guest", methods=["GET", "POST"])
 def guest():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        try:
-            if User.register_user(email, password):
-                session["email"] = email
-                return redirect(url_for("account.portfolio_list"))
-        except UserError as e:
-            return e.message
-    return render_template("users/register.html")
+    session["email"] = os.environ["GUEST_EMAIL"]
+    return redirect(url_for("account.list_portfolios"))
 
 @user_blueprint.route("/logout", methods=["GET"])
 def log_out_user():

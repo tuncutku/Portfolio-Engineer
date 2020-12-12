@@ -17,16 +17,6 @@ def requires_login(f: Callable) -> Callable:
     return decorated_function
 
 
-def requires_admin(f: Callable) -> Callable:
-    @functools.wraps(f)
-    def decorated_function(*args, **kwargs):
-        if session.get("email") != current_app.config.get("ADMIN", ""):
-            flash("You need to be an administrator to access this page.", "danger")
-            return redirect(url_for("users.login_user"))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
 def requires_questrade_access(f: Callable) -> Callable:
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
@@ -37,6 +27,6 @@ def requires_questrade_access(f: Callable) -> Callable:
             return render_template("portfolio/questrade/token.html", error_message=e.message)
         # TODO add the error message to the webpage
         except InternalServerError as e:
-            return redirect(url_for("account.portfolio_list"))
+            return redirect(url_for("account.list_portfolios"))
         return f(*args, **kwargs)
     return decorated_function
