@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template
 import inspect
 
-from src.db import create_tables
+from src.app.db import create_tables
 from src.app.views import *
 
 # TODO use plotly dash for dynamic graphics

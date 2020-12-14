@@ -5,8 +5,8 @@ import configparser
 from flask import session
 from dataclasses import dataclass
 
-from src.db import database
-from lib.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
+from src.app.db import database
+from src.app.lib.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
 # TODO implement signin in as a guest.
 @dataclass

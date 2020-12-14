@@ -2,8 +2,8 @@ import functools
 from typing import Callable
 from flask import session, flash, redirect, url_for, request, current_app, render_template
 
-from lib.questrade.questrade import Questrade
-from lib.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
+from src.app.lib.questrade import Questrade
+from src.app.lib.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
 from src.app.models.auth import Auth
 
 

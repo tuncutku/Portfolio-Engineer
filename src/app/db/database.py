@@ -1,8 +1,8 @@
 from typing import List, Tuple
 from contextlib import contextmanager
 
-from src.db.connection import get_cursor
-from src.db.encryption import encrypt_token, decrypt_token
+from src.app.db.connection import get_cursor
+from src.app.db.encryption import encrypt_token, decrypt_token
 
 # SQL user commands
 CREATE_USERS = "CREATE TABLE IF NOT EXISTS users (email TEXT PRIMARY KEY, password TEXT);"

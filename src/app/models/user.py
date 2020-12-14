@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from lib.questrade import Questrade
-from src.db import database
+from src.app.lib.questrade import Questrade
+from src.app.db import database
 from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
 from src.app.models.auth import Auth
 

@@ -4,7 +4,7 @@ from src.app.models import User, Portfolio
 from src.app.models.utils import UserError, requires_login, requires_questrade_access, PortfolioNotFoundError
 from src.app.views.utils import check_and_update_portfolio, add_portfolio
 
-from lib.questrade.questrade import Questrade
+from src.app.lib.questrade import Questrade
 
 account_blueprint = Blueprint("account", __name__)
 

@@ -2,7 +2,7 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 
 from src.app.models import User #Portfolio
 from src.app.models.utils import UserError, requires_login, requires_questrade_access
-from lib.questrade.questrade import Questrade
+from src.app.lib.questrade import Questrade
 
 portfolio_blueprint = Blueprint("portfolio", __name__)
 

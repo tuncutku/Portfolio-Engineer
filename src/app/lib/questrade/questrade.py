@@ -2,7 +2,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-from lib.questrade.utils import _read_config
+from src.app.lib.questrade.utils import _read_config
 from src.app.models.auth import Auth
 
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "questrade.cfg")

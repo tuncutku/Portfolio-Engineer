@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import List
 
-from src.db import database
+from src.app.db import database
 from src.app.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError, PortfolioNotFoundError
-from lib.questrade import Questrade
+from src.app.lib.questrade import Questrade
 
 @dataclass
 class Portfolio:
