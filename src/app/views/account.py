@@ -51,9 +51,6 @@ def edit_portfolio():
     pass
 
 
-
-
-
 @account_blueprint.route("/update", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login
 def delete_portfolio():
