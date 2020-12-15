@@ -1,6 +1,6 @@
 # from dataclasses import dataclass
 
-# from src.app.models.portfolio import Portfolio
+# from models.portfolio import Portfolio
 # from src.environment.reports.base import Report
 
 # @dataclass

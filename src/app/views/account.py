@@ -45,13 +45,13 @@ def update_portfolio_list():
 
     return redirect(url_for("account.list_portfolios"))
 
-@account_blueprint.route("/update", methods=["GET", "PUT"])
+@account_blueprint.route("/edit", methods=["GET", "PUT"])
 @requires_login
 def edit_portfolio():
     pass
 
 
-@account_blueprint.route("/update", methods=["GET", "POST", "PUT", "DELETE"])
+@account_blueprint.route("/delete", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login
 def delete_portfolio():
     pass

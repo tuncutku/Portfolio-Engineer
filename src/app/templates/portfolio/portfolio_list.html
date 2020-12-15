@@ -15,8 +15,8 @@
                 <div class="card-body">
                     <h5 class="card-title">Portfolio name: {{ portfolio.name }}</h5>
                     <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.portfolio_type }}.</p>
-                    <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-warning">View Portfolio</a>
-                    <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-info">Edit Portfolio</a>
+                    <a href="{{ url_for('portfolio.portfolio_overview') }}" class="btn bg-warning">View Portfolio</a>
+                    <a href="{{ url_for('account.edit_portfolio', portfolio_id=portfolio.name) }}" class="btn bg-info">Edit Portfolio</a>
                     <a href="{{ url_for('portfolio.portfolio_overview', portfolio_id=portfolio[number]) }}" class="btn bg-danger text-white">Delete Portfolio</a>
                 </div>
             </div>
