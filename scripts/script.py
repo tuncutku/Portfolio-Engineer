@@ -1,5 +1,5 @@
-from src.app.lib.questrade import Questrade
-#from src.app.models.portfolio import Portfolio
+from src.services.questrade import Questrade
+#from src.models.portfolio import Portfolio
 import redis
 
 from datetime import datetime, timedelta
