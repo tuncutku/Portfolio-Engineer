@@ -2,14 +2,14 @@ import os
 from flask import Flask, render_template
 import inspect
 
-from src.app.db import create_tables
-from src.app.views import *
+from src.db import create_tables
+from src.views import *
 
 # TODO use plotly dash for dynamic graphics
 # TODO use flask_profiler for monitoring endpoints
 # TODO use flask-swagger for profiling
 # youtube tutorial: https://www.youtube.com/channel/UCqBFsuAz41sqWcFjZkqmJqQ/playlists (Charming Data)
-app = Flask(__name__, template_folder="src/app/templates", static_folder="src/app/static")
+app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
 
 app.secret_key = os.urandom(64)
 app.config.update(ADMIN=os.environ.get("ADMIN"))
