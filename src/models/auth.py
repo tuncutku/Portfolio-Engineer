@@ -5,7 +5,7 @@ import configparser
 from flask import session
 from dataclasses import dataclass
 
-from src.db import database
+from src.db import DB_Token
 from src.services.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
 # TODO implement signin in as a guest.
@@ -47,11 +47,11 @@ class Auth(object):
             raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
         
     def _read_token(self):
-        return database.find_token_by_user_email(self.user_email)
+        return DB_Token.find_token_by_user_email(self.user_email)
 
     # TODO write test
     def _write_token(self, token):
-        database.add_user_token(
+        DB_Token.add_user_token(
             token["access_token"],
             token["api_server"],
             token["expires_at"],
@@ -61,7 +61,7 @@ class Auth(object):
         )
 
     def _update_token(self, token):
-        database.update_user_token(
+        DB_Token.update_user_token(
             token["access_token"],
             token["api_server"],
             token["expires_at"],

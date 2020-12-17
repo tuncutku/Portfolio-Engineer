@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
-from src.services.questrade import Questrade
-from src.db import database
+from src.db import DB_User
 from src.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
 from src.models.auth import Auth
 
@@ -12,7 +11,7 @@ class User(object):
     
     @classmethod
     def find_by_email(cls, email: str) -> "User":
-        user = database.find_user_by_email(email)
+        user = DB_User.find_user_by_email(email)
         if user:
             return cls(*user)
         else:
@@ -46,25 +45,9 @@ class User(object):
             user = cls.find_by_email(email)
             raise UserAlreadyRegisteredError("The e-mail you used to register already exists.")
         except UserNotFoundError:
-            database.add_user(email, credential_check.hash_password(password))
+            DB_User.add_user(email, credential_check.hash_password(password))
         return True
 
     @staticmethod
     def logout():
         pass
-
-    
-    @staticmethod
-    def portfolio_list(q: Questrade):
-        portfolioList = list()
-        accounts = q.accounts
-        for account in accounts["accounts"]:
-            portfolio = {
-                "port_type": account["type"],
-                "number": account["number"],
-                "status": account["status"],
-                "account_type": account["clientAccountType"],
-                "userId": accounts["userId"],
-            }
-            portfolioList.append(portfolio)
-        return portfolioList
