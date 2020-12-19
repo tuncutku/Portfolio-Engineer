@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import List
 
 from src.db import database
@@ -9,7 +9,6 @@ class Position:
     symbol: str
     quantity: int
     portfolio_id: str
-    email: str
     position_id: int = None
 
     @property

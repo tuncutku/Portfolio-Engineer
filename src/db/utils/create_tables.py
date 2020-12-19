@@ -21,15 +21,24 @@ CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
     id SERIAL PRIMARY KEY);"""
 CREATE_POSITION = """CREATE TABLE IF NOT EXISTS position (
     symbol TEXT,
-    quantity TEXT,
+    quantity INT,
     portfolio_id INT,
     FOREIGN KEY (portfolio_id) REFERENCES portfolio (id),
     id SERIAL PRIMARY KEY);"""
 CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     symbol TEXT,
-    quantity TEXT,
+    state TEXT,
+    quantity INT,
+    side TEXT,
+    average_price DECIMAL,
+    time TIMESTAMP,
+    legs TEXT,
+    strategy TEXT,
+    fee DECIMAL,
     portfolio_id INT,
+    position_id INT,
     FOREIGN KEY (portfolio_id) REFERENCES portfolio (id),
+    FOREIGN KEY (position_id) REFERENCES position (id),
     id SERIAL PRIMARY KEY);"""
 
 def create_tables():
@@ -38,3 +47,4 @@ def create_tables():
         cursor.execute(CREATE_USER_TOKEN)
         cursor.execute(CREATE_PORTFOLIO)
         cursor.execute(CREATE_POSITION)
+        cursor.execute(CREATE_ORDERS)
