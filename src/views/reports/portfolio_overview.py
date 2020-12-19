@@ -1,13 +1,20 @@
-# from pydantic.dataclasses import dataclass
+from flask import Blueprint, request, session, url_for, render_template, redirect
+import requests
 
-# from models.portfolio import Portfolio
-# from src.environment.reports.base import Report
+from src.environment.user_activities import User #Portfolio
+from src.environment.user_activities.utils import UserError, requires_login, requires_questrade_access
+from src.services.questrade import Questrade
 
-# @dataclass
-# def portfolio_summary(Report):
-#     portfolio: Portfolio
+portfolio_blueprint = Blueprint("portfolio", __name__)
 
-#     @abstractmethod
-#     def create_img:
-#         pass
 
+@portfolio_blueprint.route("/overview", methods=["GET"])
+@requires_login
+def portfolio_overview():
+    if not valid_positions:
+        return 
+
+    return "Hello world!"
+
+def edit_portfolio():
+    pass

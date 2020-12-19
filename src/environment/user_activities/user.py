@@ -1,8 +1,8 @@
 from pydantic.dataclasses import dataclass
 
 from src.db import DB_User
-from src.models.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
-from src.models.auth import Auth
+from src.environment.user_activities.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
+from src.environment.user_activities.auth import Auth
 
 @dataclass
 class User(object):

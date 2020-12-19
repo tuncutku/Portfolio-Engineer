@@ -4,7 +4,7 @@ from flask import session, flash, redirect, url_for, request, current_app, rende
 
 from src.services.questrade import Questrade
 from src.services.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
-from src.models.auth import Auth
+from src.environment.user_activities.auth import Auth
 
 
 def requires_login(f: Callable) -> Callable:

@@ -1,6 +1,6 @@
 import random
 
-from src.models.portfolio import Portfolio
+from src.environment.user_activities.portfolio import Portfolio
 
 def check_and_update_portfolio(port_db: Portfolio, port_questrade: dict) -> None:
     """Utility function that checks if Questrade portfolio is up-to-date. If not, updates database."""

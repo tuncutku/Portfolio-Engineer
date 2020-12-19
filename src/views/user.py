@@ -1,8 +1,8 @@
 import os
 
 from flask import Blueprint, request, session, url_for, render_template, redirect
-from src.models import User
-from src.models.utils import UserError
+from src.environment.user_activities import User
+from src.environment.user_activities.utils import UserError
 
 
 # TODO integrate "LoginManager() for managing logins"

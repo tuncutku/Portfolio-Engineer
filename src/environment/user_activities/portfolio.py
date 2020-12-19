@@ -2,7 +2,7 @@ from pydantic.dataclasses import dataclass
 from typing import List
 
 from src.db import DB_Portfolio
-from src.models.utils import (
+from src.environment.user_activities.utils import (
     credential_check, 
     UserAlreadyRegisteredError, 
     UserNotFoundError, 

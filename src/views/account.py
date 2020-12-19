@@ -1,7 +1,7 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 
-from src.models import User, Portfolio
-from src.models.utils import UserError, requires_login, requires_questrade_access, PortfolioNotFoundError
+from src.environment.user_activities import User, Portfolio
+from src.environment.user_activities.utils import UserError, requires_login, requires_questrade_access, PortfolioNotFoundError
 from src.views.utils import check_and_update_portfolio, add_portfolio
 
 from src.services.questrade import Questrade
