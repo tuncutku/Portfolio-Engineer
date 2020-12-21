@@ -2,7 +2,7 @@ from pydantic.dataclasses import dataclass
 from typing import List
 
 from src.db import database
-from src.services.questrade import Questrade
+from src.questrade import Questrade
 
 @dataclass
 class Position:

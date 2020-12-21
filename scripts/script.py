@@ -1,4 +1,4 @@
-from src.services.questrade import Questrade
+from src.questrade import Questrade
 #from src.environment.user_activities.portfolio import Portfolio
 import redis
 

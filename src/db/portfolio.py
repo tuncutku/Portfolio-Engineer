@@ -29,8 +29,8 @@ SELECT_PORTFOLIOS_BY_USER_EMAIL = """SELECT
     status,
     type,
     email,
-    id,
-    questrade_id
+    questrade_id,
+    id
     FROM portfolio WHERE email = %s;"""
 SELECT_PORTFOLIO = """SELECT
     name,
@@ -57,7 +57,7 @@ class DB_Portfolio:
             return cursor.fetchone()
 
     @staticmethod
-    def add_portfolio(name, source, status, portfolio_type, email, questrade_id) -> None:
+    def add_portfolio(name, source, status, portfolio_type, email, questrade_id = None) -> None:
         with get_cursor() as cursor:
             cursor.execute(INSERT_PORTFOLIO, (name, source, status, portfolio_type, email, questrade_id))
 

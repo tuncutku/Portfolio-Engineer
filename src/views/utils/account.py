@@ -10,6 +10,8 @@ def check_and_update_portfolio(port_db: Portfolio, port_questrade: dict) -> None
         port_db.status == port_questrade["status"],
     ]
 
+    # TODO check positions and orders as well and update them
+
     if not all(check_list):
         Portfolio.update_portfolio(
             port_questrade["status"],

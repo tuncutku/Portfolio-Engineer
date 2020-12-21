@@ -2,8 +2,8 @@ import functools
 from typing import Callable
 from flask import session, flash, redirect, url_for, request, current_app, render_template
 
-from src.services.questrade import Questrade
-from src.services.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
+from src.questrade import Questrade
+from src.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
 from src.environment.user_activities.auth import Auth
 
 
@@ -24,7 +24,7 @@ def requires_questrade_access(f: Callable) -> Callable:
         try:
             q.access_status()
         except (TokenNotFoundError, InvalidTokenError) as e:
-            return render_template("portfolio/questrade/token.html", error_message=e.message)
+            return render_template("account/questrade_token.html", error_message=e.message)
         # TODO add the error message to the webpage
         except InternalServerError as e:
             return redirect(url_for("account.list_portfolios"))

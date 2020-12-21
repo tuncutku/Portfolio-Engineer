@@ -18,8 +18,8 @@ class Portfolio:
     status: str
     portfolio_type: str
     email: str
-    portfolio_id: int
     questrade_id: int = None
+    portfolio_id: int = None
 
     @classmethod
     def find_all(cls, email: str) -> List["Portfolio"]:
@@ -33,8 +33,8 @@ class Portfolio:
         DB_Portfolio.get_portfolio(name, email)
 
     @staticmethod
-    def add_portfolio(name: str, source: str, status: str, portfolio_type: str, email: str, portfolio_id: int) -> None:
-        DB_Portfolio.add_portfolio(name, source, status, portfolio_type, email, portfolio_id)
+    def add_portfolio(name: str, source: str, status: str, portfolio_type: str, email: str, questrade_id: int = None) -> None:
+        DB_Portfolio.add_portfolio(name, source, status, portfolio_type, email, questrade_id)
     
     @staticmethod
     def update_portfolio(status: str, portfolio_type: str, name: str) -> None:

@@ -1,4 +1,4 @@
-{% extends "base_home.html" %}
+{% extends "base/home.html" %}
 {% block content %}
 
 <div class="container position-absolute top-50 left-50 translate-middle">
@@ -7,21 +7,17 @@
         </div>
         <div class="col">
             <img class="rounded mx-auto d-block" src="../static/home_logo.png" alt="" width="300" height="300">
-            <form action="{{ url_for('users.login_user') }}" method="post">
+            <form action="{{ url_for('users.register_user') }}" method="post">
                 <div class="mb-6">
                     <label for="exampleInputEmail1" class="form-label">Email address</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Email" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">Be sure to enter a valid e-mail, the app will send alerts.</div>
                 </div>
-                <div class="mb-3 mt-2">
+                <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Password</label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password">
                 </div>
-                {% if error_message %}
-                    <div class="alert alert-danger" role="alert">
-                        Email or password is wrong!
-                    </div>
-                {% endif %}
-                <button type="submit" class="btn btn-success">Sign In</button>
+                <button type="submit" class="btn btn-success">Sign Up</button>
             </form>
         </div>
         <div class="col">

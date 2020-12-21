@@ -20,8 +20,8 @@ def login_user():
                 return redirect(url_for("account.list_portfolios"))
         except UserError as e:
             error_message = e.message
-            return render_template("users/login.html", error_message=error_message)
-    return render_template("users/login.html", error_message=error_message)
+            return render_template("user/login.html", error_message=error_message)
+    return render_template("user/login.html", error_message=error_message)
 
 
 @user_blueprint.route("/register", methods=["GET", "POST"])
@@ -35,7 +35,7 @@ def register_user():
                 return redirect(url_for("account.list_portfolios"))
         except UserError as e:
             return e.message
-    return render_template("users/register.html")
+    return render_template("user/register.html")
 
 
 @user_blueprint.route("/guest", methods=["GET", "POST"])

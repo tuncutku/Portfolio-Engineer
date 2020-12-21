@@ -2,21 +2,21 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 
 from src.environment.user_activities import User, Portfolio
 from src.environment.user_activities.utils import UserError, requires_login, requires_questrade_access, PortfolioNotFoundError
-from src.views.utils import check_and_update_portfolio, add_portfolio
+from src.views.utils import check_and_update_portfolio, add_portfolio, _valide_portfolio_name
 
-from src.services.questrade import Questrade
+from src.questrade import Questrade
 
 account_blueprint = Blueprint("account", __name__)
 
-@account_blueprint.route("/portfolio_list", methods=["GET", "POST", "PUT", "DELETE"])
+@account_blueprint.route("/account", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login
 def list_portfolios():
     try:
         port_list = Portfolio.find_all(session["email"])
-        return render_template("portfolio/portfolio_list.html", port_list = port_list, error_message = None)
+        return render_template("account/account.html", port_list = port_list, error_message = None)
     except PortfolioNotFoundError as e:
         port_list = None
-        return render_template("portfolio/portfolio_list.html", port_list = port_list, error_message = e.message)
+        return render_template("account/account.html", port_list = port_list, error_message = e.message)
 
 @account_blueprint.route("/update", methods=["GET"])
 @requires_login
@@ -50,8 +50,20 @@ def update_portfolio_list():
 def edit_portfolio():
     pass
 
-
 @account_blueprint.route("/delete", methods=["GET", "POST", "PUT", "DELETE"])
 @requires_login
 def delete_portfolio():
     pass
+
+@account_blueprint.route("/portfolio_name", methods=["GET", "POST"])
+@requires_login
+def set_portfolio_name():
+    if request.method == "POST":
+        name = request.form["name"]
+        if not _valide_portfolio_name(name, session["email"]):
+            return render_template("account/set_portfolio_name.html", error_message = None)
+        else:
+            # Portfolio type can be specified my the user. Add a drop down menu.
+            Portfolio.add_portfolio(name, "Custom", "Active", "Invalid", session["email"])
+            return render_template("order/new_order.html")
+    return render_template("account/set_portfolio_name.html", error_message = None)

@@ -2,7 +2,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-from src.services.questrade.utils import _read_config
+from src.questrade.utils import _read_config, InvalidTokenError
 from src.environment.user_activities.auth import Auth
 
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "questrade.cfg")
@@ -30,7 +30,8 @@ class Questrade:
         url = token["api_server"] + "v1" + endpoint
 
         resp = self.session.request(request, url, params=params, timeout=30)
-        resp.raise_for_status()
+        if resp.status_code == 401:
+            raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
         return resp.json()
 
     @property

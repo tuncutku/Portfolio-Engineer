@@ -17,6 +17,7 @@ app.secret_key = os.urandom(64)
 app.register_blueprint(user_blueprint, url_prefix="/users")
 app.register_blueprint(account_blueprint, url_prefix="/account")
 app.register_blueprint(questrade_blueprint, url_prefix="/questrade")
+app.register_blueprint(portfolio_blueprint, url_prefix="/portfolio")
 
 @app.route("/")
 def home():
@@ -24,8 +25,8 @@ def home():
 
 
 if __name__ == "__main__":
-    drop_tables()
-    create_tables()
+    # drop_tables()
+    # create_tables()
     # create_guest_user()
 
     app.run(debug=True, host="0.0.0.0", port=5000)

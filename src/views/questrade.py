@@ -2,8 +2,8 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 
 from src.environment.user_activities.auth import Auth
 from src.environment.user_activities.utils import UserError, requires_login
-from src.services.questrade.utils import InvalidTokenError
-from src.services.questrade import Questrade
+from src.questrade.utils import InvalidTokenError
+from src.questrade import Questrade
 
 questrade_blueprint = Blueprint("questrade", __name__)
 
