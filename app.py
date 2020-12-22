@@ -25,6 +25,7 @@ def home():
 
 
 if __name__ == "__main__":
+
     # drop_tables()
     # create_tables()
     # create_guest_user()

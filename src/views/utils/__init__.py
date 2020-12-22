@@ -1,1 +1,1 @@
-from src.views.utils.account import check_and_update_portfolio, add_portfolio, _valide_portfolio_name
+from src.views.utils.account import check_and_update_portfolio, _add_portfolio, _valide_portfolio_name

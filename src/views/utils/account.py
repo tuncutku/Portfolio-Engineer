@@ -10,8 +10,6 @@ def check_and_update_portfolio(port_db: Portfolio, port_questrade: dict) -> None
         port_db.status == port_questrade["status"],
     ]
 
-    # TODO check positions and orders as well and update them
-
     if not all(check_list):
         Portfolio.update_portfolio(
             port_questrade["status"],
@@ -19,7 +17,7 @@ def check_and_update_portfolio(port_db: Portfolio, port_questrade: dict) -> None
             port_db.name,
         )
 
-def add_portfolio(port_questrade: dict, email: str) -> None:
+def _add_portfolio(port_questrade: dict, email: str) -> None:
     """Add a questrade portfolio with randon name"""
 
     # Find a valid name
@@ -41,3 +39,8 @@ def add_portfolio(port_questrade: dict, email: str) -> None:
 def _valide_portfolio_name(name, email) -> bool:
     name_list = [port.name for port in Portfolio.find_all(email)]
     return name not in name_list
+
+
+# TODO check positions and orders as well and update them
+def check_and_update_positions(port_db: Portfolio, port_questrade: dict) -> None:
+    pass

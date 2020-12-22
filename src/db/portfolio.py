@@ -1,15 +1,6 @@
 from src.db.utils import get_cursor
 
 # SQL Portfolio commands
-CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
-    name TEXT,
-    source TEXT,
-    status TEXT,
-    type TEXT,
-    email TEXT,
-    questrade_id INT,
-    FOREIGN KEY (email) REFERENCES users (email),
-    id SERIAL PRIMARY KEY);"""
 INSERT_PORTFOLIO = """INSERT INTO portfolio (
     name,
     source,
@@ -20,9 +11,10 @@ INSERT_PORTFOLIO = """INSERT INTO portfolio (
     )
     VALUES (%s, %s, %s, %s, %s, %s);"""
 UPDATE_PORTFOLIO = """UPDATE portfolio SET
+    name = %s,
     status = %s,
     type = %s
-    WHERE name = %s;"""
+    WHERE name = %s AND email = %s;"""
 SELECT_PORTFOLIOS_BY_USER_EMAIL = """SELECT
     name,
     source,
@@ -38,9 +30,10 @@ SELECT_PORTFOLIO = """SELECT
     status,
     type,
     email,
-    id,
-    questrade_id
-    FROM portfolio WHERE email = %s AND name = %s;"""
+    questrade_id,
+    id
+    FROM portfolio WHERE name = %s AND email = %s;"""
+DELETE_PORTFOLIO = """DELETE FROM portfolio WHERE id = %s;"""
 
 class DB_Portfolio:
 
@@ -62,14 +55,11 @@ class DB_Portfolio:
             cursor.execute(INSERT_PORTFOLIO, (name, source, status, portfolio_type, email, questrade_id))
 
     @staticmethod
-    def update_portfolio(status, portfolio_type, name):
+    def update_portfolio(name, status, portfolio_type, old_name, email):
         with get_cursor() as cursor:
-            cursor.execute(UPDATE_PORTFOLIO, (status, portfolio_type, name))
-
-    @staticmethod
-    def update_portfolio_name():
-        pass
+            cursor.execute(UPDATE_PORTFOLIO, (name, status, portfolio_type, old_name, email))
 
     @staticmethod
     def delete_portfolio(_id):
-        pass
+        with get_cursor() as cursor:
+            cursor.execute(DELETE_PORTFOLIO, (_id,))

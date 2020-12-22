@@ -6,9 +6,9 @@ from flask import session
 from dataclasses import dataclass
 
 from src.db import DB_Token
+# TODO move errors to environment directory
 from src.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
-# TODO implement signin in as a guest.
 @dataclass
 class Auth(object):
 

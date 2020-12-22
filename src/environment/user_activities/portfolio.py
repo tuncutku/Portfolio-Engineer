@@ -30,18 +30,18 @@ class Portfolio:
 
     @classmethod
     def find_by_name(cls, name: str, email: str) -> "Portfolio":
-        DB_Portfolio.get_portfolio(name, email)
+        port = DB_Portfolio.get_portfolio(name, email)
+        return cls(*port)
 
     @staticmethod
     def add_portfolio(name: str, source: str, status: str, portfolio_type: str, email: str, questrade_id: int = None) -> None:
         DB_Portfolio.add_portfolio(name, source, status, portfolio_type, email, questrade_id)
     
-    @staticmethod
-    def update_portfolio(status: str, portfolio_type: str, name: str) -> None:
-        DB_Portfolio.update_portfolio(status, portfolio_type, name)
+    def update_portfolio(self, name: str, status: str, portfolio_type: str) -> None:
+        DB_Portfolio.update_portfolio(name, status, portfolio_type, self.name, self.email)
     
-    def delete(self) -> None:
-        DB_Portfolio.delete_portfolio(self.email, self.name)
+    def delete_portfolio(self) -> None:
+        DB_Portfolio.delete_portfolio(self.portfolio_id)
 
 
 
