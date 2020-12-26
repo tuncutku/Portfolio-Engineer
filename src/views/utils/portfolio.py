@@ -13,5 +13,7 @@ def _modify_position_list(positions_questrade: list, positions_db: list):
 
 
 def _check_position_validity(positions: List[Position]):
+    """Check if sum of order amount verifies the position amount."""
+    for position in positions:
 
-    a = 1
+        a = 1

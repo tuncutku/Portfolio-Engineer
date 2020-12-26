@@ -2,7 +2,7 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 
 from src.environment.user_activities import Position, Portfolio
 from src.environment.user_activities.utils import requires_login, requires_questrade_access, PositionNotFoundError
-from src.views.utils import _modify_position_list
+from src.views.utils import _modify_position_list, _check_position_validity
 
 from src.questrade import Questrade
 
@@ -58,6 +58,6 @@ def update_position_list(portfolio_name):
         else:
             Position.add_position(new_position, position_dict_questrade[new_position], port_id)
     
-    # deficient_positions = _check_position_validity(Position.find_all(port_id))
+    deficient_positions = _check_position_validity(Position.find_all(port_id))
 
     return redirect(url_for("portfolio.list_positions", portfolio_name=portfolio_name))
