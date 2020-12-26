@@ -5,6 +5,7 @@ import inspect
 from src.db import create_tables, drop_tables
 from src.views import *
 
+
 # TODO use plotly dash for dynamic graphics
 # TODO use flask_profiler for monitoring endpoints
 # TODO use flask-swagger for profiling
@@ -27,7 +28,7 @@ def home():
 if __name__ == "__main__":
 
     # drop_tables()
-    # create_tables()
+    # create_tables()
     # create_guest_user()
 
     app.run(debug=True, host="0.0.0.0", port=5000)

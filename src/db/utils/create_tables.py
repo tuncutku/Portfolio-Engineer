@@ -22,6 +22,7 @@ CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
 CREATE_POSITION = """CREATE TABLE IF NOT EXISTS position (
     symbol TEXT,
     quantity INT,
+    state TEXT,
     portfolio_id INT,
     FOREIGN KEY (portfolio_id) REFERENCES portfolio (id),
     id SERIAL PRIMARY KEY);"""

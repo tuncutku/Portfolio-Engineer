@@ -1,6 +1,6 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 
-from src.environment.user_activities import User, Portfolio
+from src.environment.user_activities import Portfolio
 from src.environment.user_activities.utils import UserError, requires_login, requires_questrade_access, PortfolioNotFoundError
 from src.views.utils import check_and_update_portfolio, _add_portfolio, _valide_portfolio_name
 
@@ -12,19 +12,18 @@ account_blueprint = Blueprint("account", __name__)
 @requires_login
 def list_portfolios():
     # TODO: add primary secondary portfolio - the website will list the primary first and will show the positions directly.
-    try:
-        port_list = Portfolio.find_all(session["email"])
+    port_list = Portfolio.find_all(session["email"])
+    if port_list:
         return render_template("account/account.html", port_list = port_list, error_message = None)
-    except PortfolioNotFoundError as e:
-        port_list = None
-        return render_template("account/account.html", port_list = port_list, error_message = e.message)
+    else:
+        error_message = "You currently don't have a portfolio. Add a custom portfolio or update with your Questrade account!"
+        return render_template("account/account.html", port_list = port_list, error_message = error_message)
 
 @account_blueprint.route("/update", methods=["GET"])
 @requires_login
 @requires_questrade_access
 def update_portfolio_list():
     
-    new_port_list = list()
     q = Questrade()
 
     # List the Questrade portfolios saved in database, and pulled Questrade portfolios

@@ -4,6 +4,13 @@
         <h2 class="text-success">
             Please choose a portfolio:
         </h2>
+
+        {% if error_message %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_message }}
+        </div>
+        {% endif %}
+        
     </div>
 
     <!-- # TODO Move Delete to right, add icons near card headrs. ex questrade logo and cutom logo. -->
@@ -16,7 +23,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Portfolio name: {{ portfolio.name }}</h5>
                     <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.portfolio_type }}.</p>
-                    <a href="{{ url_for('portfolio.overview') }}" class="btn bg-warning">View Portfolio</a>
+                    <a href="{{ url_for('portfolio.list_positions', portfolio_name=portfolio.name) }}" class="btn bg-warning">View Portfolio</a>
                     <a href="{{ url_for('account.edit_portfolio', portfolio_name=portfolio.name) }}" class="btn bg-info">Edit Portfolio</a>
                     <a href="{{ url_for('account.delete_portfolio', portfolio_name=portfolio.name) }}" class="btn bg-danger text-white">Delete Portfolio</a>
                     <!-- Modal -->
