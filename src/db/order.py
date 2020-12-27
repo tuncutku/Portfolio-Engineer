@@ -1,12 +1,25 @@
 from src.db.utils import get_cursor
 
 # SQL Order commands
-CREATE_ORDER = ""
+SELECT_ORDERS = """SELECT
+    symbol,
+    state,
+    quantity,
+    side,
+    average_price,
+    time,
+    strategy,
+    fee,
+    portfolio_id,
+    position_id,
+    id
+    FROM orders WHERE position_id = %s;"""
 INSERT_ORDER = ""
 UPDATE_ORDER = ""
 DELETE_ORDER = ""
 
 class DB_Order:
-    def add_user(email, password):
+    def get_orders(position_id):
         with get_cursor() as cursor:
-            cursor.execute(INSERT_USER, (email, password))
+            cursor.execute(SELECT_ORDERS, (position_id,))
+            return cursor.fetchall()

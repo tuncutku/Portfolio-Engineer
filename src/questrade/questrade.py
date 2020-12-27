@@ -2,7 +2,8 @@ import requests
 import os
 from datetime import datetime, timedelta
 
-from src.questrade.utils import _read_config, InvalidTokenError
+from src.questrade.utils import _read_config
+from src.environment.user_activities.utils import InvalidTokenError
 from src.environment.user_activities.auth import Auth
 
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "questrade.cfg")

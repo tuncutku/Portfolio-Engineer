@@ -2,7 +2,6 @@ from pydantic.dataclasses import dataclass
 from typing import List
 
 from src.db import DB_Position
-from src.environment.user_activities.utils import PositionNotFoundError
 
 @dataclass
 class Position:

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from src.db import DB_Token
 # TODO move errors to environment directory
-from src.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
+from src.environment.user_activities.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
 @dataclass
 class Auth(object):

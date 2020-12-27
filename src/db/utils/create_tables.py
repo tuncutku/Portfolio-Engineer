@@ -33,7 +33,6 @@ CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     side TEXT,
     average_price DECIMAL,
     time TIMESTAMP,
-    legs TEXT,
     strategy TEXT,
     fee DECIMAL,
     portfolio_id INT,

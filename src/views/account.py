@@ -1,7 +1,7 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 
 from src.environment.user_activities import Portfolio
-from src.environment.user_activities.utils import UserError, requires_login, requires_questrade_access, PortfolioNotFoundError
+from src.views.utils import requires_login, requires_questrade_access
 from src.views.utils import check_and_update_portfolio, _add_portfolio, _valide_portfolio_name
 
 from src.questrade import Questrade
@@ -22,9 +22,7 @@ def list_portfolios():
 @account_blueprint.route("/update", methods=["GET"])
 @requires_login
 @requires_questrade_access
-def update_portfolio_list():
-    
-    q = Questrade()
+def update_portfolio_list(q: Questrade):
 
     # List the Questrade portfolios saved in database, and pulled Questrade portfolios
     port_list_questrade = [port for port in q.accounts["accounts"]]
