@@ -21,6 +21,7 @@ CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
     id SERIAL PRIMARY KEY);"""
 CREATE_POSITION = """CREATE TABLE IF NOT EXISTS position (
     symbol TEXT,
+    source TEXT,
     quantity INT,
     state TEXT,
     portfolio_id INT,
@@ -28,6 +29,7 @@ CREATE_POSITION = """CREATE TABLE IF NOT EXISTS position (
     id SERIAL PRIMARY KEY);"""
 CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     symbol TEXT,
+    source TEXT,
     state TEXT,
     quantity INT,
     side TEXT,

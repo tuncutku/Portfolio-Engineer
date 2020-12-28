@@ -3,6 +3,7 @@ from src.db.utils import get_cursor
 # SQL Order commands
 SELECT_ORDERS = """SELECT
     symbol,
+    source,
     state,
     quantity,
     side,

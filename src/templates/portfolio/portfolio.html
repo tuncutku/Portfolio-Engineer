@@ -14,39 +14,55 @@
     </div>
 
     <!-- # TODO Move Delete to right, add icons near card headrs. ex questrade logo and cutom logo. -->
-    {% for position in position_list %}
-        <div class="container mt-4 mb-3">
-            <div class="card"></div>
-                <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                      </tr>
-                    </tbody>
-                  </table>
-            </div>
+  
+    <div class="container mt-4 mb-3">
+      <div class="card"></div>
+          <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Symbol</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Market Value (CAD)</th>
+                  <th scope="col">Options</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for position in position_list %}
+                <tr>
+                  <th scope="row">{{loop.index}}</th>
+                  <td>Type</td>
+                  <td>{{ position.symbol }}</td>
+                  <td>{{ position.quantity }}</td>
+                  <td>Price</td>
+                  <td>Market Value</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+      </div>
+    </div>
+    
+    <div class="container mt-4 mb-3">
+      <div class="col">
+        <div class="card"></div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Total Portolio Return</th>
+                <th scope="col">Total Portfolio Market Value (CAD)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Price</td>
+                <td>Market Value</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-    {% endfor %}
+      </div>
+    </div>
 {% endblock %}

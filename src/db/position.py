@@ -7,6 +7,7 @@ UPDATE_POSITION = """UPDATE position SET
     WHERE id = %s;"""
 SELECT_POSITION = """SELECT
     symbol,
+    source,
     quantity,
     state,
     portfolio_id,
@@ -14,6 +15,7 @@ SELECT_POSITION = """SELECT
     FROM position WHERE symbol = %s AND portfolio_id = %s;"""
 SELECT_POSITIONS = """SELECT
     symbol,
+    source,
     quantity,
     state,
     portfolio_id,
@@ -21,12 +23,13 @@ SELECT_POSITIONS = """SELECT
     FROM position WHERE portfolio_id = %s;"""
 INSERT_POSITION = """INSERT INTO position (
     symbol,
+    source,
     quantity,
     state,
     portfolio_id
     )
-    VALUES (%s, %s, %s, %s);"""
-DELETE_POSITION = """DELETE FROM POSİTİON WHERE id = %s;"""
+    VALUES (%s, %s, %s, %s, %s);"""
+DELETE_POSITION = """DELETE FROM Position WHERE id = %s;"""
 
 class DB_Position:
 
@@ -43,9 +46,9 @@ class DB_Position:
             return cursor.fetchone()
 
     @staticmethod
-    def add_position(symbol, quantity, state, port_id):
+    def add_position(symbol, source, quantity, state, port_id):
         with get_cursor() as cursor:
-            cursor.execute(INSERT_POSITION, (symbol, quantity, state, port_id))
+            cursor.execute(INSERT_POSITION, (symbol, source, quantity, state, port_id))
 
     @staticmethod
     def update_position(quantity, state, position_id):

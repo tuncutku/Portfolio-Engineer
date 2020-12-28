@@ -7,6 +7,7 @@ from src.db import DB_Order
 @dataclass
 class Order:
     symbol: str
+    source: str
     state: str # ex: "Canceled"
     filledQuantity: int
     side: str # ex: Buy
