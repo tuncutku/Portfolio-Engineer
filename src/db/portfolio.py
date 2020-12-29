@@ -50,7 +50,7 @@ class DB_Portfolio:
             return cursor.fetchone()
 
     @staticmethod
-    def add_portfolio(name, source, status, portfolio_type, email, questrade_id = None) -> None:
+    def add_portfolio(name, source, status, portfolio_type, email, questrade_id = None):
         with get_cursor() as cursor:
             cursor.execute(INSERT_PORTFOLIO, (name, source, status, portfolio_type, email, questrade_id))
 

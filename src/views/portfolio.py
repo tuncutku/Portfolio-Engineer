@@ -62,13 +62,3 @@ def update_position_list(q: Questrade, portfolio_name: str):
         return render_template("portfolio/incomplete_positions.html", deficient_positions=deficient_positions, portfolio=port)
 
     return redirect(url_for("portfolio.list_positions", portfolio_name=portfolio_name))
-
-@portfolio_blueprint.route("/<string:portfolio_name>/edit_position/<string:symbol>/", methods=["GET", "POST"])
-@requires_login
-def add_position(portfolio_name: str, symbol: str):
-    if request.method == "POST":
-        pass
-
-    a = 1
-
-    return 4

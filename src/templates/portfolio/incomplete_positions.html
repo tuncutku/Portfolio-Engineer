@@ -31,7 +31,7 @@
                   <td>{{ symbol }}</td>
                   <td>{{ quantity }}</td>
                   <td>
-                    <a href="{{ url_for('portfolio.list_positions', portfolio_name=portfolio.name) }}" class="btn bg-warning">Add Position</a>
+                    <a href="{{ url_for('order.add_order', portfolio_name=portfolio.name, symbol=symbol, required_amount=quantity) }}" class="btn bg-warning">Complete Position</a>
                   </td>
                 </tr>
                 {% endfor %}

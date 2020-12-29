@@ -1,0 +1,98 @@
+{% extends "base/portfolio.html" %}
+{% block content %}
+    <div class="container mt-5">
+
+        <form class = "card p-3 bg-light" action="{{ url_for('order.add_order', portfolio_name=portfolio.name, symbol=symbol, required_amount=required_amount) }}" method="post">
+            <legend class="mb-3">Position: {{ symbol }}</legend>
+
+            <div class="row 3 align-items-center mt-2">
+                <div class="col-2">
+                  <label for="name" class="col-form-label">Order Quantity</label>
+                </div>
+                <div class="col-sm-1">
+                  <input type="number" id="order_quantity" class="form-control" name="order_quantity" aria-describedby="order_quantity" value="{{ required_amount }}">
+                </div>
+                {% if required_amount %}
+                <div class="col-auto">
+                  <span id="portfolio_name" class="form-text">
+                    Missing total amount: {{ required_amount }}
+                  </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="row g-3 align-items-center mt-2">
+                <div class="col-2">
+                  <label for="order_type" class="col-form-label">Order type</label>
+                </div>
+                <div class="col-sm-1">            
+                    <select id="order_type" class="form-select" name="order_type" aria-describedby="order_type">
+                        <option selected value="Buy">Buy</option>
+                        <option>Sell</option>
+                    </select>
+                </div>  
+            </div>
+
+            <div class="row g-3 align-items-center mt-2">
+                <div class="col-2">
+                  <label for="strategy" class="col-form-label">Strategy</label>
+                </div>
+                <div class="col-sm-2">            
+                    <select id="strategy" class="form-select" name="strategy" aria-describedby="strategy">
+                        <option selected value="Single-leg">Single-leg</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 align-items-center mt-2">
+                <div class="col-2">
+                  <label for="fee" class="col-form-label">Fee / Commission</label>
+                </div>
+                <div class="col-sm-1">
+                  <input type="number" id="fee" class="form-control" name="fee" aria-describedby="fee" value=0>
+                </div>
+                <div class="col-sm-1">            
+                    <select id="fee-currency" class="form-select" name="fee-currency" aria-describedby="fee-currency">
+                        <option selected value="CAD">CAD</option>
+                        <option>USD</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 align-items-center mt-2">
+                <div class="col-2">
+                  <label for="date" class="col-form-label">Execution Date</label>
+                </div>
+                <div class="col-sm-2">
+                <input type="date" class="form-control" id="date" name="date" aria-describedby="date" placeholder="YYYY-MM-DD" required>
+                </div>
+                <div class="col-auto">
+                    <span id="date" class="form-text">
+                        Ex: 2017-02-14
+                    </span>
+                  </div>
+            </div>
+
+            <div class="row g-3 align-items-center mt-2">
+                <div class="col-2">
+                  <label for="date" class="col-form-label">Execution Time</label>
+                </div>
+                <div class="col-sm-1">
+                <input type="time" class="form-control" id="time" name="time" aria-describedby="time" placeholder="--:-- --" required>
+                </div>
+                <div class="col-auto">
+                    <span id="time" class="form-text">
+                        Ex: 9:30, 12:00, 15:45 56
+                    </span>
+                  </div>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-success mt-3">Submit</button>
+            </div>
+            
+
+        </form>
+
+    </div>
+{% endblock %} 

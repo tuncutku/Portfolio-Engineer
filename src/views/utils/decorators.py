@@ -36,3 +36,10 @@ def requires_questrade_access(f: Callable) -> Callable:
             return redirect(url_for("account.list_portfolios"))
         return f(q=q, *args, **kwargs)
     return decorated_function
+
+# TODO: check if all positions are valid.
+def valid_positions(f: Callable) -> Callable:
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        return f(*args, **kwargs)
+    return decorated_function

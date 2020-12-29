@@ -19,6 +19,8 @@ app.register_blueprint(user_blueprint, url_prefix="/users")
 app.register_blueprint(account_blueprint, url_prefix="/account")
 app.register_blueprint(questrade_blueprint, url_prefix="/questrade")
 app.register_blueprint(portfolio_blueprint, url_prefix="/portfolio")
+app.register_blueprint(order_blueprint, url_prefix="/order")
+
 
 @app.route("/")
 def home():
