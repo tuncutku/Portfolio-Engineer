@@ -22,7 +22,7 @@
                         <a class="nav-item nav-link text-white" href="{{ url_for('account.list_portfolios') }}">My Portfolios</a>
                         <a class="nav-item nav-link text-white" href="{{ url_for('portfolio.list_positions', portfolio_name=portfolio.name) }}">My Positions</a>
                         <a class="nav-item nav-link text-white" href="{{ url_for('portfolio.update_position_list', portfolio_name=portfolio.name) }}">Update Positions</a>
-                        <a class="nav-item nav-link text-white" href="">Log out</a>
+                        <a class="nav-item nav-link text-white" href="{{ url_for('users.log_out_user') }}">Log out</a>
                     </div>
                 </div>
             </div>

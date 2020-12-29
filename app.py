@@ -21,6 +21,10 @@ app.register_blueprint(questrade_blueprint, url_prefix="/questrade")
 app.register_blueprint(portfolio_blueprint, url_prefix="/portfolio")
 app.register_blueprint(order_blueprint, url_prefix="/order")
 
+# @app.before_first_request
+# def initiate_tables():
+#     drop_tables()
+#     create_tables()
 
 @app.route("/")
 def home():
@@ -28,9 +32,5 @@ def home():
 
 
 if __name__ == "__main__":
-
-    # drop_tables()
-    # create_tables()
-    # create_guest_user()
 
     app.run(debug=True, host="0.0.0.0", port=5000)

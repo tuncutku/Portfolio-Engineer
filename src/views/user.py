@@ -3,6 +3,7 @@ import os
 from flask import Blueprint, request, session, url_for, render_template, redirect
 from src.environment.user_activities import User
 from src.environment.user_activities.utils import UserError
+from src.views.utils import requires_login
 
 
 # TODO integrate "LoginManager() for managing logins"
@@ -44,6 +45,8 @@ def guest():
     return redirect(url_for("account.list_portfolios"))
 
 @user_blueprint.route("/logout", methods=["GET"])
+@requires_login
 def log_out_user():
-    return render_template("home.html")
+    session.clear()
+    return redirect(url_for("home"))
 
