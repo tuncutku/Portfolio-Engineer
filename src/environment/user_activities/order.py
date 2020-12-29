@@ -5,6 +5,7 @@ from typing import List
 from src.db import DB_Order
 
 # TODO: Add leg property for multileg options
+# TODO: Add currency
 @dataclass
 class Order:
     symbol: str

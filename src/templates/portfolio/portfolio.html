@@ -26,7 +26,7 @@
                   <th scope="col">Quantity</th>
                   <th scope="col">Price</th>
                   <th scope="col">Market Value (CAD)</th>
-                  <th scope="col">Options</th>
+                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -38,7 +38,10 @@
                   <td>{{ position.quantity }}</td>
                   <td>Price</td>
                   <td>Market Value</td>
-                </tr>
+                  <td>
+                    <a href="{{ url_for('order.list_orders', portfolio_name=portfolio.name, symbol=position.symbol) }}" class="btn bg-warning">View Orders</a>
+                  </td>
+                  </tr>
                 {% endfor %}
               </tbody>
             </table>

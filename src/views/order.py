@@ -2,11 +2,20 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 import datetime
 
 from src.environment.user_activities import Position, Portfolio, Order
-from src.views.utils import requires_login
-from src.views.utils import _modify_position_list, _check_position_validity
+from src.views.utils import requires_login, _modify_position_list, _check_position_validity, _extract_open_orders
 
 
 order_blueprint = Blueprint("order", __name__)
+
+
+@order_blueprint.route("/<string:portfolio_name>/view_orders/<string:symbol>/", methods=["GET"])
+@requires_login
+def list_orders(portfolio_name: str, symbol: str):
+    port = Portfolio.find_by_name(portfolio_name, session["email"])
+    position = Position.find_by_symbol(symbol, port.portfolio_id)
+    all_orders = Order.find_all(position.position_id)
+    open_orders = _extract_open_orders(all_orders)
+    return render_template("order/order.html", symbol=position.symbol, order_list=open_orders, portfolio=port)
 
 @order_blueprint.route("/<string:portfolio_name>/add_order/<string:symbol>/<int:required_amount>/", methods=["GET", "POST"])
 @order_blueprint.route("/<string:portfolio_name>/add_order/<string:symbol>/", methods=["GET", "POST"])
