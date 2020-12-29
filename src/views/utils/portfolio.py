@@ -20,7 +20,11 @@ def _check_position_validity(positions: List[Position]) -> dict:
     for position in positions:
         orders = Order.find_all(position.position_id)
         if orders:
-            deficient_positions[position.symbol] = position.quantity
+            total_position_quantity = sum(
+                [order.filledQuantity if order.side == "Buy" else order.filledQuantity * -1 for order in orders]
+            )
+            if position.quantity != total_position_quantity:
+                deficient_positions[position.symbol] = position.quantity - total_position_quantity
         else:
             deficient_positions[position.symbol] = position.quantity 
     return deficient_positions

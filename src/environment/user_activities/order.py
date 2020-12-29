@@ -36,7 +36,7 @@ class Order:
         exec_time: datetime,
         strategyType: str,
         portfolio_id: int,
-        fee: int = 0,
+        fee: float = 0.0,
         position_id: int = None,
     ) -> None:
         DB_Order.add_order(
@@ -48,8 +48,8 @@ class Order:
             avg_exec_price,
             exec_time,
             strategyType,
-            portfolio_id,
             fee,
+            portfolio_id,
             position_id,
         )
 

@@ -50,8 +50,8 @@ class DB_Order:
         avg_exec_price,
         exec_time,
         strategyType,
-        portfolio_id,
         fee,
+        portfolio_id,
         position_id,
     ):
         with get_cursor() as cursor:
@@ -64,8 +64,8 @@ class DB_Order:
                 avg_exec_price,
                 exec_time,
                 strategyType,
-                portfolio_id,
                 fee,
+                portfolio_id,
                 position_id,
                 )
             )
