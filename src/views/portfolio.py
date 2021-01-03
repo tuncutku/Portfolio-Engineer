@@ -74,6 +74,8 @@ def update_position(portfolio_name: str, symbol: str):
     port = Portfolio.find_by_name(portfolio_name, session["email"])
     orders = Order.find_all_by_symbol(port.portfolio_id, symbol)
     position_generated = Position.generate_by_orders(orders, symbol, port.portfolio_id)
+
+    # TODO: close position if new quantity is 0.
     try:
         position_db = Position.find_by_symbol(symbol, port.portfolio_id)
         position_db.update_position(position_generated.quantity)
