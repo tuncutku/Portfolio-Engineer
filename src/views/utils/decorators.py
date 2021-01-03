@@ -11,13 +11,13 @@ import os
 def requires_login(f: Callable) -> Callable:
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        # if not session.get("email"):
-        #     flash("You need to be signed in for this page.", "danger")
-        #     return redirect(url_for("users.login_user"))
+        if not session.get("email"):
+            flash("You need to be signed in for this page.", "danger")
+            return redirect(url_for("users.login_user"))
 
         # ONLY FOR DEVELOPMENT!!!!!
-        email = os.environ["ADMIN_EMAIL"]
-        session["email"] = email
+        # email = os.environ["ADMIN_EMAIL"]
+        # session["email"] = email
 
         return f(*args, **kwargs)
     return decorated_function
