@@ -15,6 +15,7 @@ connection = psycopg2.connect(database_uri)
 #     password = "postgres",
 # )
 
+# TODO: find a way to close the connection ---> connection.close() ---> https://www.psycopg.org/docs/usage.html?highlight=gunpoint#with-statement
 @contextmanager
 def get_cursor():
     with connection:

@@ -24,8 +24,6 @@
                   <th scope="col">Type</th>
                   <th scope="col">Symbol</th>
                   <th scope="col">Quantity</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Market Value (CAD)</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
@@ -36,8 +34,6 @@
                   <td>Type</td>
                   <td>{{ position.symbol }}</td>
                   <td>{{ position.quantity }}</td>
-                  <td>Price</td>
-                  <td>Market Value</td>
                   <td>
                     <a href="{{ url_for('order.list_orders', portfolio_name=portfolio.name, symbol=position.symbol) }}" class="btn bg-warning">View Orders</a>
                   </td>
@@ -45,27 +41,6 @@
                 {% endfor %}
               </tbody>
             </table>
-      </div>
-    </div>
-    
-    <div class="container mt-4 mb-3">
-      <div class="col">
-        <div class="card"></div>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Total Portolio Return</th>
-                <th scope="col">Total Portfolio Market Value (CAD)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Price</td>
-                <td>Market Value</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
 {% endblock %}

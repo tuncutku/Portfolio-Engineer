@@ -14,3 +14,11 @@ def _extract_open_orders(order_list: List[Order]) -> List[Order]:
         if remaining_amount == 0:
             break
     return open_orders
+
+def _update_order_id(orders: list, position_id: int) -> None:
+    for order in orders:
+        if order.position_id is None:
+            order.insert_position_id(position_id)
+
+def _validate_order():
+    pass

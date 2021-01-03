@@ -31,7 +31,8 @@
                   <td>{{ order.fee }}</td>
                   {% if order.source == "Custom" %}
                   <td>
-                    <a href="" class="btn bg-warning">Edit Order</a>
+                    <a href="{{ url_for('order.edit_order', portfolio_name=portfolio_name, symbol=symbol, order_id=order.order_id) }}" class="btn bg-warning">Edit Order</a>
+                    <a href="{{ url_for('order.delete_order', portfolio_name=portfolio_name, symbol=symbol, order_id=order.order_id) }}" class="btn bg-danger text-white">Delete Order</a>
                   </td>
                   {% endif %}
                 </tr>

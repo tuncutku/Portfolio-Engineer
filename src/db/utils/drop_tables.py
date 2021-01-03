@@ -12,5 +12,5 @@ def drop_tables():
         cursor.execute(DROP_ORDERS)
         cursor.execute(DROP_POSITION)
         cursor.execute(DROP_PORTFOLIO)
-        cursor.execute(DROP_USER_TOKEN)
-        cursor.execute(DROP_USERS)
+        #cursor.execute(DROP_USER_TOKEN)
+        #cursor.execute(DROP_USERS)

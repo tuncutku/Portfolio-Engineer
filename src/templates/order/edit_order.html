@@ -2,8 +2,8 @@
 {% block content %}
     <div class="container mt-5">
 
-        <form class = "card p-3 bg-light" action="{{ url_for('order.add_order', portfolio_name=portfolio.name, symbol=symbol, required_amount=required_amount) }}" method="post">
-            <legend class="mb-3">Position: {{ symbol }}</legend>
+        <form class = "card p-3 bg-light" action="{{ url_for('order.edit_order', portfolio_name=portfolio.name, symbol=order.symbol, order_id=order.order_id) }}" method="post">
+            <legend class="mb-3">Position: {{ order.symbol }}</legend>
 
             {% if error_message %}
             <div class="alert alert-danger" role="alert">
@@ -11,33 +11,12 @@
             </div>
             {% endif %}
 
-            <div class="row g-3 align-items-center mt-2 mb-3">
-              <div class="col-2">
-                <label for="symbol" class="col-form-label">Symbol</label>
-              </div>
-                {% if symbol %}
-                  <div class="col-sm-1">
-                    <input type="text" class="form-control" id="symbol" name="symbol" value="{{ symbol }}" readonly>
-                  </div>
-                {% else %}
-                  <div class="col-sm-1">
-                    <input type="text" class="form-control" id="symbol" name="symbol" aria-describedby="symbol" placeholder="AAPL" required>
-                  </div>
-                  <div class="col-auto">
-                    <span id="symbol" class="form-text">
-                        Please make sure the ticker is correct. 
-                        <a href="https://www.marketwatch.com/tools/quotes/lookup.asp" class="text-success">Market Watch</a> 
-                    </span>
-                  </div>
-                {% endif %}
-            </div>
-
             <div class="row 3 align-items-center mt-2">
                 <div class="col-2">
                   <label for="name" class="col-form-label">Order Quantity</label>
                 </div>
                 <div class="col-sm-1">
-                  <input type="number" id="order_quantity" class="form-control" name="order_quantity" aria-describedby="order_quantity" value="{{ required_amount }}">
+                  <input type="number" id="order_quantity" class="form-control" name="order_quantity" aria-describedby="order_quantity" value="{{ order.filledQuantity }}">
                 </div>
                 {% if required_amount %}
                 <div class="col-auto">
@@ -54,10 +33,14 @@
                 </div>
                 <div class="col-sm-1">            
                     <select id="order_type" class="form-select" name="order_type" aria-describedby="order_type">
-                        <option selected value="Buy">Buy</option>
+                        <option selected value="{{ order.side }}">{{ order.side }}</option>
+                        {% if order.side == "Buy" %}
                         <option>Sell</option>
+                        {% else %}
+                        <option>Buy</option>
+                        {% endif %}
                     </select>
-                </div>  
+                </div>
             </div>
 
             <div class="row g-3 align-items-center mt-2">
@@ -76,7 +59,7 @@
                   <label for="fee" class="col-form-label">Fee / Commission</label>
                 </div>
                 <div class="col-sm-1">
-                  <input type="number" id="fee" class="form-control" name="fee" aria-describedby="fee" value=0>
+                  <input type="number" id="fee" class="form-control" name="fee" aria-describedby="fee" value={{ order.fee }}>
                 </div>
                 <div class="col-sm-1">            
                     <select id="fee-currency" class="form-select" name="fee-currency" aria-describedby="fee-currency">
@@ -91,7 +74,7 @@
                   <label for="date" class="col-form-label">Execution Date</label>
                 </div>
                 <div class="col-sm-2">
-                <input type="date" class="form-control" id="date" name="date" aria-describedby="date" placeholder="YYYY-MM-DD" required>
+                <input type="date" class="form-control" id="date" name="date" aria-describedby="date" value={{ order.exec_time.strftime("%Y-%m-%d") }} required>
                 </div>
                 <div class="col-auto">
                     <span id="date" class="form-text">
@@ -105,13 +88,13 @@
                   <label for="date" class="col-form-label">Execution Time</label>
                 </div>
                 <div class="col-sm-1">
-                <input type="time" class="form-control" id="time" name="time" aria-describedby="time" placeholder="--:--" required>
+                <input type="time" class="form-control" id="time" name="time" aria-describedby="time" value={{ order.exec_time.strftime("%H:%M") }} required>
                 </div>
                 <div class="col-auto">
-                  <span id="time" class="form-text">
-                      Ex: 9:30, 12:00, 15:45
-                  </span>
-                </div>
+                    <span id="time" class="form-text">
+                        Ex: 9:30, 12:00, 15:45
+                    </span>
+                  </div>
             </div>
 
             <div>

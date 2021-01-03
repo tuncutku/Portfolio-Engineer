@@ -21,11 +21,11 @@ app.register_blueprint(questrade_blueprint, url_prefix="/questrade")
 app.register_blueprint(portfolio_blueprint, url_prefix="/portfolio")
 app.register_blueprint(order_blueprint, url_prefix="/order")
 
-# @app.before_first_request
-# def initiate_tables():
-#     drop_tables()
-#     create_tables()
-
+@app.before_first_request
+def initiate_tables():
+    #drop_tables()
+    create_tables()
+ 
 @app.route("/")
 def home():
     return render_template("home.html")
