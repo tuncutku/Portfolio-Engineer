@@ -1,4 +1,4 @@
-from src.db.utils import get_cursor
+from src.db.utils import database_manager
 
 # SQL Order commands
 UPDATE_POSITION = """UPDATE position SET
@@ -35,28 +35,28 @@ class DB_Position:
 
     @staticmethod
     def get_positions(portfolio_id):
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(SELECT_POSITIONS, (portfolio_id,))
             return cursor.fetchall()
 
     @staticmethod
     def get_position(symbol, portfolio_id):
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(SELECT_POSITION, (symbol, portfolio_id))
             return cursor.fetchone()
 
     @staticmethod
     def add_position(symbol, source, quantity, state, port_id):
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(INSERT_POSITION, (symbol, source, quantity, state, port_id))
 
     @staticmethod
     def update_position(quantity, state, position_id):
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(UPDATE_POSITION, (quantity, state, position_id))
 
     @staticmethod
     def delete_position(_id):
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(DELETE_POSITION, (_id,))
 

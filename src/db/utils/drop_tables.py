@@ -1,4 +1,4 @@
-from src.db.utils.connection import get_cursor
+from src.db.utils.connection import database_manager
 
 
 DROP_USERS = """DROP TABLE IF EXISTS users;"""
@@ -8,7 +8,7 @@ DROP_POSITION = """DROP TABLE IF EXISTS position"""
 DROP_ORDERS = """DROP TABLE IF EXISTS orderS"""
 
 def drop_tables():
-    with get_cursor() as cursor:
+    with database_manager() as cursor:
         cursor.execute(DROP_ORDERS)
         cursor.execute(DROP_POSITION)
         cursor.execute(DROP_PORTFOLIO)

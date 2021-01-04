@@ -1,4 +1,4 @@
-from src.db.utils.connection import get_cursor
+from src.db.utils.connection import database_manager
 
 CREATE_USERS = """CREATE TABLE IF NOT EXISTS users (email TEXT PRIMARY KEY, password TEXT);"""
 CREATE_USER_TOKEN = """CREATE TABLE IF NOT EXISTS user_token (
@@ -44,7 +44,7 @@ CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY);"""
 
 def create_tables():
-    with get_cursor() as cursor:
+    with database_manager() as cursor:
         cursor.execute(CREATE_USERS)
         cursor.execute(CREATE_USER_TOKEN)
         cursor.execute(CREATE_PORTFOLIO)

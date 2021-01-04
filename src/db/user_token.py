@@ -1,4 +1,4 @@
-from src.db.utils import get_cursor, encrypt_token, decrypt_token
+from src.db.utils import database_manager, encrypt_token, decrypt_token
 
 # SQL Questrade Token commands
 INSERT_TOKEN = """INSERT INTO user_token (
@@ -32,19 +32,19 @@ class DB_Token:
     def add_user_token(access_token, api_server, expires_at, refresh_token, token_type, email):
         access_token = encrypt_token(access_token)
         refresh_token = encrypt_token(refresh_token)
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(INSERT_TOKEN, (access_token, api_server, expires_at, refresh_token, token_type, email))
 
     @staticmethod
     def update_user_token(access_token, api_server, expires_at, refresh_token, token_type, email):
         access_token = encrypt_token(access_token)
         refresh_token = encrypt_token(refresh_token)
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(UPDATE_TOKEN, (access_token, api_server, expires_at, refresh_token, token_type, email))
 
     @staticmethod
     def find_token_by_user_email(email):
-        with get_cursor() as cursor:
+        with database_manager() as cursor:
             cursor.execute(SELECT_TOKEN_BY_USER_EMAIL, (email,))
             token = cursor.fetchone()
             if token is not None:

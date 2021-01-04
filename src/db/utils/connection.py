@@ -20,8 +20,8 @@ def database_manager():
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 yield cursor
     finally:
-        cur.close()
-        db_pool.putconn(con)
+        cursor.close()
+        db_pool.putconn(connection)
 
 # connection = psycopg2.connect(
 #     dbname = "hello_flask_dev",
