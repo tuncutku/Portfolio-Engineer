@@ -35,3 +35,5 @@ class Position:
     def update_position(self, quantity: int, state: str = "Open") -> None:
         DB_Position.update_position(quantity, state, self.position_id)
 
+    def delete_position(self) -> None:
+        DB_Position.delete_position(self.position_id)

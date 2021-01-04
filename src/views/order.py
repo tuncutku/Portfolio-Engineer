@@ -79,6 +79,7 @@ def edit_order(portfolio_name: str, symbol: str, order_id: int):
         required_amount=None,
         error_message=None)
 
+# TODO: required_amount can be negative (which means the position is "sell", fix it!)
 @order_blueprint.route("/<string:portfolio_name>/add_order/<string:symbol>/<int:required_amount>/", methods=["GET", "POST"])
 @order_blueprint.route("/<string:portfolio_name>/add_order/", methods=["GET", "POST"])
 @requires_login

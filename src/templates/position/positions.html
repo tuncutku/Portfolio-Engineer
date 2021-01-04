@@ -35,7 +35,10 @@
                   <td>{{ position.symbol }}</td>
                   <td>{{ position.quantity }}</td>
                   <td>
-                    <a href="{{ url_for('order.list_orders', portfolio_name=portfolio.name, symbol=position.symbol) }}" class="btn bg-warning">View Orders</a>
+                    <a href="{{ url_for('order.list_orders', portfolio_name=portfolio.name, symbol=position.symbol) }}" class="btn bg-warning text-white">View Orders</a>
+                    {% if portfolio.source == "Custom" %}
+                    <a href="{{ url_for('position.close_position', portfolio_name=portfolio.name, symbol=position.symbol) }}" class="btn bg-danger text-white">Close Position</a>
+                    {% endif %}
                   </td>
                   </tr>
                 {% endfor %}

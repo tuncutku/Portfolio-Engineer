@@ -29,7 +29,7 @@ INSERT_POSITION = """INSERT INTO position (
     portfolio_id
     )
     VALUES (%s, %s, %s, %s, %s);"""
-DELETE_POSITION = """DELETE FROM Position WHERE id = %s;"""
+DELETE_POSITION = """DELETE FROM position WHERE id = %s;"""
 
 class DB_Position:
 

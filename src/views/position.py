@@ -18,13 +18,13 @@ def list_positions(portfolio_name: str):
     position_list = Position.find_all(port.portfolio_id)
 
     if position_list:
-        return render_template("portfolio/positions.html", position_list = position_list, portfolio=port, error_message = None)
+        return render_template("position/positions.html", position_list = position_list, portfolio=port, error_message = None)
     else: 
         if port.source == "Questrade":
             error_message = "You currently don't have any position. Time to sync orders with Questrade!"
         else:
             error_message = "You currently don't have any position. Time to add new order!"
-        return render_template("portfolio/positions.html", position_list = position_list, portfolio=port, error_message = error_message)
+        return render_template("position/positions.html", position_list = position_list, portfolio=port, error_message = error_message)
 
 
 @position_blueprint.route("/sync/<string:portfolio_name>/", methods=["GET"])
@@ -66,7 +66,7 @@ def sync_position_list(q: Questrade, portfolio_name: str):
 
     deficient_positions = _check_position_validity(Position.find_all(port_id))
     if deficient_positions:
-        return render_template("portfolio/incomplete_positions.html", deficient_positions=deficient_positions, portfolio=port)
+        return render_template("position/incomplete_positions.html", deficient_positions=deficient_positions, portfolio=port)
 
     return redirect(url_for("position.list_positions", portfolio_name=portfolio_name))
 
@@ -79,7 +79,6 @@ def update_position(portfolio_name: str, symbol: str):
     orders = Order.find_all_by_symbol(port.portfolio_id, symbol)
     position_generated = Position.generate_by_orders(orders, symbol, port.portfolio_id)
 
-    # TODO: close position if new quantity is 0.
     try:
         position_db = Position.find_by_symbol(symbol, port.portfolio_id)
         position_db.update_position(position_generated.quantity)
@@ -87,4 +86,33 @@ def update_position(portfolio_name: str, symbol: str):
         position_generated.add_position()
         position_db = Position.find_by_symbol(symbol, port.portfolio_id)
     _update_order_id(orders, position_db.position_id)
+
+    if position_generated.quantity == 0:
+        position_db.delete_position()
+
     return redirect(url_for("position.list_positions", portfolio_name=portfolio_name))
+
+@position_blueprint.route("/close_position/<string:portfolio_name>/<string:symbol>", methods=["GET"])
+@requires_login
+def close_position(portfolio_name: str, symbol: str):
+
+    # port = Portfolio.find_by_name(portfolio_name, session["email"])
+    # orders = Order.find_all_by_symbol(port.portfolio_id, symbol)
+    # position_generated = Position.generate_by_orders(orders, symbol, port.portfolio_id)
+    # position_db = Position.find_by_symbol(symbol, port.portfolio_id)
+
+    # Order.add_order(
+    #     request.form["symbol"],
+    #     "Custom",
+    #     "Executed",
+    #     int(request.form["order_quantity"]),
+    #     request.form["order_type"],
+    #     33, # TODO: pull this from Market Data Manager
+    #     exec_datetime,
+    #     request.form["strategy"],
+    #     port.portfolio_id,
+    #     0,
+    #     Position.find_by_symbol(symbol, port.portfolio_id).position_id if symbol else None,
+    # )
+
+    pass

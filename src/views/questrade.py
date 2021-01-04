@@ -16,5 +16,5 @@ def insert_refresh_token():
             q.submit_refresh_token(token)
             return redirect(url_for("account.list_portfolios"))
         except InvalidTokenError as e:
-            return render_template("portfolio/questrade/token.html", error_message=e.message)
-    return render_template("portfolio/questrade/token.html", error_message=None)
+            return render_template("account/questrade_token.html", error_message=e.message)
+    return render_template("account/questrade_token.html", error_message=None)
