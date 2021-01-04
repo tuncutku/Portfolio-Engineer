@@ -8,7 +8,7 @@ CREATE_USER_TOKEN = """CREATE TABLE IF NOT EXISTS user_token (
     refresh_token TEXT,
     token_type TEXT,
     email TEXT,
-    FOREIGN KEY (email) REFERENCES users (email),
+    FOREIGN KEY (email) REFERENCES users (email) ON UPDATE CASCADE ON DELETE CASCADE,
     id SERIAL PRIMARY KEY);"""
 CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
     name TEXT,
@@ -17,7 +17,7 @@ CREATE_PORTFOLIO = """CREATE TABLE IF NOT EXISTS portfolio (
     type TEXT,
     email TEXT,
     questrade_id INT,
-    FOREIGN KEY (email) REFERENCES users (email),
+    FOREIGN KEY (email) REFERENCES users (email) ON UPDATE CASCADE ON DELETE CASCADE,
     id SERIAL PRIMARY KEY);"""
 CREATE_POSITION = """CREATE TABLE IF NOT EXISTS position (
     symbol TEXT,
@@ -25,7 +25,7 @@ CREATE_POSITION = """CREATE TABLE IF NOT EXISTS position (
     quantity INT,
     state TEXT,
     portfolio_id INT,
-    FOREIGN KEY (portfolio_id) REFERENCES portfolio (id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolio (id) ON DELETE CASCADE,
     id SERIAL PRIMARY KEY);"""
 CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     symbol TEXT,
@@ -39,8 +39,8 @@ CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     portfolio_id INT,
     fee DECIMAL,
     position_id INT,
-    FOREIGN KEY (portfolio_id) REFERENCES portfolio (id),
-    FOREIGN KEY (position_id) REFERENCES position (id),
+    FOREIGN KEY (portfolio_id) REFERENCES portfolio (id) ON DELETE CASCADE,
+    FOREIGN KEY (position_id) REFERENCES position (id) ON DELETE CASCADE,
     id SERIAL PRIMARY KEY);"""
 
 def create_tables():

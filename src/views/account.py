@@ -24,8 +24,6 @@ def list_portfolios():
 @requires_questrade_access
 def update_portfolio_list(q: Questrade):
 
-    # TODO: change structure as portfolio endpoint
-
     # List the Questrade portfolios saved in database, and pulled Questrade portfolios
     port_list_questrade = [port for port in q.accounts["accounts"]]
     port_list_db = [port for port in Portfolio.find_all(session["email"]) if port.source == "Questrade"]

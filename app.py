@@ -23,7 +23,7 @@ app.register_blueprint(order_blueprint, url_prefix="/order")
 
 @app.before_first_request
 def initiate_tables():
-    #drop_tables()
+    drop_tables()
     create_tables()
  
 @app.route("/")

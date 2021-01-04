@@ -6,7 +6,6 @@ from flask import session
 from dataclasses import dataclass
 
 from src.db import DB_Token
-# TODO move errors to environment directory
 from src.environment.user_activities.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
 @dataclass
@@ -49,7 +48,6 @@ class Auth(object):
     def _read_token(self):
         return DB_Token.find_token_by_user_email(self.user_email)
 
-    # TODO write test
     def _write_token(self, token):
         DB_Token.add_user_token(
             token["access_token"],

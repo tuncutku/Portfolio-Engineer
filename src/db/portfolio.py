@@ -14,7 +14,7 @@ UPDATE_PORTFOLIO = """UPDATE portfolio SET
     name = %s,
     status = %s,
     type = %s
-    WHERE name = %s AND email = %s;"""
+    WHERE id = %s;"""
 SELECT_PORTFOLIOS_BY_USER_EMAIL = """SELECT
     name,
     source,
@@ -55,9 +55,9 @@ class DB_Portfolio:
             cursor.execute(INSERT_PORTFOLIO, (name, source, status, portfolio_type, email, questrade_id))
 
     @staticmethod
-    def update_portfolio(name, status, portfolio_type, old_name, email):
+    def update_portfolio(name, status, portfolio_type, portfolio_id):
         with get_cursor() as cursor:
-            cursor.execute(UPDATE_PORTFOLIO, (name, status, portfolio_type, old_name, email))
+            cursor.execute(UPDATE_PORTFOLIO, (name, status, portfolio_type, portfolio_id))
 
     @staticmethod
     def delete_portfolio(_id):

@@ -35,9 +35,8 @@ class Portfolio:
     def add_portfolio(name: str, source: str, status: str, portfolio_type: str, email: str, questrade_id: int = None) -> None:
         DB_Portfolio.add_portfolio(name, source, status, portfolio_type, email, questrade_id)
     
-    # TODO: use portfolio id to find and update portfolio
     def update_portfolio(self, name: str, status: str, portfolio_type: str) -> None:
-        DB_Portfolio.update_portfolio(name, status, portfolio_type, self.name, self.email)
+        DB_Portfolio.update_portfolio(name, status, portfolio_type, self.portfolio_id)
     
     def delete_portfolio(self) -> None:
         DB_Portfolio.delete_portfolio(self.portfolio_id)
