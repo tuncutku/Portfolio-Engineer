@@ -30,12 +30,3 @@ def database_manager():
 #     password = "postgres",
 # )
 
-
-@contextmanager
-def get_cursor():
-    try:
-        with connection:
-            with connection.cursor(cursor_factory=DictCursor) as cursor:
-                yield cursor
-    finally:
-        cursor.close()
