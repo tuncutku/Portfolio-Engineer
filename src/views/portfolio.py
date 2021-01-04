@@ -1,3 +1,4 @@
+# TODO: change the name of this file to position
 from flask import Blueprint, request, session, url_for, render_template, redirect
 
 from src.environment.user_activities import Position, Portfolio, Order
@@ -19,7 +20,10 @@ def list_positions(portfolio_name: str):
     if position_list:
         return render_template("portfolio/positions.html", position_list = position_list, portfolio=port, error_message = None)
     else: 
-        error_message = "You currently don't have any position. Time to add new orders! or pull them from Questrade."
+        if port.source == "Questrade":
+            error_message = "You currently don't have any position. Time to sync orders with Questrade!"
+        else:
+            error_message = "You currently don't have any position. Time to add new order!"
         return render_template("portfolio/positions.html", position_list = position_list, portfolio=port, error_message = error_message)
 
 

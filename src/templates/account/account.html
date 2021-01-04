@@ -21,7 +21,7 @@
                     {{ portfolio.source }}
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Portfolio name: {{ portfolio.name }}</h5>
+                    <h5 class="card-title">Portfolio: {{ portfolio.name }}</h5>
                     <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.portfolio_type }}.</p>
                     <a href="{{ url_for('portfolio.list_positions', portfolio_name=portfolio.name) }}" class="btn bg-warning text-white">View Positions</a>
                     <a href="" class="btn bg-success text-white">Manage Alerts</a>

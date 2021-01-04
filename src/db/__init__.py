@@ -1,4 +1,3 @@
-from src.db.database import create_tables
 from src.db.user import DB_User
 from src.db.user_token import DB_Token
 from src.db.portfolio import DB_Portfolio
