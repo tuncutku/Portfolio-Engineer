@@ -7,10 +7,10 @@ from src.views.utils import _modify_position_list, _check_position_validity, _up
 
 from src.questrade import Questrade
 
-portfolio_blueprint = Blueprint("portfolio", __name__)
+position_blueprint = Blueprint("position", __name__)
 
 # TODO: Enable user to sort the positions by -> Amount, price, date etc.
-@portfolio_blueprint.route("/<string:portfolio_name>", methods=["GET"])
+@position_blueprint.route("/<string:portfolio_name>", methods=["GET"])
 @requires_login
 def list_positions(portfolio_name: str):
     # TODO: Validate if the postiions are backed by orders
@@ -27,7 +27,7 @@ def list_positions(portfolio_name: str):
         return render_template("portfolio/positions.html", position_list = position_list, portfolio=port, error_message = error_message)
 
 
-@portfolio_blueprint.route("/sync/<string:portfolio_name>/", methods=["GET"])
+@position_blueprint.route("/sync/<string:portfolio_name>/", methods=["GET"])
 @requires_login
 @requires_questrade_access
 def sync_position_list(q: Questrade, portfolio_name: str):
@@ -68,10 +68,10 @@ def sync_position_list(q: Questrade, portfolio_name: str):
     if deficient_positions:
         return render_template("portfolio/incomplete_positions.html", deficient_positions=deficient_positions, portfolio=port)
 
-    return redirect(url_for("portfolio.list_positions", portfolio_name=portfolio_name))
+    return redirect(url_for("position.list_positions", portfolio_name=portfolio_name))
 
 
-@portfolio_blueprint.route("/update/<string:portfolio_name>/<string:symbol>", methods=["GET"])
+@position_blueprint.route("/update/<string:portfolio_name>/<string:symbol>", methods=["GET"])
 @requires_login
 def update_position(portfolio_name: str, symbol: str):
 
@@ -87,4 +87,4 @@ def update_position(portfolio_name: str, symbol: str):
         position_generated.add_position()
         position_db = Position.find_by_symbol(symbol, port.portfolio_id)
     _update_order_id(orders, position_db.position_id)
-    return redirect(url_for("portfolio.list_positions", portfolio_name=portfolio_name))
+    return redirect(url_for("position.list_positions", portfolio_name=portfolio_name))

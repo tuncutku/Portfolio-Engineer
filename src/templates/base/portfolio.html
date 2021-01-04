@@ -20,9 +20,9 @@
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                         <a class="nav-item nav-link text-white" href="{{ url_for('account.list_portfolios') }}">My Account</a>
-                        <a class="nav-item nav-link text-white" href="{{ url_for('portfolio.list_positions', portfolio_name=portfolio.name) }}">My Positions</a>
+                        <a class="nav-item nav-link text-white" href="{{ url_for('position.list_positions', portfolio_name=portfolio.name) }}">My Positions</a>
                         {% if portfolio.source == "Questrade" %}
-                        <a class="nav-item nav-link text-white" href="{{ url_for('portfolio.sync_position_list', portfolio_name=portfolio.name) }}">Sync Positions</a>
+                        <a class="nav-item nav-link text-white" href="{{ url_for('position.sync_position_list', portfolio_name=portfolio.name) }}">Sync Positions</a>
                         {% else %}
                         <a class="nav-item nav-link text-white" href="{{ url_for('order.add_order', portfolio_name=portfolio.name) }}">Add Order</a>
                         {% endif %}

@@ -29,4 +29,3 @@ def database_manager():
 #     host = "db",
 #     password = "postgres",
 # )
-

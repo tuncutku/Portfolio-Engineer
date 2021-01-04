@@ -25,9 +25,9 @@ def delete_order(portfolio_name: str, symbol: str, order_id: int):
     order = Order.find_by_id(order_id)
     order.delete_order()
     if port.source == "Questrade":
-        return redirect(url_for("portfolio.sync_position_list", portfolio_name=portfolio_name))
+        return redirect(url_for("position.sync_position_list", portfolio_name=portfolio_name))
     else:
-        return redirect(url_for("portfolio.update_position", portfolio_name=portfolio_name, symbol=symbol))
+        return redirect(url_for("position.update_position", portfolio_name=portfolio_name, symbol=symbol))
 
 
 @order_blueprint.route("/<string:portfolio_name>/edit_order/<string:symbol>/<int:order_id>/", methods=["GET", "POST"])
@@ -69,9 +69,9 @@ def edit_order(portfolio_name: str, symbol: str, order_id: int):
         )
         
         if port.source == "Questrade":
-            return redirect(url_for("portfolio.sync_position_list", portfolio_name=portfolio_name))
+            return redirect(url_for("position.sync_position_list", portfolio_name=portfolio_name))
         else:
-            return redirect(url_for("portfolio.update_position", portfolio_name=portfolio_name, symbol=symbol))
+            return redirect(url_for("position.update_position", portfolio_name=portfolio_name, symbol=symbol))
 
     return render_template("order/edit_order.html",
         portfolio=port,
@@ -117,9 +117,9 @@ def add_order(portfolio_name: str, symbol: str = None, required_amount: int = No
         )
 
         if port.source == "Custom":
-            return redirect(url_for("portfolio.update_position", portfolio_name=portfolio_name, symbol=request.form["symbol"]))
+            return redirect(url_for("position.update_position", portfolio_name=portfolio_name, symbol=request.form["symbol"]))
 
-        return redirect(url_for("portfolio.sync_position_list", portfolio_name=portfolio_name))
+        return redirect(url_for("position.sync_position_list", portfolio_name=portfolio_name))
 
 
     return render_template(
