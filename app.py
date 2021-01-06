@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template
 import inspect
 
-from src.db import create_tables, drop_tables
+from scripts.db import create_tables, drop_tables
 from src.views import *
 
 
