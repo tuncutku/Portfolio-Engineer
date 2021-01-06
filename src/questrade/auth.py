@@ -6,7 +6,7 @@ from flask import session
 from dataclasses import dataclass
 
 from src.db import DB_Token
-from src.environment.user_activities.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
+from src.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
 
 @dataclass
 class Auth(object):

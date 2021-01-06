@@ -8,4 +8,3 @@ from src.environment.user_activities.utils.user_errors import (
 )
 from src.environment.user_activities.utils.portfolio_errors import PositionError, PositionNotFoundError
 from src.environment.user_activities.utils.account_errors import PortfolioNotFoundError, PortfolioError
-from src.environment.user_activities.utils.token_errors import TokenNotFoundError, InvalidTokenError, InternalServerError

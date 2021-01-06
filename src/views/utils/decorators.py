@@ -3,7 +3,7 @@ from typing import Callable
 from flask import session, flash, redirect, url_for, request, current_app, render_template
 
 from src.questrade import Questrade
-from src.environment.user_activities.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
+from src.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
 
 # ONLY FOR DEVELOPMENT!!!!!
 import os

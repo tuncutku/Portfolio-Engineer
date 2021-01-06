@@ -18,6 +18,3 @@ class InvalidEmailError(UserError):
 class IncorrectPasswordError(UserError):
     pass
 
-
-class UserTokenNotFoundError(UserError):
-    pass
