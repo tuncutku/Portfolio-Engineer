@@ -1,6 +1,10 @@
 import requests
 import os
+import inspect
+import pandas as pd
 from datetime import datetime, timedelta
+from functools import wraps
+from abc import ABCMeta, abstractmethod
 
 from src.questrade.utils import _read_config
 from src.questrade.utils import InvalidTokenError
@@ -9,11 +13,63 @@ from src.questrade.auth import Auth
 CONFIG_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "questrade.cfg")
 
 
-class Questrade:
+class Questrade(metaclass=ABCMeta):
     def __init__(self):
         self.session = requests.Session()
         self.config = _read_config(CONFIG_PATH)
         self.auth = Auth(self.config)
+
+    
+    @classmethod
+    def _call_api_on_func(cls, func):
+        """ Decorator for forming the api call with the arguments of the
+        function, it works by taking the arguments given to the function
+        and building the url to call the api on it
+        Keyword Arguments:
+            func:  The function to be decorated
+        """
+        argspec = inspect.getfullargspec(func)
+        try:
+            positional_count = len(argspec.args) - len(argspec.defaults)
+            defaults = dict(
+                zip(argspec.args[positional_count:], argspec.defaults))
+        except:
+            if argspec.args:
+                # No defaults
+                positional_count = len(argspec.args)
+                defaults = {}
+            elif argspec.defaults:
+                # Only defaults
+                positional_count = 0
+                defaults = argspec.defaults
+        
+        @wraps(func)
+        def _call_wrapper(self, *args, **kwargs):
+            endpoint, params = func(self, *args, **kwargs)
+            return self._request(endpoint, params)
+        return _call_wrapper
+    
+    # @classmethod
+    # def _output_format(cls, output_format: str):
+    #     def _output_decorator(func):
+    #         """ Decorator in charge of giving the output its right format, either
+    #         json or pandas
+    #         Keyword Arguments:
+    #             func:  The function to be decorated
+    #             override:  Override the internal format of the call, default None
+    #         """
+    #         @wraps(func)
+    #         def _format_wrapper(self, *args, **kwargs):
+    #             call_response = func(self, *args, **kwargs)
+    #             if call_response.status_code == 401:
+    #                 raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
+    #             if output_format == "json":
+    #                 return call_response.json()
+    #             elif output_format == "pandas":
+    #                 return pd.json_normalize(call_response)
+    #         return _format_wrapper
+    #     return _output_decorator
+
 
     def access_status(self) -> bool:
         self.time
@@ -21,7 +77,7 @@ class Questrade:
     def submit_refresh_token(self, refresh_token):
         self.auth._refresh_token(refresh_token)
 
-    def _request(self, endpoint, params: dict = None, request: str = "get"):
+    def _request(self, endpoint, params: dict = None):
         token = self.auth.token
         # set headers
         headers = {"Authorization": token["token_type"] + " " + token["access_token"]}
@@ -30,7 +86,7 @@ class Questrade:
         # generate url for the request
         url = token["api_server"] + "v1" + endpoint
 
-        resp = self.session.request(request, url, params=params, timeout=30)
+        resp = self.session.request("get", url, params=params, timeout=30)
         if resp.status_code == 401:
             raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
         return resp.json()
@@ -42,82 +98,3 @@ class Questrade:
     def _days_ago(self, d):
         now = datetime.now().astimezone()
         return (now - timedelta(days=d)).isoformat("T")
-
-    @property
-    def time(self):
-        return self._request(self.config["API"]["time"])
-
-    @property
-    def accounts(self):
-        return self._request(self.config["API"]["Accounts"])
-
-    def account_positions(self, id):
-        return self._request(self.config["API"]["AccountPositions"].format(id))
-
-    def account_balances(self, id):
-        return self._request(self.config["API"]["AccountBalances"].format(id))
-
-    def account_executions(self, id, **kwargs):
-        return self._request(self.config["API"]["AccountExecutions"].format(id), kwargs)
-
-    def account_orders(self, id, **kwargs):
-        """Get account orders
-        Parameters:
-            id (int): Account Id
-            kwargs: startTime, endTime, ids
-            
-        Returns:
-            list: orders
-        """
-        if "ids" in kwargs:
-            kwargs["ids"] = kwargs["ids"].replace(" ", "")
-        return self._request(self.config["API"]["AccountOrders"].format(id), kwargs)
-
-    def account_order(self, id, order_id):
-        return self._request(self.config["API"]["AccountOrder"].format(id, order_id))
-
-    def account_activities(self, id, **kwargs):
-        if "startTime" not in kwargs:
-            kwargs["startTime"] = self._days_ago(1)
-        if "endTime" not in kwargs:
-            kwargs["endTime"] = self._now
-        return self._request(self.config["API"]["AccountActivities"].format(id), kwargs)
-
-    def symbol(self, id):
-        return self._request(self.config["API"]["Symbol"].format(id))
-
-    def symbols(self, **kwargs):
-        if "ids" in kwargs:
-            kwargs["ids"] = kwargs["ids"].replace(" ", "")
-        return self._request(self.config["API"]["Symbols"].format(id), kwargs)
-
-    def symbols_search(self, **kwargs):
-        return self._request(self.config["API"]["SymbolsSearch"].format(id), kwargs)
-
-    def symbol_options(self, id):
-        return self._request(self.config["API"]["SymbolOptions"].format(id))
-
-    @property
-    def markets(self):
-        return self._request(self.config["API"]["Markets"])
-
-    def markets_quote(self, id):
-        return self._request(self.config["API"]["MarketsQuote"].format(id))
-
-    def markets_quotes(self, **kwargs):
-        if "ids" in kwargs:
-            kwargs["ids"] = kwargs["ids"].replace(" ", "")
-        return self._request(self.config["API"]["MarketsQuotes"], kwargs)
-
-    def markets_options(self, **kwargs):
-        return self._request(self.config["API"]["MarketsOptions"], kwargs)
-
-    def markets_strategies(self, **kwargs):
-        return self._request(self.config["API"]["MarketsStrategies"], kwargs)
-
-    def markets_candles(self, id, **kwargs):
-        if "startTime" not in kwargs:
-            kwargs["startTime"] = self._days_ago(1)
-        if "endTime" not in kwargs:
-            kwargs["endTime"] = self._now
-        return self._request(self.config["API"]["MarketsCandles"].format(id), kwargs)

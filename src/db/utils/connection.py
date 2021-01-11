@@ -10,7 +10,7 @@ database_uri = os.environ["DATABASE_URI"]
 connection = psycopg2.connect(database_uri)
 
 
-db_pool = pool.SimpleConnectionPool(1, 20, dsn=os.environ["DATABASE_URI"])
+db_pool = pool.SimpleConnectionPool(1, 25, dsn=os.environ["DATABASE_URI"])
 
 @contextmanager
 def database_manager():

@@ -107,7 +107,7 @@ def add_order(portfolio_name: str, symbol: str = None, required_amount: int = No
             request.form["symbol"],
             "Custom",
             "Executed",
-            int(request.form["order_quantity"]),
+            float(request.form["order_quantity"]),
             request.form["order_type"],
             33, # TODO: pull this from Market Data Manager
             exec_datetime,

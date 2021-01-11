@@ -2,11 +2,9 @@ import functools
 from typing import Callable
 from flask import session, flash, redirect, url_for, request, current_app, render_template
 
-from src.questrade import Questrade
+from src.questrade import Questrade, Questrade_Account, Questrade_Market_Data
 from src.questrade.utils import TokenNotFoundError, InternalServerError, InvalidTokenError
 
-# ONLY FOR DEVELOPMENT!!!!!
-import os
 
 def requires_login(f: Callable) -> Callable:
     @functools.wraps(f)
@@ -16,6 +14,7 @@ def requires_login(f: Callable) -> Callable:
             return redirect(url_for("users.login_user"))
 
         # ONLY FOR DEVELOPMENT!!!!!
+        # import os
         # email = os.environ["ADMIN_EMAIL"]
         # session["email"] = email
 
@@ -26,7 +25,7 @@ def requires_login(f: Callable) -> Callable:
 def requires_questrade_access(f: Callable) -> Callable:
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        q = Questrade()
+        q = Questrade_Account()
         try:
             q.access_status()
         except (TokenNotFoundError, InvalidTokenError) as e:
@@ -35,6 +34,14 @@ def requires_questrade_access(f: Callable) -> Callable:
         except InternalServerError as e:
             return redirect(url_for("account.list_portfolios"))
         return f(q=q, *args, **kwargs)
+    return decorated_function
+
+
+def market_data_connection(f: Callable) -> Callable:
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        md = Questrade_Market_Data()
+        return f(md=md, *args, **kwargs)
     return decorated_function
 
 # TODO: check if all positions are valid.

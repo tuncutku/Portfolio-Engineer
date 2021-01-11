@@ -41,7 +41,7 @@ class Order:
         symbol: str,
         source: str,
         state: str,
-        filledQuantity: int,
+        filledQuantity: float,
         side: str,
         avg_exec_price: float,
         exec_time: datetime,

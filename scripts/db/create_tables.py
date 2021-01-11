@@ -31,7 +31,7 @@ CREATE_ORDERS = """CREATE TABLE IF NOT EXISTS orders (
     symbol TEXT,
     source TEXT,
     state TEXT,
-    quantity INT,
+    quantity DECIMAL,
     side TEXT,
     average_price DECIMAL,
     time TIMESTAMP,

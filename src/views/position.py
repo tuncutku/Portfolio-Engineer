@@ -2,24 +2,28 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 
 from src.environment.user_activities import Position, Portfolio, Order
-from src.views.utils import requires_login, requires_questrade_access
-from src.views.utils import _modify_position_list, _check_position_validity, _update_order_id
+from src.views.utils import requires_login, requires_questrade_access, market_data_connection
+from src.views.utils import _modify_position_list, _check_position_validity, _update_order_id, _extend_position_list
 
-from src.questrade import Questrade
+from src.questrade import Questrade, Questrade_Market_Data
 
 position_blueprint = Blueprint("position", __name__)
 
 # TODO: Enable user to sort the positions by -> Amount, price, date etc.
 @position_blueprint.route("/<string:portfolio_name>", methods=["GET"])
 @requires_login
-def list_positions(portfolio_name: str):
+@market_data_connection
+def list_positions(md: Questrade_Market_Data, portfolio_name: str):
+
     # TODO: Validate if the postiions are backed by orders
     port = Portfolio.find_by_name(portfolio_name, session["email"])
     position_list = Position.find_all(port.portfolio_id)
 
     if position_list:
+        # Add price and market cap to position list
+        position_list = _extend_position_list(md, position_list)
         return render_template("position/positions.html", position_list = position_list, portfolio=port, error_message = None)
-    else: 
+    else:
         if port.source == "Questrade":
             error_message = "You currently don't have any position. Time to sync orders with Questrade!"
         else:

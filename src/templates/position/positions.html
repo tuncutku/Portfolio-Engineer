@@ -24,16 +24,22 @@
                   <th scope="col">Type</th>
                   <th scope="col">Symbol</th>
                   <th scope="col">Quantity</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Market Cap</th>
+                  <th scope="col">Currency</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {% for position in position_list %}
+                {% for position, price, mkt_cap in position_list %}
                 <tr>
                   <th scope="row">{{loop.index}}</th>
                   <td>Type</td>
                   <td>{{ position.symbol }}</td>
                   <td>{{ position.quantity }}</td>
+                  <td>{{ price }}</td>
+                  <td>{{ mkt_cap }}</td>
+                  <td>XYZ</td>
                   <td>
                     <a href="{{ url_for('order.list_orders', portfolio_name=portfolio.name, symbol=position.symbol) }}" class="btn bg-warning text-white">View Orders</a>
                     {% if portfolio.source == "Custom" %}
