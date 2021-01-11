@@ -8,9 +8,13 @@ def _extend_position_list(market_data_provider: Questrade_Market_Data, position_
         raw_symbols = market_data_provider.symbols_search(prefix=position.symbol)
         symbol_id = market_data_provider.get_symbol_id(raw_symbols, position.symbol)
         raw_quote = market_data_provider.markets_quote(id=symbol_id)
-
+        
         quote = raw_quote["quotes"][0]["lastTradePrice"]
-        mkt_cap = quote * position.quantity
+        if quote is not None:
+            mkt_cap = quote * position.quantity
+        else:
+            quote = "Invalid"
+            mkt_cap = "Invalid"
 
         quotes_list.append(quote)
         mkt_cap_list.append(mkt_cap)
