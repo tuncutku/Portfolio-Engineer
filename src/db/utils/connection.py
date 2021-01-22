@@ -12,6 +12,7 @@ connection = psycopg2.connect(database_uri)
 
 db_pool = pool.SimpleConnectionPool(1, 25, dsn=os.environ["DATABASE_URI"])
 
+
 @contextmanager
 def database_manager():
     connection = db_pool.getconn()
@@ -22,6 +23,7 @@ def database_manager():
     finally:
         cursor.close()
         db_pool.putconn(connection)
+
 
 # connection = psycopg2.connect(
 #     dbname = "hello_flask_dev",

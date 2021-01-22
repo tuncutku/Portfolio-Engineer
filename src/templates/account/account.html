@@ -1,35 +1,39 @@
 {% extends "base/account.html" %}
 {% block content %}
-    <div class="container mt-5">
-        <h2 class="text-success">
-            My Portfolios:
-        </h2>
+<div class="container mt-5">
+    <h2 class="text-success">
+        My Portfolios:
+    </h2>
 
-        {% if error_message %}
-        <div class="alert alert-danger" role="alert">
-            {{ error_message }}
-        </div>
-        {% endif %}
-        
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_message }}
     </div>
+    {% endif %}
 
-    <!-- # TODO Move Delete to right, add icons near card headrs. ex questrade logo and cutom logo. -->
-    {% for portfolio in port_list %}
-        <div class="container mt-4 mb-3">
-            <div class="card">
-                <div class="card-header">
-                    {{ portfolio.source }}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Portfolio: {{ portfolio.name }}</h5>
-                    <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.portfolio_type }}.</p>
-                    <a href="{{ url_for('position.list_positions', portfolio_name=portfolio.name) }}" class="btn bg-warning text-white">View Positions</a>
-                    <a href="" class="btn bg-success text-white">Manage Alerts</a>
-                    <a href="" class="btn bg-info text-white">View Reports</a>
-                    <a href="{{ url_for('account.edit_portfolio', portfolio_name=portfolio.name) }}" class="btn bg-secondary text-white">Edit Portfolio</a>
-                    <a href="{{ url_for('account.delete_portfolio', portfolio_name=portfolio.name) }}" class="btn bg-danger text-white">Delete Portfolio</a>
-                    <!-- Modal -->
-                    <!--
+</div>
+
+<!-- # TODO Move Delete to right, add icons near card headrs. ex questrade logo and cutom logo. -->
+{% for portfolio in port_list %}
+<div class="container mt-4 mb-3">
+    <div class="card">
+        <div class="card-header">
+            {{ portfolio.source }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Portfolio: {{ portfolio.name }}</h5>
+            <p class="card-text">Account status is {{ portfolio.status }} and type is {{ portfolio.portfolio_type }}.
+            </p>
+            <a href="{{ url_for('position.list_positions', portfolio_name=portfolio.name) }}"
+                class="btn bg-warning text-white">View Positions</a>
+            <a href="" class="btn bg-success text-white">Manage Alerts</a>
+            <a href="" class="btn bg-info text-white">View Reports</a>
+            <a href="{{ url_for('account.edit_portfolio', portfolio_name=portfolio.name) }}"
+                class="btn bg-secondary text-white">Edit Portfolio</a>
+            <a href="{{ url_for('account.delete_portfolio', portfolio_name=portfolio.name) }}"
+                class="btn bg-danger text-white">Delete Portfolio</a>
+            <!-- Modal -->
+            <!--
                     <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -50,8 +54,8 @@
                         </div>
                     </div>
                     //-->
-                </div>
-            </div>
         </div>
-    {% endfor %}
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

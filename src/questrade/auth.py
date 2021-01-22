@@ -6,7 +6,12 @@ from flask import session
 from dataclasses import dataclass
 
 from src.db import DB_Token
-from src.questrade.utils import TokenNotFoundError, InvalidTokenError, InternalServerError
+from src.questrade.utils import (
+    TokenNotFoundError,
+    InvalidTokenError,
+    InternalServerError,
+)
+
 
 @dataclass
 class Auth(object):
@@ -15,11 +20,11 @@ class Auth(object):
 
     def __post_init__(self):
         self.user_email = session.get("email")
-    
+
     @property
     def token(self):
         return self._read_valid_token()
-    
+
     def _read_valid_token(self):
         """ Function to check if previous access token is still valid. If not, use refresh token to claim a new access token. """
         self.token_data = self._read_token()
@@ -41,10 +46,14 @@ class Auth(object):
             else:
                 self._update_token(token)
         elif payload.status_code == 500:
-            raise InternalServerError("Cannot acces to Questrade, internal server error.")
+            raise InternalServerError(
+                "Cannot acces to Questrade, internal server error."
+            )
         else:
-            raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
-        
+            raise InvalidTokenError(
+                "Wrong token provided, access denied. Please update the token."
+            )
+
     def _read_token(self):
         return DB_Token.find_token_by_user_email(self.user_email)
 

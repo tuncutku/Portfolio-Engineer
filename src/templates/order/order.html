@@ -1,44 +1,46 @@
 {% extends "base/portfolio.html" %}
 {% block content %}
-    <div class="container mt-5">
-        <h2 class="text-success">
-            Orders for: {{ symbol }}
-        </h2>
-    </div>
-  
-    <div class="container mt-4 mb-3">
-      <div class="card"></div>
-          <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Time</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Side</th>
-                  <th scope="col">Average Price</th>
-                  <th scope="col">Strategy</th>
-                  <th scope="col">Fee</th>
-                  <th scope="col">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for order in order_list %}
-                <tr>
-                  <td>{{ order.exec_time }}</td>
-                  <td>{{ order.filledQuantity }}</td>
-                  <td>{{ order.side }}</td>
-                  <td>{{ order.avg_exec_price }}</td>
-                  <td>{{ order.strategyType }}</td>
-                  <td>{{ order.fee }}</td>
-                  {% if order.source == "Custom" %}
-                  <td>
-                    <a href="{{ url_for('order.edit_order', portfolio_name=portfolio_name, symbol=symbol, order_id=order.order_id) }}" class="btn bg-warning">Edit Order</a>
-                    <a href="{{ url_for('order.delete_order', portfolio_name=portfolio_name, symbol=symbol, order_id=order.order_id) }}" class="btn bg-danger text-white">Delete Order</a>
-                  </td>
-                  {% endif %}
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-      </div>
-    </div>
+<div class="container mt-5">
+  <h2 class="text-success">
+    Orders for: {{ symbol }}
+  </h2>
+</div>
+
+<div class="container mt-4 mb-3">
+  <div class="card"></div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Side</th>
+        <th scope="col">Average Price</th>
+        <th scope="col">Strategy</th>
+        <th scope="col">Fee</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in order_list %}
+      <tr>
+        <td>{{ order.exec_time }}</td>
+        <td>{{ order.filledQuantity }}</td>
+        <td>{{ order.side }}</td>
+        <td>{{ order.avg_exec_price }}</td>
+        <td>{{ order.strategyType }}</td>
+        <td>{{ order.fee }}</td>
+        {% if order.source == "Custom" %}
+        <td>
+          <a href="{{ url_for('order.edit_order', portfolio_name=portfolio_name, symbol=symbol, order_id=order.order_id) }}"
+            class="btn bg-warning">Edit Order</a>
+          <a href="{{ url_for('order.delete_order', portfolio_name=portfolio_name, symbol=symbol, order_id=order.order_id) }}"
+            class="btn bg-danger text-white">Delete Order</a>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
 {% endblock %}

@@ -2,6 +2,7 @@ import random
 
 from src.environment.user_activities.portfolio import Portfolio
 
+
 def check_and_update_portfolio(port_db: Portfolio, port_questrade: dict) -> None:
     """Utility function that checks if Questrade portfolio is up-to-date. If not, updates database."""
 
@@ -13,9 +14,10 @@ def check_and_update_portfolio(port_db: Portfolio, port_questrade: dict) -> None
     if not all(check_list):
         Portfolio.update_portfolio(
             port_questrade["status"],
-            port_questrade["type"], 
+            port_questrade["type"],
             port_db.name,
         )
+
 
 def _add_portfolio(port_questrade: dict, email: str) -> None:
     """Add a questrade portfolio with randon name"""
@@ -33,8 +35,9 @@ def _add_portfolio(port_questrade: dict, email: str) -> None:
         port_questrade["status"],
         port_questrade["type"],
         email,
-        int(port_questrade["number"])
+        int(port_questrade["number"]),
     )
+
 
 def _valide_portfolio_name(name, email) -> bool:
     name_list = [port.name for port in Portfolio.find_all(email)]

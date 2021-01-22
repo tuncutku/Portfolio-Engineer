@@ -1,25 +1,25 @@
 {% extends "base/account.html" %}
 {% block content %}
-    <div class="container position-absolute top-50 left-50 translate-middle">
-        <div class="row">
-            <div class="col">
-            </div>
-            <div class="col">
-                <form action="{{ url_for('account.add_portfolio') }}" method="post">
-                    <div class="mb-6">
-                        <label class="form-label">Portfolio Name:</label>
-                        <input type="text" class="form-control" id="email" name="name" placeholder="Name" required>
-                    </div>
-                    {% if error_message %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ error_message }}
-                    </div>
-                    {% endif %}
-                    <button type="submit" class="btn btn-success mt-2">Submit</button>
-                </form>
-            </div>
-            <div class="col">
-            </div>
+<div class="container position-absolute top-50 left-50 translate-middle">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col">
+            <form action="{{ url_for('account.add_portfolio') }}" method="post">
+                <div class="mb-6">
+                    <label class="form-label">Portfolio Name:</label>
+                    <input type="text" class="form-control" id="email" name="name" placeholder="Name" required>
+                </div>
+                {% if error_message %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error_message }}
+                </div>
+                {% endif %}
+                <button type="submit" class="btn btn-success mt-2">Submit</button>
+            </form>
+        </div>
+        <div class="col">
         </div>
     </div>
+</div>
 {% endblock %}

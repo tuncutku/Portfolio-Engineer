@@ -27,20 +27,43 @@ SELECT_TOKEN_BY_USER_EMAIL = """SELECT
 
 
 class DB_Token:
-
     @staticmethod
-    def add_user_token(access_token, api_server, expires_at, refresh_token, token_type, email):
+    def add_user_token(
+        access_token, api_server, expires_at, refresh_token, token_type, email
+    ):
         access_token = encrypt_token(access_token)
         refresh_token = encrypt_token(refresh_token)
         with database_manager() as cursor:
-            cursor.execute(INSERT_TOKEN, (access_token, api_server, expires_at, refresh_token, token_type, email))
+            cursor.execute(
+                INSERT_TOKEN,
+                (
+                    access_token,
+                    api_server,
+                    expires_at,
+                    refresh_token,
+                    token_type,
+                    email,
+                ),
+            )
 
     @staticmethod
-    def update_user_token(access_token, api_server, expires_at, refresh_token, token_type, email):
+    def update_user_token(
+        access_token, api_server, expires_at, refresh_token, token_type, email
+    ):
         access_token = encrypt_token(access_token)
         refresh_token = encrypt_token(refresh_token)
         with database_manager() as cursor:
-            cursor.execute(UPDATE_TOKEN, (access_token, api_server, expires_at, refresh_token, token_type, email))
+            cursor.execute(
+                UPDATE_TOKEN,
+                (
+                    access_token,
+                    api_server,
+                    expires_at,
+                    refresh_token,
+                    token_type,
+                    email,
+                ),
+            )
 
     @staticmethod
     def find_token_by_user_email(email):
@@ -51,4 +74,3 @@ class DB_Token:
                 token["access_token"] = decrypt_token(token["access_token"])
                 token["refresh_token"] = decrypt_token(token["refresh_token"])
             return token
-

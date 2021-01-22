@@ -1,6 +1,9 @@
 from src.questrade import Questrade_Market_Data
 
-def _extend_position_list(market_data_provider: Questrade_Market_Data, position_list: list) -> list:
+
+def _extend_position_list(
+    market_data_provider: Questrade_Market_Data, position_list: list
+) -> list:
 
     quotes_list = list()
     mkt_cap_list = list()
@@ -8,7 +11,6 @@ def _extend_position_list(market_data_provider: Questrade_Market_Data, position_
         raw_symbols = market_data_provider.symbols_search(prefix=position.symbol)
         symbol_id = market_data_provider.get_symbol_id(raw_symbols, position.symbol)
         raw_quote = market_data_provider.markets_quote(id=symbol_id)
-        
 
         # TODO: Add currency, security type and brief description to the position list.
         quote = raw_quote["quotes"][0]["lastTradePrice"]

@@ -1,92 +1,94 @@
 {% extends "base/account.html" %}
 {% block content %}
-    <div class="container mt-5">
+<div class="container mt-5">
 
-        <form action="{{ url_for('account.edit_portfolio', portfolio_name=portfolio.name) }}" method="post">
-            <legend class="mb-3">{{ portfolio.name }}</legend>
+    <form action="{{ url_for('account.edit_portfolio', portfolio_name=portfolio.name) }}" method="post">
+        <legend class="mb-3">{{ portfolio.name }}</legend>
 
-            <div class="row 3 align-items-center mt-2">
-                <div class="col-2">
-                  <label for="name" class="col-form-label">New Portfolio Name</label>
-                </div>
-                <div class="col-sm-3">
-                  <input type="text" id="name" class="form-control" name="name" aria-describedby="portfolio_name" value="{{ portfolio.name }}">
-                </div>
-                <div class="col-auto">
-                  <span id="portfolio_name" class="form-text">
+        <div class="row 3 align-items-center mt-2">
+            <div class="col-2">
+                <label for="name" class="col-form-label">New Portfolio Name</label>
+            </div>
+            <div class="col-sm-3">
+                <input type="text" id="name" class="form-control" name="name" aria-describedby="portfolio_name"
+                    value="{{ portfolio.name }}">
+            </div>
+            <div class="col-auto">
+                <span id="portfolio_name" class="form-text">
                     Must be 1-20 characters long.
-                  </span>
-                </div>
+                </span>
             </div>
+        </div>
 
-            <div class="row g-3 align-items-center mt-1">
-                <div class="col-2">
-                  <label for="portfolio_status" class="col-form-label">Portfolio Status</label>
-                </div>
-                {% if portfolio.source == "Questrade" %}
-                    <div class="col-auto">
-                        
-                        <select id="portfolio_status" class="form-select" name="portfolio_status" aria-describedby="portfolio_status">
-                            <option selected value="{{ portfolio.status }}">{{ portfolio.status }}</option>
-                        </select>
-                      
-                    </div>
-                    <div class="col-auto">
-                        <span id="portfolio_status" class="form-text">
-                            Portfolio status can be modified through Questrade account.
-                        </span>
-                    </div>
-                {% else %}
-                <div class="col-auto">
-                    <select id="inputState" class="form-select" name="portfolio_status">
-                        <option selected>active</option>
-                        <!-- #TODO use for loop for the inputs and use a class -->
-                        <option>closed</option>
-                    </select>
-                </div>
-                {% endif %}
+        <div class="row g-3 align-items-center mt-1">
+            <div class="col-2">
+                <label for="portfolio_status" class="col-form-label">Portfolio Status</label>
             </div>
+            {% if portfolio.source == "Questrade" %}
+            <div class="col-auto">
 
-            <div class="row g-3 align-items-center mt-1">
-                <div class="col-2">
-                  <label for="portfolio_type" class="col-form-label">Portfolio Type</label>
-                </div>
-                {% if portfolio.source == "Questrade" %}
-                    <div class="col-auto">
-                       
-                        <select id="portfolio_type" class="form-select" name="portfolio_type" aria-describedby="portfolio_type">
-                            <option selected value="{{ portfolio.portfolio_type }}">{{ portfolio.portfolio_type }}</option>
-                        </select>
-                     
-                    </div>
-                    <div class="col-auto">
-                        <span id="portfolio_type" class="form-text">
-                            Portfolio type can be modified through Questrade account.
-                        </span>
-                    </div>
-                {% else %}
-                    <div class="col-auto">
-                        <select id="inputState" class="form-select" name="portfolio_type">
-                            <option selected value="TFSA">TFSA</option>
-                            <!-- #TODO use for loop for the inputs and use a class -->
-                            <option value="Margin">Margin</option>
-                            <option value="Cash">Cash</option>
-                            <option value="RRSP">RRSP</option>
-                            <option value="Invalid">Invalid</option>
-                        </select>
-                    </div>
-                {% endif %}
+                <select id="portfolio_status" class="form-select" name="portfolio_status"
+                    aria-describedby="portfolio_status">
+                    <option selected value="{{ portfolio.status }}">{{ portfolio.status }}</option>
+                </select>
+
             </div>
-
-
-            {% if error_message %}
-            <div class="alert alert-danger" role="alert">
-                {{ error_message }}
+            <div class="col-auto">
+                <span id="portfolio_status" class="form-text">
+                    Portfolio status can be modified through Questrade account.
+                </span>
+            </div>
+            {% else %}
+            <div class="col-auto">
+                <select id="inputState" class="form-select" name="portfolio_status">
+                    <option selected>active</option>
+                    <!-- #TODO use for loop for the inputs and use a class -->
+                    <option>closed</option>
+                </select>
             </div>
             {% endif %}
-            <button type="submit" class="btn btn-success mt-3">Submit</button>
+        </div>
 
-        </form>
+        <div class="row g-3 align-items-center mt-1">
+            <div class="col-2">
+                <label for="portfolio_type" class="col-form-label">Portfolio Type</label>
+            </div>
+            {% if portfolio.source == "Questrade" %}
+            <div class="col-auto">
 
-    </div>
-{% endblock %} 
+                <select id="portfolio_type" class="form-select" name="portfolio_type" aria-describedby="portfolio_type">
+                    <option selected value="{{ portfolio.portfolio_type }}">{{ portfolio.portfolio_type }}</option>
+                </select>
+
+            </div>
+            <div class="col-auto">
+                <span id="portfolio_type" class="form-text">
+                    Portfolio type can be modified through Questrade account.
+                </span>
+            </div>
+            {% else %}
+            <div class="col-auto">
+                <select id="inputState" class="form-select" name="portfolio_type">
+                    <option selected value="TFSA">TFSA</option>
+                    <!-- #TODO use for loop for the inputs and use a class -->
+                    <option value="Margin">Margin</option>
+                    <option value="Cash">Cash</option>
+                    <option value="RRSP">RRSP</option>
+                    <option value="Invalid">Invalid</option>
+                </select>
+            </div>
+            {% endif %}
+        </div>
+
+
+        {% if error_message %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_message }}
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-success mt-3">Submit</button>
+
+    </form>
+
+</div>
+{% endblock %}

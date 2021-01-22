@@ -1,11 +1,13 @@
 from cryptography.fernet import Fernet
 import os
 
+
 def generate_key():
     """
     Generates a key and save it into a file
     """
     return Fernet.generate_key()
+
 
 def encrypt_token(token: str) -> str:
     """
@@ -15,6 +17,7 @@ def encrypt_token(token: str) -> str:
     encoded_token = token.encode()
     f = Fernet(key)
     return f.encrypt(encoded_token).decode()
+
 
 def decrypt_token(encrypted_token: str) -> str:
     """

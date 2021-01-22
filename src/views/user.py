@@ -9,6 +9,7 @@ from src.views.utils import requires_login
 # TODO integrate "LoginManager() for managing logins"
 user_blueprint = Blueprint("users", __name__)
 
+
 @user_blueprint.route("/login", methods=["GET", "POST"])
 def login_user():
     error_message = None
@@ -44,9 +45,9 @@ def guest():
     session["email"] = os.environ["GUEST_EMAIL"]
     return redirect(url_for("account.list_portfolios"))
 
+
 @user_blueprint.route("/logout", methods=["GET"])
 @requires_login
 def log_out_user():
     session.clear()
     return redirect(url_for("home"))
-

@@ -1,8 +1,8 @@
 from src.questrade.questrade import Questrade
 from src.questrade.utils import InvalidSymbolError
 
-class Questrade_Market_Data(Questrade):
 
+class Questrade_Market_Data(Questrade):
     @staticmethod
     def get_symbol_id(raw_symbols: list, position_symbol: str):
         if not raw_symbols:
@@ -11,7 +11,6 @@ class Questrade_Market_Data(Questrade):
             if raw_symbol["symbol"] == position_symbol:
                 return raw_symbol["symbolId"]
         raise InvalidSymbolError("Invalid Symbol!")
-
 
     @Questrade._call_api_on_func
     def symbol(self, id):
@@ -60,4 +59,4 @@ class Questrade_Market_Data(Questrade):
             kwargs["startTime"] = self._days_ago(1)
         if "endTime" not in kwargs:
             kwargs["endTime"] = self._now
-        return (self.config["API"]["MarketsCandles"].format(id), kwargs)                                                                                                                                                                                                                                     
+        return (self.config["API"]["MarketsCandles"].format(id), kwargs)

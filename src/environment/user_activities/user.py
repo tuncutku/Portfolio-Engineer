@@ -1,13 +1,20 @@
 from pydantic.dataclasses import dataclass
 
 from src.db import DB_User
-from src.environment.user_activities.utils import credential_check, UserAlreadyRegisteredError, UserNotFoundError, InvalidEmailError, IncorrectPasswordError
+from src.environment.user_activities.utils import (
+    credential_check,
+    UserAlreadyRegisteredError,
+    UserNotFoundError,
+    InvalidEmailError,
+    IncorrectPasswordError,
+)
+
 
 @dataclass
 class User(object):
     email: str
-    password: str  
-    
+    password: str
+
     @classmethod
     def find_by_email(cls, email: str) -> "User":
         user = DB_User.find_user_by_email(email)
@@ -39,10 +46,14 @@ class User(object):
         :return: True if registered successfully, or False otherwise (exceptions can also be raised)
         """
         if not credential_check.email_is_valid(email):
-            raise UserErrors.InvalidEmailError("The e-mail does not have the right format.")
+            raise UserErrors.InvalidEmailError(
+                "The e-mail does not have the right format."
+            )
         try:
             user = cls.find_by_email(email)
-            raise UserAlreadyRegisteredError("The e-mail you used to register already exists.")
+            raise UserAlreadyRegisteredError(
+                "The e-mail you used to register already exists."
+            )
         except UserNotFoundError:
             DB_User.add_user(email, credential_check.hash_password(password))
         return True

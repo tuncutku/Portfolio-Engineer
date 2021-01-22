@@ -19,21 +19,22 @@ class Questrade(metaclass=ABCMeta):
         self.config = _read_config(CONFIG_PATH)
         self.auth = Auth(self.config)
 
-    
     @classmethod
     def _call_api_on_func(cls, func):
-        """ Decorator for forming the api call with the arguments of the
+        """Decorator for forming the api call with the arguments of the
         function, it works by taking the arguments given to the function
         and building the url to call the api on it
         Keyword Arguments:
             func:  The function to be decorated
-        """  
+        """
+
         @wraps(func)
         def _call_wrapper(self, *args, **kwargs):
             endpoint, params = func(self, *args, **kwargs)
             return self._request(endpoint, params)
+
         return _call_wrapper
-    
+
     # @classmethod
     # def _output_format(cls, output_format: str):
     #     def _output_decorator(func):
@@ -55,7 +56,6 @@ class Questrade(metaclass=ABCMeta):
     #         return _format_wrapper
     #     return _output_decorator
 
-
     def access_status(self) -> bool:
         self.time
 
@@ -73,7 +73,9 @@ class Questrade(metaclass=ABCMeta):
 
         resp = self.session.request("get", url, params=params, timeout=30)
         if resp.status_code == 401:
-            raise InvalidTokenError("Wrong token provided, access denied. Please update the token.")
+            raise InvalidTokenError(
+                "Wrong token provided, access denied. Please update the token."
+            )
         return resp.json()
 
     @property

@@ -4,8 +4,8 @@ from src.db.utils import database_manager
 INSERT_USER = "INSERT INTO users (email, password) VALUES (%s, %s);"
 SELECT_USER_BY_EMAIL = "SELECT email, password FROM users WHERE email = %s;"
 
-class DB_User:
 
+class DB_User:
     @staticmethod
     def add_user(email, password):
         with database_manager() as cursor:
@@ -16,4 +16,3 @@ class DB_User:
         with database_manager() as cursor:
             cursor.execute(SELECT_USER_BY_EMAIL, (email,))
             return cursor.fetchone()
-

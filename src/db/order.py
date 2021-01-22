@@ -77,7 +77,6 @@ DELETE_ORDER = """DELETE FROM orders WHERE id = %s;"""
 
 
 class DB_Order:
-    
     @staticmethod
     def get_orders(position_id):
         with database_manager() as cursor:
@@ -89,13 +88,13 @@ class DB_Order:
         with database_manager() as cursor:
             cursor.execute(SELECT_ORDERS_BY_SYMBOL, (portfolio_id, symbol))
             return cursor.fetchall()
-    
+
     @staticmethod
     def get_order(order_id):
         with database_manager() as cursor:
             cursor.execute(SELECT_ORDER, (order_id,))
             return cursor.fetchone()
-    
+
     @staticmethod
     def delete_order(order_id):
         with database_manager() as cursor:
@@ -105,9 +104,9 @@ class DB_Order:
     def update_position_id(order_id, position_id):
         with database_manager() as cursor:
             cursor.execute(UPDATE_ORDER_POSITION_ID, (position_id, order_id))
-    
+
     @staticmethod
-    def add_order(        
+    def add_order(
         symbol,
         source,
         state,
@@ -121,23 +120,25 @@ class DB_Order:
         position_id,
     ):
         with database_manager() as cursor:
-            cursor.execute(INSERT_ORDER, (
-                symbol,
-                source,
-                state,
-                filledQuantity,
-                side,
-                avg_exec_price,
-                exec_time,
-                strategyType,
-                portfolio_id,
-                fee,
-                position_id,
-                )
+            cursor.execute(
+                INSERT_ORDER,
+                (
+                    symbol,
+                    source,
+                    state,
+                    filledQuantity,
+                    side,
+                    avg_exec_price,
+                    exec_time,
+                    strategyType,
+                    portfolio_id,
+                    fee,
+                    position_id,
+                ),
             )
 
     @staticmethod
-    def update_order(        
+    def update_order(
         symbol,
         source,
         state,
@@ -149,22 +150,23 @@ class DB_Order:
         portfolio_id,
         fee,
         position_id,
-        order_id
+        order_id,
     ):
         with database_manager() as cursor:
-            cursor.execute(UPDATE_ORDER, (
-                symbol,
-                source,
-                state,
-                filledQuantity,
-                side,
-                avg_exec_price,
-                exec_time,
-                strategyType,
-                portfolio_id,
-                fee,
-                position_id,
-                order_id,
-                )
+            cursor.execute(
+                UPDATE_ORDER,
+                (
+                    symbol,
+                    source,
+                    state,
+                    filledQuantity,
+                    side,
+                    avg_exec_price,
+                    exec_time,
+                    strategyType,
+                    portfolio_id,
+                    fee,
+                    position_id,
+                    order_id,
+                ),
             )
-

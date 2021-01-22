@@ -31,8 +31,8 @@ INSERT_POSITION = """INSERT INTO position (
     VALUES (%s, %s, %s, %s, %s);"""
 DELETE_POSITION = """DELETE FROM position WHERE id = %s;"""
 
-class DB_Position:
 
+class DB_Position:
     @staticmethod
     def get_positions(portfolio_id):
         with database_manager() as cursor:
@@ -59,4 +59,3 @@ class DB_Position:
     def delete_position(_id):
         with database_manager() as cursor:
             cursor.execute(DELETE_POSITION, (_id,))
-

@@ -1,7 +1,7 @@
 from src.questrade.questrade import Questrade
 
+
 class Questrade_Account(Questrade):
-    
     @property
     @Questrade._call_api_on_func
     def time(self):
@@ -11,7 +11,7 @@ class Questrade_Account(Questrade):
     @Questrade._call_api_on_func
     def accounts(self):
         return (self.config["API"]["Accounts"], None)
-    
+
     @Questrade._call_api_on_func
     def account_positions(self, id):
         return (self.config["API"]["AccountPositions"].format(id), None)
@@ -30,7 +30,7 @@ class Questrade_Account(Questrade):
         Parameters:
             id (int): Account Id
             kwargs: startTime, endTime, ids
-            
+
         Returns:
             list: orders
         """

@@ -17,4 +17,3 @@ class InvalidEmailError(UserError):
 
 class IncorrectPasswordError(UserError):
     pass
-

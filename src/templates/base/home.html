@@ -1,20 +1,23 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Portfolio Engineer</title>
-    </head>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-success">
-            <div class="container">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css"
+        integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
+
+    <title>Portfolio Engineer</title>
+</head>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-success">
+        <div class="container">
             <a class="navbar-brand text-white" href="{{ url_for('home') }}">Portfolio Engineer</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -24,18 +27,22 @@
                     <a class="nav-item nav-link text-white" href="{{ url_for('users.guest') }}">Guest</a>
                 </div>
             </div>
-            </div>
-        </nav>
-    </header>
-    <body>
-        {% block content %}
+        </div>
+    </nav>
+</header>
 
-        {% endblock %}
-        <footer class="bg-light text-center text-lg-start fixed-bottom">
-            <div class="container">
-                <span class="text-muted"> Portfolio Engineer</span>
-            </div>
-        </footer>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>  
-    </body>
+<body>
+    {% block content %}
+
+    {% endblock %}
+    <footer class="bg-light text-center text-lg-start fixed-bottom">
+        <div class="container">
+            <span class="text-muted"> Portfolio Engineer</span>
+        </div>
+    </footer>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js"
+        integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD"
+        crossorigin="anonymous"></script>
+</body>
+
 </html>

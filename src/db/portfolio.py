@@ -35,8 +35,8 @@ SELECT_PORTFOLIO = """SELECT
     FROM portfolio WHERE name = %s AND email = %s;"""
 DELETE_PORTFOLIO = """DELETE FROM portfolio WHERE id = %s;"""
 
-class DB_Portfolio:
 
+class DB_Portfolio:
     @staticmethod
     def get_portfolio_list(email):
         with database_manager() as cursor:
@@ -50,14 +50,19 @@ class DB_Portfolio:
             return cursor.fetchone()
 
     @staticmethod
-    def add_portfolio(name, source, status, portfolio_type, email, questrade_id = None):
+    def add_portfolio(name, source, status, portfolio_type, email, questrade_id=None):
         with database_manager() as cursor:
-            cursor.execute(INSERT_PORTFOLIO, (name, source, status, portfolio_type, email, questrade_id))
+            cursor.execute(
+                INSERT_PORTFOLIO,
+                (name, source, status, portfolio_type, email, questrade_id),
+            )
 
     @staticmethod
     def update_portfolio(name, status, portfolio_type, portfolio_id):
         with database_manager() as cursor:
-            cursor.execute(UPDATE_PORTFOLIO, (name, status, portfolio_type, portfolio_id))
+            cursor.execute(
+                UPDATE_PORTFOLIO, (name, status, portfolio_type, portfolio_id)
+            )
 
     @staticmethod
     def delete_portfolio(_id):

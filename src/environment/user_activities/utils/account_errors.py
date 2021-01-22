@@ -5,4 +5,3 @@ class PortfolioError(Exception):
 
 class PortfolioNotFoundError(PortfolioError):
     pass
-
