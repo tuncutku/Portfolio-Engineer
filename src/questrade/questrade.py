@@ -27,22 +27,7 @@ class Questrade(metaclass=ABCMeta):
         and building the url to call the api on it
         Keyword Arguments:
             func:  The function to be decorated
-        """
-        argspec = inspect.getfullargspec(func)
-        try:
-            positional_count = len(argspec.args) - len(argspec.defaults)
-            defaults = dict(
-                zip(argspec.args[positional_count:], argspec.defaults))
-        except:
-            if argspec.args:
-                # No defaults
-                positional_count = len(argspec.args)
-                defaults = {}
-            elif argspec.defaults:
-                # Only defaults
-                positional_count = 0
-                defaults = argspec.defaults
-        
+        """  
         @wraps(func)
         def _call_wrapper(self, *args, **kwargs):
             endpoint, params = func(self, *args, **kwargs)

@@ -9,6 +9,8 @@ def _extend_position_list(market_data_provider: Questrade_Market_Data, position_
         symbol_id = market_data_provider.get_symbol_id(raw_symbols, position.symbol)
         raw_quote = market_data_provider.markets_quote(id=symbol_id)
         
+
+        # TODO: Add currency, security type and brief description to the position list.
         quote = raw_quote["quotes"][0]["lastTradePrice"]
         if quote is not None:
             mkt_cap = quote * position.quantity
