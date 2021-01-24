@@ -11,7 +11,7 @@ from src.views.utils import (
     _modify_position_list,
     _check_position_validity,
     _update_order_id,
-    _extend_position_list,
+    _extend_position_list_with_md,
 )
 
 from src.questrade import Questrade, Questrade_Market_Data
@@ -30,7 +30,7 @@ def list_positions(md: Questrade_Market_Data, portfolio_name: str):
 
     if position_list:
         # Add price and market cap to position list
-        position_list = _extend_position_list(md, position_list)
+        position_list = _extend_position_list_with_md(md, position_list)
         return render_template(
             "position/positions.html",
             position_list=position_list,

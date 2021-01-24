@@ -4,11 +4,22 @@ import datetime
 from src.environment.user_activities import Position, Portfolio, Order
 from src.views.utils import (
     requires_login,
+    market_data_connection,
     _modify_position_list,
     _check_position_validity,
     _extract_open_orders,
     _validate_order,
+    _get_exec_time,
 )
+from src.views.errors.user_level_errors import (
+    UserLevelError,
+    InvalidOrderAmountError,
+    InvalidOrderDateError,
+    InvalidOrderFeeError,
+)
+from src.questrade import Questrade_Market_Data
+from src.questrade.utils import InvalidSymbolError
+from src.views.utils.common import get_quote_from_symbol
 
 
 order_blueprint = Blueprint("order", __name__)
@@ -124,25 +135,28 @@ def edit_order(portfolio_name: str, symbol: str, order_id: int):
 )
 @order_blueprint.route("/<string:portfolio_name>/add_order/", methods=["GET", "POST"])
 @requires_login
-def add_order(portfolio_name: str, symbol: str = None, required_amount: int = None):
+@market_data_connection
+def add_order(
+    md: Questrade_Market_Data,
+    portfolio_name: str,
+    symbol: str = None,
+    required_amount: int = None,
+):
     port = Portfolio.find_by_name(portfolio_name, session["email"])
     if request.method == "POST":
         try:
-            # TODO: quantity should be positive integer
-            # TODO: symbol should be accurate
-            # TODO: if currency is USD convert it to CAD
-            # TODO: check if the same order is in database
-            date = datetime.datetime.strptime(request.form["date"], "%Y-%m-%d")
-            time = datetime.datetime.strptime(request.form["time"], "%H:%M").time()
-            exec_datetime = datetime.datetime.combine(date, time)
-        except ValueError:  # Add exception
+            _validate_order(dict(request.form), md)
+        except (InvalidSymbolError, UserLevelError) as e:
             return render_template(
                 "order/add_order.html",
                 portfolio=port,
                 symbol=symbol,
                 required_amount=required_amount,
-                error_message="Invalid date or time provided, please try again.",
+                error_message=e.message,
             )
+
+        exec_datetime = _get_exec_time(request.form["date"], request.form["time"])
+        quote = get_quote_from_symbol(request.form["symbol"], md)
 
         Order.add_order(
             request.form["symbol"],
@@ -150,7 +164,7 @@ def add_order(portfolio_name: str, symbol: str = None, required_amount: int = No
             "Executed",
             float(request.form["order_quantity"]),
             request.form["order_type"],
-            33,  # TODO: pull this from Market Data Manager
+            quote,
             exec_datetime,
             request.form["strategy"],
             port.portfolio_id,

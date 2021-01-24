@@ -5,7 +5,7 @@
   <form class="card p-3 bg-light"
     action="{{ url_for('order.add_order', portfolio_name=portfolio.name, symbol=symbol, required_amount=required_amount) }}"
     method="post">
-    <legend class="mb-3">Position: {{ symbol }}</legend>
+    <legend class="mb-3">New Position</legend>
 
     {% if error_message %}
     <div class="alert alert-danger" role="alert">

@@ -55,17 +55,9 @@ def requires_questrade_access(f: Callable) -> Callable:
 
 def market_data_connection(f: Callable) -> Callable:
     @functools.wraps(f)
-    def decorated_function(*args, **kwargs):
+    @requires_questrade_access
+    def decorated_function(q: Questrade, *args, **kwargs):
         md = Questrade_Market_Data()
         return f(md=md, *args, **kwargs)
-
-    return decorated_function
-
-
-# TODO: check if all positions are valid.
-def valid_positions(f: Callable) -> Callable:
-    @functools.wraps(f)
-    def decorated_function(*args, **kwargs):
-        return f(*args, **kwargs)
 
     return decorated_function

@@ -12,6 +12,13 @@ class Questrade_Market_Data(Questrade):
                 return raw_symbol["symbolId"]
         raise InvalidSymbolError("Invalid Symbol!")
 
+    def validate_symbol(self, raw_symbol) -> None:
+        symbols = self.symbols_search(prefix=raw_symbol)
+        for symbol in symbols["symbols"]:
+            if symbol["symbol"] == raw_symbol:
+                return None
+        raise InvalidSymbolError(f"{raw_symbol} is not a valid symbol!")
+
     @Questrade._call_api_on_func
     def symbol(self, id):
         return (self.config["API"]["Symbol"].format(id), None)
