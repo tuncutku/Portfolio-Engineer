@@ -11,7 +11,7 @@ def _extend_position_list_with_md(
     for position in position_list:
         quote = get_quote_from_symbol(position.symbol, market_data_provider)
         if quote is not None:
-            mkt_cap = quote * position.quantity
+            mkt_cap = round(quote * position.quantity, 2)
         else:
             quote = "Invalid"
             mkt_cap = "Invalid"

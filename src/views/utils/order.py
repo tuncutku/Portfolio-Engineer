@@ -34,7 +34,7 @@ def _update_order_id(orders: list, position_id: int) -> None:
 
 def _validate_order(request: dict, md: Questrade_Market_Data) -> None:
     # TODO: if currency is USD convert it to CAD
-    if int(request["order_quantity"]) <= 0:
+    if int(float(request["order_quantity"])) <= 0:
         raise InvalidOrderAmountError(
             "Order amount should be a positive integer number."
         )

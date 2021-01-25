@@ -5,13 +5,22 @@
   <form class="card p-3 bg-light"
     action="{{ url_for('order.edit_order', portfolio_name=portfolio.name, symbol=order.symbol, order_id=order.order_id) }}"
     method="post">
-    <legend class="mb-3">Position: {{ order.symbol }}</legend>
+    <legend class="mb-3">Edit Order</legend>
 
     {% if error_message %}
     <div class="alert alert-danger" role="alert">
       {{ error_message }}
     </div>
     {% endif %}
+
+    <div class="row g-3 align-items-center mt-2 mb-3">
+      <div class="col-2">
+        <label for="symbol" class="col-form-label">Symbol</label>
+      </div>
+      <div class="col-sm-1">
+        <input type="text" class="form-control" id="symbol" name="symbol" value="{{ order.symbol }}" readonly>
+      </div>
+    </div>
 
     <div class="row 3 align-items-center mt-2">
       <div class="col-2">
