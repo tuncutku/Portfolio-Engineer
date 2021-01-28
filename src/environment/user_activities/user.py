@@ -57,7 +57,3 @@ class User(object):
         except UserNotFoundError:
             DB_User.add_user(email, credential_check.hash_password(password))
         return True
-
-    @staticmethod
-    def logout():
-        pass

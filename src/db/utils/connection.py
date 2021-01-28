@@ -6,11 +6,14 @@ import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv()
-database_uri = os.environ["DATABASE_URI"]
-connection = psycopg2.connect(database_uri)
 
 
-db_pool = pool.SimpleConnectionPool(1, 25, dsn=os.environ["DATABASE_URI"])
+def get_connection_pool(test_case: bool = False):
+    url = os.environ["DATABASE_URI_TEST"] if test_case else os.environ["DATABASE_URI"]
+    return pool.SimpleConnectionPool(1, 10, dsn=url)
+
+
+db_pool = get_connection_pool()
 
 
 @contextmanager

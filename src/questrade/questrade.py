@@ -4,7 +4,7 @@ import inspect
 import pandas as pd
 from datetime import datetime, timedelta
 from functools import wraps
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
 from src.questrade.utils import _read_config
 from src.questrade.utils import InvalidTokenError
