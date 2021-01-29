@@ -3,7 +3,13 @@ from flask import Flask, render_template
 import inspect
 
 from scripts.db import create_tables, drop_tables
-from src.views import *
+from src.views import (
+    user_blueprint,
+    account_blueprint,
+    questrade_blueprint,
+    position_blueprint,
+    order_blueprint,
+)
 
 
 # TODO use plotly dash for dynamic graphics
