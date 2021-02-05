@@ -1,53 +1,50 @@
 import os
 
-from flask import Blueprint, request, session, url_for, render_template, redirect
+from flask import Blueprint, request, session, url_for, render_template, redirect, flash
+from flask_login import login_user, logout_user
+
 from src.environment.user_activities import User
 from src.environment.user_activities.utils import UserError
 from src.views.utils import requires_login
+from src.forms.user_forms import RegisterForm, LoginForm
+from src import db_1
 
 
-# TODO integrate "LoginManager() for managing logins"
-user_blueprint = Blueprint("users", __name__)
+user_blueprint = Blueprint("users", __name__, url_prefix="/users")
 
 
 @user_blueprint.route("/login", methods=["GET", "POST"])
-def login_user():
-    error_message = None
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        try:
-            if User.is_login_valid(email, password):
-                session["email"] = email
-                return redirect(url_for("account.list_portfolios"))
-        except UserError as e:
-            error_message = e.message
-            return render_template("user/login.html", error_message=error_message)
-    return render_template("user/login.html", error_message=error_message)
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).one()
+        login_user(user)
+        flash("You have been logged in.", category="success")
+        return redirect(url_for("portfolio.list_portfolios"))
+    return render_template("user/login.html", form=form)
 
 
 @user_blueprint.route("/register", methods=["GET", "POST"])
-def register_user():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        try:
-            if User.register_user(email, password):
-                session["email"] = email
-                return redirect(url_for("account.list_portfolios"))
-        except UserError as e:
-            return e.message
-    return render_template("user/register.html")
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        new_user = User(form.email.data)
+        new_user.set_password(form.password.data)
+        # Add user to database
+        db_1.session.add(new_user)
+        db_1.session.commit()
+        return redirect(url_for("users.login"))
+    return render_template("user/register.html", form=form)
 
 
 @user_blueprint.route("/guest", methods=["GET", "POST"])
 def guest():
     session["email"] = os.environ["GUEST_EMAIL"]
-    return redirect(url_for("account.list_portfolios"))
+    return redirect(url_for("portfolio.list_portfolios"))
 
 
-@user_blueprint.route("/logout", methods=["GET"])
-@requires_login
-def log_out_user():
-    session.clear()
+@user_blueprint.route("/logout", methods=["GET", "POST"])
+def logout():
+    logout_user()
+    flash("You have been logged out.", category="success")
     return redirect(url_for("home"))

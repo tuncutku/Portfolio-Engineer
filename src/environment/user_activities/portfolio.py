@@ -1,52 +1,69 @@
-from pydantic.dataclasses import dataclass
-from typing import List
+import datetime
 
-from src.db import DB_Portfolio
-from src.environment.user_activities.utils import (
-    credential_check,
-    UserAlreadyRegisteredError,
-    UserNotFoundError,
-    InvalidEmailError,
-    IncorrectPasswordError,
-    PortfolioNotFoundError,
-)
+from sqlalchemy_serializer import SerializerMixin
+from src import db_1
 
 
-@dataclass
-class Portfolio:
-    name: str
-    source: str
-    status: str
-    portfolio_type: str
-    email: str
-    questrade_id: int = None
-    portfolio_id: int = None
+class PortfolioTag:
+    primary = "Primary"
+    regular = "Regular"
 
-    @classmethod
-    def find_all(cls, email: str) -> List["Portfolio"]:
-        port_list = DB_Portfolio.get_portfolio_list(email)
-        return [cls(*port) for port in port_list]
 
-    @classmethod
-    def find_by_name(cls, name: str, email: str) -> "Portfolio":
-        port = DB_Portfolio.get_portfolio(name, email)
-        return cls(*port)
+class Currency:
+    CAD = "CAD"
+    USD = "USD"
 
-    @staticmethod
-    def add_portfolio(
+
+class PortfolioType:
+    tfsa = "TFSA"
+    rrsp = "RRSP"
+    margin = "Margin"
+    cash = "Cash"
+    custom = "Custom"
+
+
+class PortfolioStatus:
+    active = "Active"
+    inactive = "Inactive"
+
+
+class PortfolioSource:
+    questrade = "Questrade"
+    custom = "Custom"
+
+
+class Portfolio(db_1.Model, SerializerMixin):
+    __tablename__ = "portfolios"
+
+    id = db_1.Column(db_1.Integer(), primary_key=True)
+    name = db_1.Column(db_1.String(255), nullable=False)
+    user_id = db_1.Column(db_1.Integer(), db_1.ForeignKey("users.id"))
+    portfolio_type = db_1.Column(db_1.String(255), nullable=False)
+    reporting_currency = db_1.Column(db_1.String(3), nullable=False)
+
+    # Questrade attributes
+    questrade_id = db_1.Column(db_1.Integer())
+    source = db_1.Column(db_1.String(255), default=PortfolioSource.custom)
+
+    # Default attributes
+    portfolio_tag = db_1.Column(db_1.String(255), default=PortfolioTag.regular)
+    date = db_1.Column(db_1.DateTime(), default=datetime.datetime.now)
+
+    def __init__(
+        self,
         name: str,
-        source: str,
-        status: str,
-        portfolio_type: str,
-        email: str,
-        questrade_id: int = None,
-    ) -> None:
-        DB_Portfolio.add_portfolio(
-            name, source, status, portfolio_type, email, questrade_id
-        )
+        user_id: int,
+        portfolio_type: str = PortfolioType.custom,
+        reporting_currency: str = Currency.CAD,
+    ):
+        self.name = name
+        self.user_id = user_id
+        self.portfolio_type = portfolio_type
+        self.reporting_currency = reporting_currency
 
-    def update_portfolio(self, name: str, status: str, portfolio_type: str) -> None:
-        DB_Portfolio.update_portfolio(name, status, portfolio_type, self.portfolio_id)
+    def __repr__(self):
+        return "<Portfolio {}.>".format(self.name)
 
-    def delete_portfolio(self) -> None:
-        DB_Portfolio.delete_portfolio(self.portfolio_id)
+    def set_questrade_attributes(questrade_id):
+        self.source = PortfolioSource.questrade
+        self.questrade_id = questrade_id

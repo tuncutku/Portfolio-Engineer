@@ -16,7 +16,7 @@ from src.views.utils import (
 
 from src.questrade import Questrade, Questrade_Market_Data
 
-position_blueprint = Blueprint("position", __name__)
+position_blueprint = Blueprint("position", __name__, url_prefix="/position")
 
 # TODO: Enable user to sort the positions by -> Amount, price, date etc.
 @position_blueprint.route("/<string:portfolio_name>", methods=["GET"])

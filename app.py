@@ -5,8 +5,7 @@ import inspect
 from scripts.db import create_tables, drop_tables
 from src.views import (
     user_blueprint,
-    account_blueprint,
-    questrade_blueprint,
+    portfolio_blueprint,
     position_blueprint,
     order_blueprint,
 )
@@ -22,8 +21,7 @@ app.secret_key = os.urandom(64)
 # app.config.update(ADMIN=os.environ.get("ADMIN"))
 
 app.register_blueprint(user_blueprint, url_prefix="/users")
-app.register_blueprint(account_blueprint, url_prefix="/account")
-app.register_blueprint(questrade_blueprint, url_prefix="/questrade")
+app.register_blueprint(portfolio_blueprint, url_prefix="/account")
 app.register_blueprint(position_blueprint, url_prefix="/position")
 app.register_blueprint(order_blueprint, url_prefix="/order")
 

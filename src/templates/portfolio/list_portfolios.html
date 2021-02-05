@@ -1,0 +1,45 @@
+{% extends "base/portfolio.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-success">
+        My Portfolios:
+    </h2>
+
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{ error_message }}
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- # TODO Move Delete to right, add icons near card headrs. ex questrade logo and cutom logo. -->
+{% for portfolio in port_list %}
+<div class="container mt-4 mb-3">
+    <div class="card">
+        <h5 class="card-header">
+            {{ portfolio.source }} Portfolio: {{ portfolio.name }}
+        </h5>
+        <div class="card-body">
+            <p class="card-text">Portfolio type: {{ portfolio.portfolio_type }}</p>
+            <p class="card-text">Reporting currency: {{ portfolio.reporting_currency }}</p>
+            <p class="card-text">Portfolio creation date: {{ portfolio.date.strftime('%Y-%m-%d') }}</p>
+            <a href="{{ url_for('position.list_positions', portfolio_name=portfolio.id) }}"
+                class="btn bg-warning text-white">View Positions</a>
+            <a href="" class="btn bg-success text-white">Manage Alerts</a>
+            <a href="" class="btn bg-info text-white">View Reports</a>
+            {% if portfolio.portfolio_tag == portfolio_tag.regular %}
+            <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=portfolio.id) }}"
+                class="btn bg-info text-white">Set Portfolio as Primary</a>
+            {% endif %}
+            <a href="{{ url_for('portfolio.edit_portfolio', portfolio_id=portfolio.id) }}"
+                class="btn bg-secondary text-white">Edit Portfolio</a>
+            <a href="{{ url_for('order.add_order', portfolio_id=portfolio.id) }}"
+                class="btn bg-secondary text-white">Add Order</a>
+            <a href="{{ url_for('portfolio.delete_portfolio', portfolio_id=portfolio.id) }}"
+                class="btn bg-danger text-white">Delete Portfolio</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
