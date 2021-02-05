@@ -1,102 +1,107 @@
 from pydantic.dataclasses import dataclass
 from datetime import datetime
 from typing import List
+from sqlalchemy_serializer import SerializerMixin
 
 from src.db import DB_Order
+from src import db_1
+
+
+class Exchange:
+    TSX = "Toronto Stock Exchange"
+    TSXV = "Toronto Venture Exchange"
+    CNSX = "Canadian National Stock Exchange"
+    MX = "Montreal Exchange"
+    NASDAQ = "NASDAQ"
+    NYSE = "New York Stock Exchange"
+    NYSEAM = "NYSE AMERICAN"
+    ARCA = "NYSE Arca"
+    OPRA = "Option Reporting Authority"
+    PinkSheets = "Pink Sheets"
+    OTCBB = "OTC Bulletin Board"
+
+
+class OrderSideType:
+    Buy = "Buy"
+    Sell = "Sell"
+    Short = "Sell Short"
+    Cov = "Cover the short"
+    BTO = "Buy-to-Open"
+    STC = "Sell-to-Close"
+    STO = "Sell-to-Open"
+    BTC = "Buy-to-Close"
+
+
+class OptionType:
+    Call = "Call"
+    Put = "Put"
+
+
+class OptionDurationType:
+    Weekly = "Weekly expiry cycle"
+    Monthly = "Monthly expiry cycle"
+    Quarterly = "Quarterly expiry cycle"
+    LEAP = "Long-term Equity Appreciation contracts"
+
+
+class OptionExerciseType:
+    American = "American option"
+    European = "European option"
+
+
+class OptionStrategyType:
+    CoveredCall = "Covered Call"
+    MarriedPuts = "Married Put"
+    VerticalCallSpread = "Vertical Call"
+    VerticalPutSpread = "Vertical Put"
+    CalendarCallSpread = "Calendar Call"
+    CalendarPutSpread = "Calendar Put"
+    DiagonalCallSpread = "Diagonal Call"
+    DiagonalPutSpread = "Diagonal Put"
+    Collar = "Collar"
+    Straddle = "Straddle"
+    Strangle = "Strangle"
+    ButterflyCall = "Butterfly Call"
+    ButterflyPut = "Butterfly Put"
+    IronButterfly = "Iron Butterfly"
+    CondorCall = "Condor"
+    Custom = "Custom"
+
+
+class SecurityType:
+    Stock = "Common and preferred equities, ETFs, ETNs, units, ADRs, etc."
+    ETF = "Exchange traded fund"
+    Option = "Equity and index options."
+    Bond = "Debentures, notes, bonds, both corporate and government."
+    Right = "Equity or bond rights and warrants."
+    Gold = "Physical gold (coins, wafers, bars)."
+    MutualFund = "Canadian or US mutual funds."
+    Index = "Stock indices (e.g., Dow Jones)."
+    CryptoCurrency = "Crypto currency"
+
 
 # TODO: Add leg property for multileg options
 # TODO: Add currency
-@dataclass
-class Order:
-    symbol: str
-    source: str
-    state: str  # ex: "Canceled"
-    filledQuantity: int
-    side: str  # ex: Buy
-    avg_exec_price: float
-    exec_time: datetime  # ex: "2014-10-23T20:03:42.890000-04:00"
-    strategyType: str  # ex:"SingleLeg"
-    portfolio_id: int
-    fee: int = 0
-    position_id: int = None
-    order_id: int = None
+class Order(db_1.Model, SerializerMixin):
+    __tablename__ = "orders"
 
-    @classmethod
-    def find_all(cls, position_id, date_range=None) -> List["Order"]:
-        order_list = DB_Order.get_orders(position_id=position_id)
-        return [cls(*order) for order in order_list]
+    id = db_1.Column(db_1.Integer(), primary_key=True)
+    portfolio_id = db_1.Column(
+        db_1.Integer(), db_1.ForeignKey("portfolios.id"), nullable=False
+    )
+    symbol = db_1.Column(db_1.String(255), nullable=False)
+    quantity = db_1.Column(db_1.Integer(), nullable=False)
+    side = db_1.Column(db_1.String(255), nullable=False)
+    avg_exec_price = db_1.Column(db_1.Float(), nullable=False)
+    exec_time = db_1.Column(db_1.DateTime, nullable=False)
+    fee = db_1.Column(db_1.Float(), nullable=False)
+    # strategyType: str  # ex:"SingleLeg"
+    # fee: int = 0
 
-    @classmethod
-    def find_all_by_symbol(cls, portfolio_id: int, symbol: str) -> List["Order"]:
-        order_list = DB_Order.get_orders_by_symbol(
-            portfolio_id=portfolio_id, symbol=symbol
-        )
-        return [cls(*order) for order in order_list]
-
-    @classmethod
-    def find_by_id(cls, order_id) -> "Order":
-        order = DB_Order.get_order(order_id)
-        return cls(*order)
-
-    @staticmethod
-    def add_order(
-        symbol: str,
-        source: str,
-        state: str,
-        filledQuantity: float,
-        side: str,
-        avg_exec_price: float,
-        exec_time: datetime,
-        strategyType: str,
-        portfolio_id: int,
-        fee: float = 0.0,
-        position_id: int = None,
-    ) -> None:
-        DB_Order.add_order(
-            symbol,
-            source,
-            state,
-            filledQuantity,
-            side,
-            avg_exec_price,
-            exec_time,
-            strategyType,
-            fee,
-            portfolio_id,
-            position_id,
-        )
-
-    def update_order(
-        self,
-        symbol: str,
-        source: str,
-        state: str,
-        filledQuantity: int,
-        side: str,
-        avg_exec_price: float,
-        exec_time: datetime,
-        strategyType: str,
-        portfolio_id: int,
-        fee: float = 0.0,
-        position_id: int = None,
-    ) -> None:
-        DB_Order.update_order(
-            symbol,
-            source,
-            state,
-            filledQuantity,
-            side,
-            avg_exec_price,
-            exec_time,
-            strategyType,
-            portfolio_id,
-            fee,
-            position_id,
-            self.order_id,
-        )
-
-    def insert_position_id(self, position_id: int) -> None:
-        DB_Order.update_position_id(self.order_id, position_id)
-
-    def delete_order(self) -> None:
-        DB_Order.delete_order(self.order_id)
+    def __init__(self, symbol, quantity, side, avg_exec_price, exec_time, fee):
+        self.symbol = symbol
+        self.quantity = quantity
+        self.side = side
+        self.avg_exec_price = avg_exec_price
+        self.exec_time = exec_time
+        self.fee = fee

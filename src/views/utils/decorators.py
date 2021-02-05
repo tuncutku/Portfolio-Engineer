@@ -23,7 +23,7 @@ def requires_login(f: Callable) -> Callable:
     def decorated_function(*args, **kwargs):
         if not session.get("email"):
             flash("You need to be signed in for this page.", "danger")
-            return redirect(url_for("users.login_user"))
+            return redirect(url_for("users.login"))
 
         # ONLY FOR DEVELOPMENT!!!!!
         # import os
@@ -47,7 +47,7 @@ def requires_questrade_access(f: Callable) -> Callable:
             )
         # TODO add the error message to the webpage
         except InternalServerError as e:
-            return redirect(url_for("account.list_portfolios"))
+            return redirect(url_for("portfolio.list_portfolios"))
         return f(q=q, *args, **kwargs)
 
     return decorated_function

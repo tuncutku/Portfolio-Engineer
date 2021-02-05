@@ -4,23 +4,24 @@ import tempfile
 # from celery.schedules import crontab
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+db_file = tempfile.NamedTemporaryFile()
 
 
 class Config(object):
     SECRET_KEY = "736670cb10a600b695a55839ca3a5aa54a7d7356cdef815d2ad6e19a2031182b"
-    RECAPTCHA_PUBLIC_KEY = "6LdKkQQTAAAAAEH0GFj7NLg5tGicaoOus7G9Q5Uw"
-    RECAPTCHA_PRIVATE_KEY = "6LdKkQQTAAAAAMYroksPTJ7pWhobYb88fTAcxcYn"
-    POSTS_PER_PAGE = 10
+    # RECAPTCHA_PUBLIC_KEY = "6LdKkQQTAAAAAEH0GFj7NLg5tGicaoOus7G9Q5Uw"
+    # RECAPTCHA_PRIVATE_KEY = "6LdKkQQTAAAAAMYroksPTJ7pWhobYb88fTAcxcYn"
+    # POSTS_PER_PAGE = 10
 
-    CELERY_BROKER_URL = "amqp://rabbitmq:rabbitmq@localhost//"
-    CELERY_BACKEND_URL = "amqp://rabbitmq:rabbitmq@localhost//"
+    # CELERY_BROKER_URL = "amqp://rabbitmq:rabbitmq@localhost//"
+    # CELERY_BACKEND_URL = "amqp://rabbitmq:rabbitmq@localhost//"
 
-    MAIL_SERVER = "smtp.gmail.com"
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_USER = "somemail@gmail.com"
-    MAIL_PASSWORD = "password"
-    MAIL_DEFAULT_SENDER = "from@flask.com"
+    # MAIL_SERVER = "smtp.gmail.com"
+    # MAIL_PORT = 465
+    # MAIL_USE_SSL = True
+    # MAIL_USER = "somemail@gmail.com"
+    # MAIL_PASSWORD = "password"
+    # MAIL_DEFAULT_SENDER = "from@flask.com"
 
     # CELERYBEAT_SCHEDULE = {
     #     "weekly-digest": {
@@ -43,6 +44,8 @@ class ProdConfig(Config):
     CACHE_REDIS_PASSWORD = ""
     CACHE_REDIS_DB = "0"
 
+    WTF_CSRF_TIME_LIMIT = None
+
 
 class DevConfig(Config):
     DEBUG = True
@@ -51,22 +54,23 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "database.db")
     CACHE_TYPE = "simple"
 
+    WTF_CSRF_TIME_LIMIT = None
+
 
 class TestConfig(Config):
-    db_file = tempfile.NamedTemporaryFile()
 
     DEBUG = True
     DEBUG_TB_ENABLED = False
 
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + db_file.name
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "test.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CACHE_TYPE = "null"
+    # CACHE_TYPE = "null"
     WTF_CSRF_ENABLED = False
 
-    CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
-    CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
+    # CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
+    # CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
 
-    MAIL_SERVER = "localhost"
-    MAIL_PORT = 25
-    MAIL_USERNAME = "username"
-    MAIL_PASSWORD = "password"
+    # MAIL_SERVER = "localhost"
+    # MAIL_PORT = 25
+    # MAIL_USERNAME = "username"
+    # MAIL_PASSWORD = "password"

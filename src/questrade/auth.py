@@ -12,14 +12,13 @@ from src.questrade.utils import (
     InternalServerError,
 )
 
+from flask_login import current_user
+
 
 @dataclass
 class Auth(object):
 
     config: configparser.ConfigParser
-
-    def __post_init__(self):
-        self.user_email = session.get("email")
 
     @property
     def token(self):
@@ -55,7 +54,7 @@ class Auth(object):
             )
 
     def _read_token(self):
-        return DB_Token.find_token_by_user_email(self.user_email)
+        return DB_Token.find_token_by_user_email(current_user.email)
 
     def _write_token(self, token):
         DB_Token.add_user_token(
@@ -64,7 +63,7 @@ class Auth(object):
             token["expires_at"],
             token["refresh_token"],
             token["token_type"],
-            self.user_email,
+            current_user.email,
         )
 
     def _update_token(self, token):
@@ -74,5 +73,5 @@ class Auth(object):
             token["expires_at"],
             token["refresh_token"],
             token["token_type"],
-            self.user_email,
+            current_user.email,
         )
