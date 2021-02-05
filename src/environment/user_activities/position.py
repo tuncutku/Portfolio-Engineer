@@ -1,16 +1,17 @@
 from pydantic.dataclasses import dataclass
+from typing import Union
 import pandas as pd
+
+security_type_map = {}
 
 
 @dataclass
 class Position:
 
-    name: str
-    symbol: str
-    security_type: str
-    industry: str
-    market: str
-    currency: str
+    name: Union[str, None]
+    symbol: Union[str, None]
+    security_type: Union[str, None]
+    currency: Union[str, None]
 
     def orders(self, orders):
         pass
@@ -38,10 +39,17 @@ class Position:
     def from_dict(
         cls,
         symbol: str,
-        longName: str,
+        shortName: str,
         quoteType: str,
-        industry: str,
-        market: str,
         currency: str,
     ):
-        return cls(symbol, "Custom", total_position_quantity, "Open", portfolio_id)
+        return cls(shortName, symbol, quoteType, currency)
+
+    @staticmethod
+    def position_attributes_map():
+        return {
+            "Symbol": "symbol",
+            "Name": "name",
+            "Type": "security_type",
+            "Currency": "currency",
+        }

@@ -3,6 +3,7 @@ from src.environment.user_activities.order import Order
 from src.environment.user_activities.position import Position
 import pandas as pd
 import yfinance as yf
+import inspect
 
 
 class PortfolioReport:
@@ -19,19 +20,23 @@ class PortfolioReport:
     def positions(self):
         df = self.generate_position_df()
 
+        position_list = list()
         for symbol in df.symbol.unique():
             symbol_df = df.loc[df["symbol"] == symbol]
 
             symbol_info = yf.Ticker(symbol).info
             position_attr = [
                 "symbol",
-                "longName",
+                "shortName",
                 "quoteType",
-                "industry",
-                "market",
                 "currency",
             ]
-
             position_attr_dict = dict()
             for attr in position_attr:
-                position_attr_dict[attr] = symbol_info[attr]
+                position_attr_dict[attr] = symbol_info.get(attr, None)
+            position_list.append(Position.from_dict(**position_attr_dict))
+        return position_list
+
+    @property
+    def position_attributes_map(self):
+        return Position.position_attributes_map()

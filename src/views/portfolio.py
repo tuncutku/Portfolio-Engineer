@@ -23,10 +23,9 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 @portfolio_blueprint.route("/list", methods=["GET"])
 @login_required
 def list_portfolios():
-
     error_message = None
-    port_list = Portfolio.query.filter_by(user_id=current_user.id).all()
 
+    port_list = Portfolio.query.filter_by(user_id=current_user.id).all()
     report_list = [PortfolioReport(port) for port in port_list]
 
     if port_list:
@@ -36,7 +35,7 @@ def list_portfolios():
 
     return render_template(
         "portfolio/list_portfolios.html",
-        port_list=port_list,
+        report_list=report_list,
         portfolio_tag=PortfolioTag,
         error_message=error_message,
     )
