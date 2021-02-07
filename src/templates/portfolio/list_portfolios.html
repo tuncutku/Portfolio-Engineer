@@ -17,42 +17,67 @@
 <div class="container mt-4 mb-3">
     <div class="card">
         <h5 class="card-header">
-            {{ report.underlying_portfolio.source }} Portfolio: {{ report.underlying_portfolio.name }}
+
+            <div class="row">
+                <div class="col-8">
+                    {{ report.underlying_portfolio.source }} Portfolio: {{ report.underlying_portfolio.name }}
+                </div>
+                <div class="col-4 text-end">
+                    Portfolio creation date: {{report.underlying_portfolio.date.strftime('%Y-%m-%d') }}
+                </div>
+            </div>
         </h5>
         <div class="row">
             <div class="col-9">
                 <div class="card-body">
-                    <p class="card-text">Portfolio type: {{ report.underlying_portfolio.portfolio_type }}</p>
+
                     <p class="card-text">Reporting currency: {{ report.underlying_portfolio.reporting_currency }}</p>
-                    <p class="card-text">Portfolio creation date: {{
-                        report.underlying_portfolio.date.strftime('%Y-%m-%d') }}</p>
+                    <p class="card-text">Total market value: {{ report.underlying_portfolio.reporting_currency }}</p>
+
+                    <div class="card">
+
+                        <h6 class="card-header">
+                            Open Positions
+                        </h6>
+
+                        <div class="card-body">
 
 
-                    <table class="table">
-                        <thead>
-                            <tr class="text-center">
-                                {% for key in report.position_attributes_map.keys() %}
-                                <th scope="col">{{ key }}</th>
-                                {% endfor %}
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for position in report.positions %}
-                            <tr class="text-center">
-                                {% for attr in report.position_attributes_map.values() %}
-                                <td class="align-middle">{{ position[attr] }}</td>
-                                {% endfor %}
-                                <td class="align-middle">
+                            <table class="table">
+                                <thead>
+                                    <tr class="text-center">
+                                        {% for key in report.position_attributes_map.keys() %}
+                                        <th scope="col">{{ key }}</th>
+                                        {% endfor %}
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for position in report.positions %}
+                                    <tr class="text-center">
+                                        {% for attr in report.position_attributes_map.values() %}
+                                        <td class="align-middle">{{ position[attr] }}</td>
+                                        {% endfor %}
+                                        <td class="align-middle">
 
-                                    <a href="" class="btn btn-outline-success">View orders</a>
-                                    <a href="" class="btn btn-outline-danger">Close Position</a>
+                                            <a href="" class="btn btn-outline-success">View details</a>
+                                            <a href="" class="btn btn-outline-danger">Close Position</a>
 
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
 
                 </div>
             </div>
@@ -90,5 +115,6 @@
         </div>
     </div>
 </div>
+
 {% endfor %}
 {% endblock %}
