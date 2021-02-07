@@ -1,7 +1,6 @@
 from pydantic.dataclasses import dataclass
 from datetime import datetime
 from typing import List
-from sqlalchemy_serializer import SerializerMixin
 
 from src.db import DB_Order
 from src import db_1
@@ -82,12 +81,14 @@ class SecurityType:
 
 # TODO: Add leg property for multileg options
 # TODO: Add currency
-class Order(db_1.Model, SerializerMixin):
+class Order(db_1.Model):
     __tablename__ = "orders"
 
     id = db_1.Column(db_1.Integer(), primary_key=True)
     portfolio_id = db_1.Column(
-        db_1.Integer(), db_1.ForeignKey("portfolios.id"), nullable=False
+        db_1.Integer(),
+        db_1.ForeignKey("portfolios.id", ondelete="CASCADE"),
+        nullable=False,
     )
     symbol = db_1.Column(db_1.String(255), nullable=False)
     quantity = db_1.Column(db_1.Integer(), nullable=False)
@@ -105,3 +106,14 @@ class Order(db_1.Model, SerializerMixin):
         self.avg_exec_price = avg_exec_price
         self.exec_time = exec_time
         self.fee = fee
+
+    def to_dict(self):
+        return {
+            "symbol": self.symbol,
+            "quantity": self.quantity,
+            "side": self.side,
+            "avg_exec_price": self.avg_exec_price,
+            "exec_time": self.exec_time,
+            "fee": self.fee,
+            "portfolio_id": self.portfolio_id,
+        }

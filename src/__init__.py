@@ -83,14 +83,12 @@ def create_app(object_name=None):
     from src.views import (
         user_blueprint,
         portfolio_blueprint,
-        position_blueprint,
         order_blueprint,
         error_handler_blueprint,
     )
 
     app.register_blueprint(user_blueprint)
     app.register_blueprint(portfolio_blueprint)
-    app.register_blueprint(position_blueprint)
     app.register_blueprint(order_blueprint)
     app.register_blueprint(error_handler_blueprint)
 

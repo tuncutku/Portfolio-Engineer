@@ -49,6 +49,10 @@ class Portfolio(db_1.Model, SerializerMixin):
     portfolio_tag = db_1.Column(db_1.String(255), default=PortfolioTag.regular)
     date = db_1.Column(db_1.DateTime(), default=datetime.datetime.now)
 
+    orders = db_1.relationship(
+        "Order", backref="portfolios", cascade="all, delete-orphan"
+    )
+
     def __init__(
         self,
         name: str,
