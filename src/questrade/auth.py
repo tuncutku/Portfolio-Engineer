@@ -5,7 +5,6 @@ import configparser
 from flask import session
 from dataclasses import dataclass
 
-from src.db import DB_Token
 from src.questrade.utils import (
     TokenNotFoundError,
     InvalidTokenError,

@@ -1,31 +1,12 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 from flask_login import login_required, current_user
 import datetime
-
-import inspect
-
-from collections import defaultdict
-
-from src.environment.user_activities import Position, Portfolio
-from src.environment.user_activities.order import Order
-from src.views.utils import (
-    requires_login,
-    market_data_connection,
-    _modify_position_list,
-    _check_position_validity,
-    _extract_open_orders,
-    _validate_order,
-    _get_exec_time,
-)
-from src import db_1
-from src.views.errors.user_level_errors import UserLevelError
-from src.questrade import Questrade_Market_Data
-from src.questrade.utils import InvalidSymbolError
-from src.views.utils.common import get_quote_from_symbol
-
-from src.forms.order_forms import AddOrderForm
-
 import pandas as pd
+import yfinance as yf
+
+from src.environment.user_activities import Position, Portfolio, Order
+from src.extensions import db
+from src.forms.order_forms import AddOrderForm
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
@@ -75,9 +56,7 @@ def delete_order(portfolio_name: str, symbol: str, order_id: int):
     methods=["GET", "POST"],
 )
 @login_required
-def edit_order(
-    md: Questrade_Market_Data, portfolio_name: str, symbol: str, order_id: int
-):
+def edit_order(md, portfolio_name: str, symbol: str, order_id: int):
     form = generate_edit_portfolio_form(port)
 
     return render_template(
@@ -96,17 +75,32 @@ def add_order(portfolio_id):
 
     form = AddOrderForm()
     if form.validate_on_submit():
+        symbol = form.symbol.data
+
+        port = Portfolio.query.get(portfolio_id)
+        pos = Position.query.filter_by(symbol=form.symbol.data, portfolio=port).first()
+        if pos is None:
+            symbol_info = yf.Ticker(symbol).info
+            pos = Position(
+                symbol=symbol,
+                name=symbol_info.get("shortName", None),
+                security_type=symbol_info.get("quoteType", None),
+                currency=symbol_info.get("currency", None),
+                portfolio=port,
+            )
+            db.session.add(pos)
+
         new_order = Order(
-            form.symbol.data,
-            form.quantity.data,
-            form.side.data,
-            form.price.data,
-            form.exec_datetime.data,
-            form.fee.data,
+            symbol=form.symbol.data,
+            quantity=form.quantity.data,
+            side=form.side.data,
+            avg_exec_price=form.price.data,
+            exec_time=form.exec_datetime.data,
+            fee=form.fee.data,
+            position=pos,
         )
-        new_order.portfolio_id = portfolio_id
-        db_1.session.add(new_order)
-        db_1.session.commit()
+        db.session.add(new_order)
+        db.session.commit()
 
         return redirect(url_for("portfolio.list_portfolios"))
 

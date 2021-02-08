@@ -3,8 +3,6 @@ from flask_login import login_required, current_user
 
 from src.questrade.utils import TokenError
 
-from src import db_1
-
 
 error_handler_blueprint = Blueprint(
     "error_handler", __name__, url_prefix="/error_handler"

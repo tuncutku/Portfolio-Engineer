@@ -9,8 +9,6 @@ import time
 import requests
 import configparser
 from flask import session
-
-from src.db import DB_Token
 from src.questrade.utils import (
     TokenNotFoundError,
     InvalidTokenError,

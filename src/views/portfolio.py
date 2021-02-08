@@ -14,7 +14,7 @@ from src.reports.portfolio_reports import PortfolioReport
 
 from src.questrade import Questrade
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
-from src import db_1
+from src.extensions import db
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
@@ -25,8 +25,7 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 def list_portfolios():
     error_message = None
 
-    port_list = Portfolio.query.filter_by(user_id=current_user.id).all()
-    report_list = [PortfolioReport(port) for port in port_list]
+    port_list = Portfolio.query.filter_by(user=current_user).all()
 
     if port_list:
         port_list = edit_list_order(port_list)
@@ -35,7 +34,7 @@ def list_portfolios():
 
     return render_template(
         "portfolio/list_portfolios.html",
-        report_list=report_list,
+        report_list=port_list,
         portfolio_tag=PortfolioTag,
         error_message=error_message,
     )
@@ -50,14 +49,14 @@ def add_portfolio():
     if form.validate_on_submit():
 
         new_portfolio = Portfolio(
-            form.port_name.data,
-            current_user.id,
-            form.port_type.data,
-            form.port_reporting_currency.data,
+            name=form.port_name.data,
+            portfolio_type=form.port_type.data,
+            reporting_currency=form.port_reporting_currency.data,
+            user=current_user,
         )
 
-        db_1.session.add(new_portfolio)
-        db_1.session.commit()
+        db.session.add(new_portfolio)
+        db.session.commit()
 
         return redirect(url_for("portfolio.list_portfolios"))
 
@@ -73,7 +72,7 @@ def edit_portfolio(portfolio_id):
         port.name = form.port_name.data
         port.reporting_currency = form.port_reporting_currency.data
         port.portfolio_type = form.port_type.data
-        db_1.session.commit()
+        db.session.commit()
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template(
         "portfolio/edit_portfolio.html", form=form, portfolio_id=portfolio_id
@@ -83,8 +82,9 @@ def edit_portfolio(portfolio_id):
 @portfolio_blueprint.route("/delete/<int:portfolio_id>", methods=["GET"])
 @login_required
 def delete_portfolio(portfolio_id):
-    Portfolio.query.filter_by(id=portfolio_id).delete()
-    db_1.session.commit()
+    port = Portfolio.query.get(portfolio_id)
+    db.session.delete(port)
+    db.session.commit()
     return redirect(url_for("portfolio.list_portfolios"))
 
 
@@ -102,7 +102,7 @@ def set_portfolio_primary(portfolio_id):
     current_portfolio = Portfolio.query.filter_by(id=portfolio_id).first()
     current_portfolio.portfolio_tag = PortfolioTag.primary
 
-    db_1.session.commit()
+    db.session.commit()
     return redirect(url_for("portfolio.list_portfolios"))
 
 

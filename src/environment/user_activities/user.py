@@ -1,18 +1,22 @@
 from sqlalchemy_serializer import SerializerMixin
 from flask_login import UserMixin
 
-from src import db_1, bcrypt
+from src.extensions import db, bcrypt
 from src.environment.user_activities.utils.encryption import (
     encrypt_token,
     decrypt_token,
 )
 
 
-class User(db_1.Model, UserMixin, SerializerMixin):
+class User(db.Model, UserMixin, SerializerMixin):
     __tablename__ = "users"
-    id = db_1.Column(db_1.Integer(), primary_key=True)
-    email = db_1.Column(db_1.String(255), nullable=False, index=True, unique=True)
-    password = db_1.Column(db_1.String(255))
+    id = db.Column(db.Integer(), primary_key=True)
+    email = db.Column(db.String(255), nullable=False, index=True, unique=True)
+    password = db.Column(db.String(255))
+
+    portfolios_rs = db.relationship(
+        "Portfolio", backref="user", cascade="all, delete-orphan"
+    )
 
     def __init__(self, email: str):
         self.email = email
