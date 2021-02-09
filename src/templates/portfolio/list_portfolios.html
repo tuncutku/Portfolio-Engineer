@@ -13,17 +13,17 @@
 
 </div>
 
-{% for report in report_list %}
+{% for port in port_list %}
 <div class="container mt-4 mb-3">
     <div class="card">
         <h5 class="card-header">
 
             <div class="row">
                 <div class="col-8">
-                    {{ report.source }} Portfolio: {{ report.name }}
+                    {{ port.source }} Portfolio: {{ port.name }}
                 </div>
                 <div class="col-4 text-end">
-                    Portfolio creation date: {{report.date.strftime('%Y-%m-%d') }}
+                    Portfolio creation date: {{port.date.strftime('%Y-%m-%d') }}
                 </div>
             </div>
         </h5>
@@ -31,17 +31,44 @@
             <div class="col-9">
                 <div class="card-body">
 
-                    <p class="card-text">Reporting currency: {{ report.reporting_currency }}</p>
-                    <p class="card-text">Total market value: {{ report.reporting_currency }}</p>
+                    <p class="card-text">Reporting currency: {{ port.reporting_currency }}</p>
+                    <p class="card-text">Total market value: {{ port.total_mkt_value }}</p>
 
+                    <div class="card">
 
+                        <h6 class="card-header">
+                            Open Positions
+                        </h6>
 
+                        <div class="card-body">
 
+                            <table class="table">
+                                <thead>
+                                    <tr class="text-center">
+                                        {% for key in position_attr.values() %}
+                                        <th scope="col">{{ key }}</th>
+                                        {% endfor %}
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for position in port["position_list"] %}
+                                    <tr class="text-center">
+                                        {% for attr in position_attr.keys() %}
+                                        <td class="align-middle">{{ position[attr] }}</td>
+                                        {% endfor %}
+                                        <td class="align-middle">
 
+                                            <a href="" class="btn btn-outline-success">View details</a>
+                                            <a href="" class="btn btn-outline-danger">Close Position</a>
 
-
-
-
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
 
                 </div>
@@ -59,15 +86,15 @@
                                         <ul class="list-group">
                                             <a href="" class="btn btn-outline-success">Manage Alerts</a>
                                             <a href="" class="btn btn-outline-success mt-2">View Reports</a>
-                                            {% if report.portfolio_tag == portfolio_tag.regular %}
-                                            <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=report.id) }}"
+                                            {% if port.portfolio_tag == portfolio_tag.regular %}
+                                            <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port.id) }}"
                                                 class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>
                                             {% endif %}
-                                            <a href="{{ url_for('portfolio.edit_portfolio', portfolio_id=report.id) }}"
+                                            <a href="{{ url_for('portfolio.edit_portfolio', portfolio_id=port.id) }}"
                                                 class="btn btn-outline-success mt-2">Edit Portfolio</a>
-                                            <a href="{{ url_for('order.add_order', portfolio_id=report.id) }}"
+                                            <a href="{{ url_for('order.add_order', portfolio_id=port.id) }}"
                                                 class="btn btn-outline-success mt-2">Add Order</a>
-                                            <a href="{{ url_for('portfolio.delete_portfolio', portfolio_id=report.id) }}"
+                                            <a href="{{ url_for('portfolio.delete_portfolio', portfolio_id=port.id) }}"
                                                 class="btn btn-outline-danger mt-2">Delete Portfolio</a>
                                         </ul>
                                     </div>

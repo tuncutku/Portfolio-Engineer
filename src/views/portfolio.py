@@ -2,17 +2,10 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 from flask_login import login_required, current_user
 import pandas as pd
 
-from src.environment.user_activities.portfolio import Portfolio, PortfolioTag
+from src.environment.user_activities.portfolio import Portfolio, PortfolioTag, Position
 from src.views.utils.common import edit_list_order
-from src.views.utils import requires_questrade_access
-from src.views.utils import (
-    check_and_update_portfolio,
-    _add_portfolio,
-    _valide_portfolio_name,
-)
 from src.reports.portfolio_reports import PortfolioReport
 
-from src.questrade import Questrade
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
 from src.extensions import db
 
@@ -34,7 +27,8 @@ def list_portfolios():
 
     return render_template(
         "portfolio/list_portfolios.html",
-        report_list=port_list,
+        port_list=port_list,
+        position_attr=Position.attr_dict,
         portfolio_tag=PortfolioTag,
         error_message=error_message,
     )

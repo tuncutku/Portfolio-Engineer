@@ -97,6 +97,10 @@ class Order(db.Model):
     # strategyType: str  # ex:"SingleLeg"
     # fee: int = 0
 
+    @property
+    def adjusted_quantity(self):
+        return self.quantity if self.side == OrderSideType.Buy else (-1) * self.quantity
+
     def to_dict(self):
         return {
             "symbol": self.symbol,

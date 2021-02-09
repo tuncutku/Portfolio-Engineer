@@ -6,6 +6,8 @@ from src.environment.user_activities.position import Position
 from sqlalchemy_serializer import SerializerMixin
 from src.extensions import db
 
+import yfinance as yf
+
 
 class PortfolioTag:
     primary = "Primary"
@@ -66,3 +68,17 @@ class Portfolio(db.Model, SerializerMixin):
     @property
     def position_list(self):
         return Position.query.filter_by(portfolio=self).all()
+
+    @property
+    def total_mkt_value(self):
+        md_provider = yf.Ticker("EURUSD=X")
+        fx_rate = float(round(md_provider.history(period="1d")["Close"], 2))
+        value = 0
+        for pos in self.position_list:
+            pos_mkt_cap = (
+                pos.market_cap
+                if pos.currency == self.reporting_currency
+                else pos.market_cap * fx_rate
+            )
+            value += pos_mkt_cap
+        return round(value, 2)
