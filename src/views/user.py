@@ -4,8 +4,6 @@ from flask import Blueprint, request, session, url_for, render_template, redirec
 from flask_login import login_user, logout_user
 
 from src.environment.user_activities import User
-from src.environment.user_activities.utils import UserError
-from src.views.utils import requires_login
 from src.forms.user_forms import RegisterForm, LoginForm
 from src.extensions import db
 
@@ -31,8 +29,7 @@ def register():
         new_user = User(form.email.data)
         new_user.set_password(form.password.data)
         # Add user to database
-        db.session.add(new_user)
-        db.session.commit()
+        new_user.save_to_db()
         return redirect(url_for("users.login"))
     return render_template("user/register.html", form=form)
 

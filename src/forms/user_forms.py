@@ -16,11 +16,11 @@ class RegisterForm(Form):
         if not check_validate:
             return False
 
-        user = User.query.filter_by(email=self.email.data).first()
+        user = User.find_by_email(email=self.email.data)
 
         # Is the email already being used
         if user:
-            self.email.errors.append("User with that email address already exists")
+            self.email.errors.append("User with that email address already exists.")
             return False
 
         return True
@@ -33,15 +33,13 @@ class LoginForm(Form):
     def validate(self):
         check_validate = super(LoginForm, self).validate()
 
-        # if our validators do not pass
         if not check_validate:
             return False
 
         def authenticate(email: str, password: str) -> User:
-            user = User.query.filter_by(email=email).first()
+            user = User.find_by_email(email=email)
             if not user:
                 return None
-            # Do the passwords match
             if not user.check_password(password):
                 return None
             return user

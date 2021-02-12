@@ -1,6 +1,7 @@
 import datetime
 from typing import List
 
+from src.environment.user_activities.base import BaseModel
 from src.environment.user_activities.position import Position
 
 from sqlalchemy_serializer import SerializerMixin
@@ -37,7 +38,7 @@ class PortfolioSource:
     custom = "Custom"
 
 
-class Portfolio(db.Model, SerializerMixin):
+class Portfolio(BaseModel):
     __tablename__ = "portfolios"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -54,7 +55,7 @@ class Portfolio(db.Model, SerializerMixin):
     portfolio_tag = db.Column(db.String(255), default=PortfolioTag.regular)
     date = db.Column(db.DateTime(), default=datetime.datetime.now)
 
-    positions_rs = db.relationship(
+    positions = db.relationship(
         "Position", backref="portfolio", cascade="all, delete-orphan"
     )
 
@@ -66,15 +67,11 @@ class Portfolio(db.Model, SerializerMixin):
     #     self.questrade_id = questrade_id
 
     @property
-    def position_list(self):
-        return Position.query.filter_by(portfolio=self).all()
-
-    @property
     def total_mkt_value(self):
         md_provider = yf.Ticker("EURUSD=X")
         fx_rate = float(round(md_provider.history(period="1d")["Close"], 2))
         value = 0
-        for pos in self.position_list:
+        for pos in self.positions:
             pos_mkt_cap = (
                 pos.market_cap
                 if pos.currency == self.reporting_currency
@@ -82,3 +79,13 @@ class Portfolio(db.Model, SerializerMixin):
             )
             value += pos_mkt_cap
         return round(value, 2)
+
+    @classmethod
+    def find_by_id(cls, _id: int):
+        return cls.query.get(_id)
+
+    def edit(self, name, currency, port_type):
+        self.name = name
+        self.reporting_currency = currency
+        self.portfolio_type = port_type
+        db.session.commit()

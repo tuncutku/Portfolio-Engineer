@@ -77,7 +77,7 @@ def add_order(portfolio_id):
     if form.validate_on_submit():
         symbol = form.symbol.data
 
-        port = Portfolio.query.get(portfolio_id)
+        port = Portfolio.find_by_id(portfolio_id)
         pos = Position.query.filter_by(symbol=form.symbol.data, portfolio=port).first()
         if pos is None:
             symbol_info = yf.Ticker(symbol).info
@@ -88,7 +88,7 @@ def add_order(portfolio_id):
                 currency=symbol_info.get("currency", None),
                 portfolio=port,
             )
-            db.session.add(pos)
+            pos.save_to_db()
 
         new_order = Order(
             symbol=form.symbol.data,
@@ -99,8 +99,8 @@ def add_order(portfolio_id):
             fee=form.fee.data,
             position=pos,
         )
-        db.session.add(new_order)
-        db.session.commit()
+
+        new_order.save_to_db()
 
         return redirect(url_for("portfolio.list_portfolios"))
 

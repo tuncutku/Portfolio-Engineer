@@ -13,7 +13,7 @@ from wtforms import (
 from datetime import datetime, timedelta
 from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
-from src.environment.user_activities.order import Order, OrderSideType
+from src.environment.user_activities.order import OrderSideType
 
 import yfinance as yf
 
@@ -36,8 +36,7 @@ def valide_price_and_date(ticker, price, date: datetime):
     # Case where date and price are not given.
     if not price and not date:
         try:
-            df = security.history(period="1m", interval="1m")
-            price = float(df["Close"].round(2))
+            price = float(round(security.history(period="1d")["Close"], 2))
             date = now
         except:
             validation = False
@@ -168,7 +167,7 @@ class EditOrderForm(Form):
 
         # Is the email already being used
         if user:
-            self.email.errors.append("User with that email address already exists")
+            self.email.errors.append("User with that email address already exists.")
             return False
 
         return True

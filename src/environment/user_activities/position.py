@@ -1,13 +1,14 @@
 import datetime
 
-from sqlalchemy_serializer import SerializerMixin
 from src.extensions import db
 from src.environment.user_activities.order import Order
+from src.environment.user_activities.base import BaseModel
+
 import yfinance as yf
 import pandas as pd
 
 
-class Position(db.Model, SerializerMixin):
+class Position(BaseModel):
     __tablename__ = "positions"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -20,9 +21,7 @@ class Position(db.Model, SerializerMixin):
         db.ForeignKey("portfolios.id"),
     )
 
-    order_rs = db.relationship(
-        "Order", backref="position", cascade="all, delete-orphan"
-    )
+    orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
 
     attr_dict = {
         "name": "Name",
@@ -31,11 +30,13 @@ class Position(db.Model, SerializerMixin):
         "market_cap": "Market Cap",
     }
 
+    def __repr__(self):
+        return "<Position {}.>".format(self.symbol)
+
     @property
     def open_quantity(self):
         quantity = 0
-        orders = Order.query.filter_by(position=self).all()
-        for order in orders:
+        for order in self.orders:
             quantity += order.adjusted_quantity
         return quantity
 
@@ -49,5 +50,6 @@ class Position(db.Model, SerializerMixin):
     def open(self) -> bool:
         return True if self.quantity != 0 else False
 
-    def __repr__(self):
-        return "<Position {}.>".format(self.symbol)
+    @classmethod
+    def find_by_email(cls, email: str):
+        return cls.query.filter_by(email=email).first()

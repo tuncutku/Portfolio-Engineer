@@ -52,7 +52,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for position in port["position_list"] %}
+                                    {% for position in port["positions"] %}
                                     <tr class="text-center">
                                         {% for attr in position_attr.keys() %}
                                         <td class="align-middle">{{ position[attr] }}</td>

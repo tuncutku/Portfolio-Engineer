@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 
 from src.extensions import db
+from src.environment.user_activities.base import BaseModel
 
 
 class Exchange:
@@ -80,7 +81,7 @@ class SecurityType:
 
 # TODO: Add leg property for multileg options
 # TODO: Add currency
-class Order(db.Model):
+class Order(BaseModel):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer(), primary_key=True)

@@ -1,5 +1,6 @@
-from sqlalchemy_serializer import SerializerMixin
 from flask_login import UserMixin
+from src.environment.user_activities.base import BaseModel
+
 
 from src.extensions import db, bcrypt
 from src.environment.user_activities.utils.encryption import (
@@ -8,13 +9,13 @@ from src.environment.user_activities.utils.encryption import (
 )
 
 
-class User(db.Model, UserMixin, SerializerMixin):
+class User(BaseModel, UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(255), nullable=False, index=True, unique=True)
     password = db.Column(db.String(255))
 
-    portfolios_rs = db.relationship(
+    portfolios = db.relationship(
         "Portfolio", backref="user", cascade="all, delete-orphan"
     )
 
@@ -29,3 +30,7 @@ class User(db.Model, UserMixin, SerializerMixin):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
+
+    @classmethod
+    def find_by_email(cls, email: str):
+        return cls.query.filter_by(email=email).first()

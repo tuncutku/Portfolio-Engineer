@@ -1,3 +1,0 @@
-activate () {
-  . ../.env/bin/activate
-}

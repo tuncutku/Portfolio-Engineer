@@ -59,10 +59,12 @@ class DevConfig(Config):
 
 class TestConfig(Config):
 
+    db_file = tempfile.NamedTemporaryFile()
+
     DEBUG = True
     DEBUG_TB_ENABLED = False
 
-    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "test.db")
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, db_file.name)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # CACHE_TYPE = "null"
     WTF_CSRF_ENABLED = False
