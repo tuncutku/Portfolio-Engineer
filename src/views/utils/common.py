@@ -1,10 +1,8 @@
 from flask_login import current_user
 from src.environment.user_activities.portfolio import Portfolio, PortfolioTag
 
-from src.questrade import Questrade_Market_Data
 
-
-def get_quote_from_symbol(symbol: str, md_provider: Questrade_Market_Data):
+def get_quote_from_symbol(symbol: str, md_provider):
     raw_symbols = md_provider.symbols_search(prefix=symbol)
     symbol_id = md_provider.get_symbol_id(raw_symbols, symbol)
     raw_quote = md_provider.markets_quote(id=symbol_id)

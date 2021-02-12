@@ -2,6 +2,8 @@ import click
 import time
 import os
 
+from src.environment.user_activities.user import User
+
 
 def register(app):
     @app.cli.command()
@@ -30,5 +32,12 @@ def register(app):
             basedir = os.path.abspath(os.path.dirname(__file__))
             covdir = os.path.join(basedir, "../tmp/coverage")
             COV.html_report(directory=covdir)
-            print("HTML version: file://{covdir}/index.html")
+            print("HTML version: file://{}/index.html".format(covdir))
             COV.erase()
+
+    @app.cli.command("create_user")
+    def create_user():
+
+        user = User("tuncutku10@gmail.com")
+        user.set_password("1234")
+        user.save_to_db()

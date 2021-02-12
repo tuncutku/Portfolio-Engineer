@@ -48,8 +48,4 @@ class Position(BaseModel):
 
     @property
     def open(self) -> bool:
-        return True if self.quantity != 0 else False
-
-    @classmethod
-    def find_by_email(cls, email: str):
-        return cls.query.filter_by(email=email).first()
+        return True if self.open_quantity != 0 else False
