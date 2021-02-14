@@ -1,7 +1,6 @@
 import datetime
 
 from src.extensions import db
-from src.environment.user_activities.order import Order
 from src.environment.user_activities.base import BaseModel
 
 import yfinance as yf
@@ -44,8 +43,19 @@ class Position(BaseModel):
     def market_cap(self, quote: pd.DataFrame = None) -> float:
         if quote is None:
             md_provider = yf.Ticker(self.symbol)
-        return float(round(md_provider.history(period="1d")["Close"], 2))
+            quote = md_provider.history(period="1d")["Close"].head(1)
+        return round(float(quote * self.open_quantity), 2)
 
     @property
     def open(self) -> bool:
         return True if self.open_quantity != 0 else False
+
+    def to_dict(self):
+        return {
+            "Symbol": self.symbol,
+            "Name": self.name,
+            "Security Type": self.security_type,
+            "Currency": self.currency,
+            "Market Cap": "{:,.2f}".format(self.market_cap),
+            "Orders": [order.to_dict() for order in self.orders],
+        }

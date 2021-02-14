@@ -2,7 +2,8 @@ from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required, current_user
 import pandas as pd
 
-from src.environment.user_activities.portfolio import Portfolio, PortfolioTag, Position
+from src.environment.user_activities.portfolio import Portfolio, PortfolioTag
+from src.environment.user_activities.position import Position
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
 from src.extensions import db
 
@@ -17,15 +18,13 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 def list_portfolios():
 
     error_message = None
-    port_list = current_user.portfolios
-    if port_list:
-        port_list = edit_list_order(port_list)
-    else:
-        error_message = "You currently don't have a portfolio. Add a custom portfolio or sync with your Questrade account!"
+    port_list = [portfolio.to_dict() for portfolio in current_user.portfolios]
+    if not port_list:
+        error_message = "Add a custom portfolio!"
+
     return render_template(
         "portfolio/list_portfolios.html",
         port_list=port_list,
-        position_attr=Position.attr_dict,
         portfolio_tag=PortfolioTag,
         error_message=error_message,
     )

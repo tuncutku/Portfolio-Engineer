@@ -68,6 +68,7 @@ class OptionStrategyType:
 
 
 class SecurityType:
+    Cash = "Cash"
     Stock = "Common and preferred equities, ETFs, ETNs, units, ADRs, etc."
     ETF = "Exchange traded fund"
     Option = "Equity and index options."
@@ -98,6 +99,9 @@ class Order(BaseModel):
     # strategyType: str  # ex:"SingleLeg"
     # fee: int = 0
 
+    def __repr__(self):
+        return "<Order {}.>".format(self.symbol)
+
     @property
     def adjusted_quantity(self):
         return self.quantity if self.side == OrderSideType.Buy else (-1) * self.quantity
@@ -110,5 +114,4 @@ class Order(BaseModel):
             "avg_exec_price": self.avg_exec_price,
             "exec_time": self.exec_time,
             "fee": self.fee,
-            "portfolio_id": self.portfolio_id,
         }

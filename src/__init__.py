@@ -1,4 +1,6 @@
 from flask import Flask, render_template
+from werkzeug.exceptions import HTTPException
+import json
 
 from src.extensions import (
     db,
@@ -46,5 +48,19 @@ def create_app(object_name=None):
     def home():
         db.create_all()
         return render_template("home.html")
+
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):
+        response = e.get_response()
+        # replace the body with JSON
+        response.data = json.dumps(
+            {
+                "code": e.code,
+                "name": e.name,
+                "description": e.description,
+            }
+        )
+        response.content_type = "application/json"
+        return response
 
     return app

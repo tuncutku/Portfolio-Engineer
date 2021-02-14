@@ -1,6 +1,6 @@
 from flask_login import current_user
 
-from src.tests.base import BaseTest
+from src.tests.utils.base import BaseTest
 
 from src.extensions import db
 from src.environment.user_activities.user import User
@@ -95,3 +95,5 @@ class TestUserURLs(BaseTest):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue("My Portfolios:" in response.get_data(as_text=True))
+
+        self.assertTemplateUsed("portfolio/list_portfolios.html")

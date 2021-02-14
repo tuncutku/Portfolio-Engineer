@@ -1,6 +1,7 @@
 import click
 import time
 import os
+import HtmlTestRunner
 
 from src.environment.user_activities.user import User
 
