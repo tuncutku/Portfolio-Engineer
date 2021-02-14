@@ -1,20 +1,13 @@
-from flask import Blueprint, request, session, url_for, render_template, redirect
+from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required, current_user
 import pandas as pd
 
 from src.environment.user_activities.portfolio import Portfolio, PortfolioTag
-from src.views.utils.common import edit_list_order
-from src.views.utils import requires_questrade_access
-from src.views.utils import (
-    check_and_update_portfolio,
-    _add_portfolio,
-    _valide_portfolio_name,
-)
-from src.reports.portfolio_reports import PortfolioReport
-
-from src.questrade import Questrade
+from src.environment.user_activities.position import Position
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
-from src import db_1
+from src.extensions import db
+
+from src.views.utils.common import edit_list_order
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
@@ -23,19 +16,15 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 @portfolio_blueprint.route("/list", methods=["GET"])
 @login_required
 def list_portfolios():
+
     error_message = None
-
-    port_list = Portfolio.query.filter_by(user_id=current_user.id).all()
-    report_list = [PortfolioReport(port) for port in port_list]
-
-    if port_list:
-        port_list = edit_list_order(port_list)
-    else:
-        error_message = "You currently don't have a portfolio. Add a custom portfolio or sync with your Questrade account!"
+    port_list = [portfolio.to_dict() for portfolio in current_user.portfolios]
+    if not port_list:
+        error_message = "Add a custom portfolio!"
 
     return render_template(
         "portfolio/list_portfolios.html",
-        report_list=report_list,
+        port_list=port_list,
         portfolio_tag=PortfolioTag,
         error_message=error_message,
     )
@@ -46,21 +35,15 @@ def list_portfolios():
 def add_portfolio():
 
     form = AddPortfolioForm()
-
     if form.validate_on_submit():
-
         new_portfolio = Portfolio(
-            form.port_name.data,
-            current_user.id,
-            form.port_type.data,
-            form.port_reporting_currency.data,
+            name=form.port_name.data,
+            portfolio_type=form.port_type.data,
+            reporting_currency=form.port_reporting_currency.data,
+            user=current_user,
         )
-
-        db_1.session.add(new_portfolio)
-        db_1.session.commit()
-
+        new_portfolio.save_to_db()
         return redirect(url_for("portfolio.list_portfolios"))
-
     return render_template("portfolio/add_portfolio.html", form=form)
 
 
@@ -70,10 +53,9 @@ def edit_portfolio(portfolio_id):
     port = Portfolio.query.filter_by(id=portfolio_id).first()
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
-        port.name = form.port_name.data
-        port.reporting_currency = form.port_reporting_currency.data
-        port.portfolio_type = form.port_type.data
-        db_1.session.commit()
+        port.edit(
+            form.port_name.data, form.port_reporting_currency.data, form.port_type.data
+        )
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template(
         "portfolio/edit_portfolio.html", form=form, portfolio_id=portfolio_id
@@ -83,8 +65,8 @@ def edit_portfolio(portfolio_id):
 @portfolio_blueprint.route("/delete/<int:portfolio_id>", methods=["GET"])
 @login_required
 def delete_portfolio(portfolio_id):
-    Portfolio.query.filter_by(id=portfolio_id).delete()
-    db_1.session.commit()
+    port = Portfolio.query.get(portfolio_id)
+    port.delete_from_db()
     return redirect(url_for("portfolio.list_portfolios"))
 
 
@@ -102,7 +84,7 @@ def set_portfolio_primary(portfolio_id):
     current_portfolio = Portfolio.query.filter_by(id=portfolio_id).first()
     current_portfolio.portfolio_tag = PortfolioTag.primary
 
-    db_1.session.commit()
+    db.session.commit()
     return redirect(url_for("portfolio.list_portfolios"))
 
 

@@ -2,8 +2,8 @@ from pydantic.dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
-from src.db import DB_Order
-from src import db_1
+from src.extensions import db
+from src.environment.user_activities.base import BaseModel
 
 
 class Exchange:
@@ -68,6 +68,7 @@ class OptionStrategyType:
 
 
 class SecurityType:
+    Cash = "Cash"
     Stock = "Common and preferred equities, ETFs, ETNs, units, ADRs, etc."
     ETF = "Exchange traded fund"
     Option = "Equity and index options."
@@ -81,31 +82,29 @@ class SecurityType:
 
 # TODO: Add leg property for multileg options
 # TODO: Add currency
-class Order(db_1.Model):
+class Order(BaseModel):
     __tablename__ = "orders"
 
-    id = db_1.Column(db_1.Integer(), primary_key=True)
-    portfolio_id = db_1.Column(
-        db_1.Integer(),
-        db_1.ForeignKey("portfolios.id", ondelete="CASCADE"),
-        nullable=False,
+    id = db.Column(db.Integer(), primary_key=True)
+    position_id = db.Column(
+        db.Integer(),
+        db.ForeignKey("positions.id"),
     )
-    symbol = db_1.Column(db_1.String(255), nullable=False)
-    quantity = db_1.Column(db_1.Integer(), nullable=False)
-    side = db_1.Column(db_1.String(255), nullable=False)
-    avg_exec_price = db_1.Column(db_1.Float(), nullable=False)
-    exec_time = db_1.Column(db_1.DateTime, nullable=False)
-    fee = db_1.Column(db_1.Float(), nullable=False)
+    symbol = db.Column(db.String(255), nullable=False)
+    quantity = db.Column(db.Integer(), nullable=False)
+    side = db.Column(db.String(255), nullable=False)
+    avg_exec_price = db.Column(db.Float(), nullable=False)
+    exec_time = db.Column(db.DateTime, nullable=False)
+    fee = db.Column(db.Float(), nullable=False)
     # strategyType: str  # ex:"SingleLeg"
     # fee: int = 0
 
-    def __init__(self, symbol, quantity, side, avg_exec_price, exec_time, fee):
-        self.symbol = symbol
-        self.quantity = quantity
-        self.side = side
-        self.avg_exec_price = avg_exec_price
-        self.exec_time = exec_time
-        self.fee = fee
+    def __repr__(self):
+        return "<Order {}.>".format(self.symbol)
+
+    @property
+    def adjusted_quantity(self):
+        return self.quantity if self.side == OrderSideType.Buy else (-1) * self.quantity
 
     def to_dict(self):
         return {
@@ -115,5 +114,4 @@ class Order(db_1.Model):
             "avg_exec_price": self.avg_exec_price,
             "exec_time": self.exec_time,
             "fee": self.fee,
-            "portfolio_id": self.portfolio_id,
         }

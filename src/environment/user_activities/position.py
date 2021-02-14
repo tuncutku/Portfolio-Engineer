@@ -1,55 +1,61 @@
-from pydantic.dataclasses import dataclass
-from typing import Union
-import pandas as pd
+import datetime
+
+from src.extensions import db
+from src.environment.user_activities.base import BaseModel
+
 import yfinance as yf
+import pandas as pd
 
-security_type_map = {}
 
+class Position(BaseModel):
+    __tablename__ = "positions"
 
-class Position:
-    def __init__(self, symbol, name, security_type, currency, quantity, market_cap):
-        self.symbol = symbol
-        self.name = name
-        self.security_type = security_type
-        self.currency = currency
-        self.quantity = quantity
-        self.market_cap = market_cap
+    id = db.Column(db.Integer(), primary_key=True)
+    symbol = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    security_type = db.Column(db.String(255), nullable=False)
+    currency = db.Column(db.String(3), nullable=False)
+    portfolio_id = db.Column(
+        db.Integer(),
+        db.ForeignKey("portfolios.id"),
+    )
 
-    def orders(self, orders):
-        pass
+    orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
+
+    attr_dict = {
+        "name": "Name",
+        "security_type": "Security Type",
+        "currency": "Currency",
+        "market_cap": "Market Cap",
+    }
+
+    def __repr__(self):
+        return "<Position {}.>".format(self.symbol)
+
+    @property
+    def open_quantity(self):
+        quantity = 0
+        for order in self.orders:
+            quantity += order.adjusted_quantity
+        return quantity
+
+    @property
+    def market_cap(self, quote: pd.DataFrame = None) -> float:
+        if quote is None:
+            md_provider = yf.Ticker(self.symbol)
+            quote = md_provider.history(period="1d")["Close"].head(1)
+        return round(float(quote * self.open_quantity), 2)
 
     @property
     def open(self) -> bool:
-        return True if self.quantity != 0 else False
+        return True if self.open_quantity != 0 else False
 
-    def generate_trades(self, orders):
-        pass
-
-    @classmethod
-    def from_df(cls, symbol: str, df: pd.DataFrame):
-        symbol_info = yf.Ticker(symbol).info
-
-        quote = (
-            yf.Ticker(symbol)
-            .history(period="1m", interval="1m")["Close"]
-            .values.tolist()
-        )
-        total_pos_quantity = df["Side amount"].sum()
-        mkt_cap = round(quote[0] * total_pos_quantity, 2) if quote else None
-
-        return cls(
-            symbol,
-            symbol_info.get("shortName", None),
-            symbol_info.get("quoteType", None),
-            symbol_info.get("currency", None),
-            total_pos_quantity,
-            mkt_cap,
-        )
-
-    @staticmethod
-    def position_attributes_map():
+    def to_dict(self):
         return {
-            "Name": "name",
-            "Currency": "currency",
-            "Market Cap": "market_cap",
+            "Symbol": self.symbol,
+            "Name": self.name,
+            "Security Type": self.security_type,
+            "Currency": self.currency,
+            "Market Cap": "{:,.2f}".format(self.market_cap),
+            "Orders": [order.to_dict() for order in self.orders],
         }

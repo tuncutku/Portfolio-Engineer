@@ -1,6 +1,7 @@
 from src.environment.user_activities.portfolio import Portfolio
 from src.environment.user_activities.order import Order
 from src.environment.user_activities.position import Position
+from src.extensions import db
 import pandas as pd
 import yfinance as yf
 import inspect
@@ -9,7 +10,14 @@ import inspect
 class PortfolioReport:
     def __init__(self, portfolio: Portfolio, start_date=None, end_date=None):
         self.underlying_portfolio = portfolio
-        self.positions = self.get_positions()
+        self.positions = Position.query.filter_by(
+            portfolio=self.underlying_portfolio
+        ).all()
+
+    def get_market_data(self):
+        pos_list = [pos.symbol for pos in self.positions]
+        md_provider = yf.Tickers(" ".join(map(str, pos_list)))
+        return md_provider.history(period="1d")
 
     def generate_order_df(self):
         order_list = Order.query.filter_by(

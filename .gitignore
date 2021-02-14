@@ -6,3 +6,4 @@ env
 access_token.yml
 chromedriver
 database.db
+tmp
