@@ -6,7 +6,7 @@ import yfinance as yf
 
 from src.environment.user_activities import Position, Portfolio, Order
 from src.extensions import db
-from src.forms.order_forms import AddOrderForm
+from src.forms.order_forms import AddOrderForm, generate_edit_order_form
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
@@ -31,41 +31,42 @@ def list_orders(portfolio_name: str, symbol: str):
 
 
 @order_blueprint.route(
-    "/<string:portfolio_name>/delete_order/<string:symbol>/<int:order_id>/",
+    "/delete_order/<int:order_id>/",
     methods=["GET"],
 )
 @login_required
-def delete_order(portfolio_name: str, symbol: str, order_id: int):
-    port = Portfolio.find_by_name(portfolio_name, session["email"])
+def delete_order(order_id: int):
+
     order = Order.find_by_id(order_id)
-    order.delete_order()
-    if port.source == "Questrade":
-        return redirect(
-            url_for("position.sync_position_list", portfolio_name=portfolio_name)
-        )
-    else:
-        return redirect(
-            url_for(
-                "position.update_position", portfolio_name=portfolio_name, symbol=symbol
-            )
-        )
+    order.delete_from_db()
+
+    return redirect(url_for("portfolio.list_portfolios"))
 
 
 @order_blueprint.route(
-    "/<string:portfolio_name>/edit_order/<string:symbol>/<int:order_id>/",
+    "/edit_order/<int:order_id>/",
     methods=["GET", "POST"],
 )
 @login_required
-def edit_order(md, portfolio_name: str, symbol: str, order_id: int):
-    form = generate_edit_portfolio_form(port)
+def edit_order(order_id: int):
+    order = Order.find_by_id(order_id)
+    form = generate_edit_order_form(order)
 
-    return render_template(
-        "order/edit_order.html",
-        portfolio=port,
-        order=order,
-        required_amount=None,
-        error_message=None,
-    )
+    if form.validate_on_submit():
+        order.edit(
+            symbol=form.symbol.data,
+            quantity=form.quantity.data,
+            side=form.side.data,
+            avg_exec_price=form.price.data,
+            exec_time=form.exec_datetime.data,
+            fee=form.fee.data,
+        )
+        return render_template(
+            "position/position_details.html",
+            position=order.position.to_dict(),
+        )
+
+    return render_template("order/edit_order.html", form=form, order_id=order_id)
 
 
 # TODO: required_amount can be negative (which means the position is "sell", fix it!)

@@ -49,7 +49,7 @@ login_manager.login_message_category = "info"
 def load_user(userid):
     from src.environment.user_activities.user import User
 
-    return User.query.get(userid)
+    return User.find_by_id(userid)
 
 
 # celery = Celery()

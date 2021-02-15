@@ -3,7 +3,7 @@ from src.environment.user_activities.portfolio import PortfolioType, Currency
 from src.environment.user_activities.order import OrderSideType, SecurityType
 
 
-user_1 = {"email": "tuncutku@gmail.com", "password": "1234"}
+user_1 = {"email": "test_user@gmail.com", "password": "1234"}
 portfolio_1 = {
     "name": "portfolio_1",
     "portfolio_type": PortfolioType.margin,

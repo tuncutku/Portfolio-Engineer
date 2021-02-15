@@ -1,0 +1,88 @@
+{% extends "base/portfolio.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-success">
+        Position details:
+    </h2>
+
+</div>
+
+<div class="container mt-4 mb-3">
+    <div class="card">
+        <h5 class="card-header">
+
+            <div class="row">
+                <div class="col-8">
+                    Name: {{ position["Name"] }}
+                </div>
+            </div>
+        </h5>
+        <div class="row">
+            <div class="col-12">
+                <div class="card-body">
+
+                    <p class="card-text">Symbol: {{ position["Symbol"] }}</p>
+                    <p class="card-text">Security type: {{ position["Security Type"] }}</p>
+                    <p class="card-text">Currency: {{ position["Currency"] }}</p>
+                    <p class="card-text">Total quantity: {{ position["Total Quantity"] }}</p>
+                    <p class="card-text">Total position value: {{ position["Market Cap"] }}</p>
+
+                    <div class="card">
+
+                        <h6 class="card-header">
+                            Orders
+                        </h6>
+
+                        <div class="card-body">
+
+
+                            <table class="table">
+                                <thead>
+                                    <tr class="text-center">
+                                        {% if position["Security Type"] == "EQUITY" %}
+                                        <th scope="col">Execution Time</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Cost</th>
+                                        <th scope="col">Side</th>
+                                        <th scope="col">Fee</th>
+                                        <th scope="col">Actions</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in position["Orders"] %}
+                                    <tr class="text-center">
+
+                                        {% if position["Security Type"] == "EQUITY" %}
+                                        <td class="align-middle">{{ order["exec_time"] }}</td>
+                                        <td class="align-middle">{{ order["quantity"] }}</td>
+                                        <td class="align-middle">{{ order["avg_exec_price"] }}</td>
+                                        <td class="align-middle">{{ order["side"] }}</td>
+                                        <td class="align-middle">{{ order["fee"] }}</td>
+                                        {% endif %}
+
+                                        <td class="align-middle">
+
+                                            <a href="{{ url_for('order.edit_order', order_id=order['ID']) }}"
+                                                class="btn btn-outline-success">Edit Order</a>
+                                            <a href="{{ url_for('order.delete_order', order_id=order['ID']) }}"
+                                                class="btn btn-outline-danger">Delete Order</a>
+
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

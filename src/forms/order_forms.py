@@ -13,7 +13,7 @@ from wtforms import (
 from datetime import datetime, timedelta
 from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
-from src.environment.user_activities.order import OrderSideType
+from src.environment.user_activities.order import Order, OrderSideType
 
 import yfinance as yf
 
@@ -145,29 +145,42 @@ class AddOrderForm(Form):
         return True
 
 
-class EditOrderForm(Form):
-    symbol = StringField("Ticker", [DataRequired(), Ticker()], Length(max=20))
+def generate_edit_order_form(order: Order):
+    class EditOrderForm(Form):
+        symbol = StringField(
+            u"Ticker", [DataRequired(), Ticker()], default=order.symbol
+        )
+        quantity = IntegerField(
+            u"Order Quantity", [DataRequired()], default=order.quantity
+        )
+        side = SelectField(
+            u"Order Side", default=order.side, choices=order_side_choices
+        )
+        fee = FloatField(u"Order Fee", [Optional(), PositiveFloat()], default=order.fee)
+        exec_datetime = DateTimeField(
+            u"Order Date", [Optional(), FutureDate()], default=order.exec_time
+        )
+        price = FloatField(u"Quote", [Optional()], default=order.avg_exec_price)
 
-    quantity = IntegerField("Order Quantity", [DataRequired()])
-    side = SelectField(
-        u"Order Side", default=OrderSideType.Buy, choices=order_side_choices
-    )
-    price = StringField("Price", [DataRequired(), Ticker()], Length(max=20))
-    exec_datetime = DateTimeField(
-        "Order Date", [DataRequired()], default=datetime.now()
-    )
+        def validate(self):
+            check_validate = super(EditOrderForm, self).validate()
 
-    def validate(self):
-        check_validate = super(RegisterForm, self).validate()
+            if not check_validate:
+                return False
 
-        if not check_validate:
-            return False
+            valid, price, date = valide_price_and_date(
+                self.symbol.data, self.price.data, self.exec_datetime.data
+            )
 
-        a = 1
+            if not valid:
+                self.price.errors.append(
+                    "Couldn't find a valid quote, please insert a quote for the underlying."
+                )
+                return False
 
-        # Is the email already being used
-        if user:
-            self.email.errors.append("User with that email address already exists.")
-            return False
+            self.price.data = price
+            self.exec_datetime.data = date
 
-        return True
+            return True
+
+    return EditOrderForm()

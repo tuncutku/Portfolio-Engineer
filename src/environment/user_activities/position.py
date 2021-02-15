@@ -22,13 +22,6 @@ class Position(BaseModel):
 
     orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
 
-    attr_dict = {
-        "name": "Name",
-        "security_type": "Security Type",
-        "currency": "Currency",
-        "market_cap": "Market Cap",
-    }
-
     def __repr__(self):
         return "<Position {}.>".format(self.symbol)
 
@@ -51,11 +44,18 @@ class Position(BaseModel):
         return True if self.open_quantity != 0 else False
 
     def to_dict(self):
+
+        order_list = [order.to_dict() for order in self.orders]
+        order_list.sort(key=lambda x: x.get("exec_time"), reverse=True)
+
         return {
+            "ID": self.id,
             "Symbol": self.symbol,
             "Name": self.name,
             "Security Type": self.security_type,
             "Currency": self.currency,
             "Market Cap": "{:,.2f}".format(self.market_cap),
-            "Orders": [order.to_dict() for order in self.orders],
+            "Total Quantity": self.open_quantity,
+            "Open": self.open,
+            "Orders": order_list,
         }

@@ -1,13 +1,12 @@
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required, current_user
 import pandas as pd
+import collections
 
-from src.environment.user_activities.portfolio import Portfolio, PortfolioTag
+from src.environment.user_activities.portfolio import Portfolio
 from src.environment.user_activities.position import Position
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
 from src.extensions import db
-
-from src.views.utils.common import edit_list_order
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
@@ -19,13 +18,14 @@ def list_portfolios():
 
     error_message = None
     port_list = [portfolio.to_dict() for portfolio in current_user.portfolios]
+    port_list.sort(key=lambda x: x.get("Primary"), reverse=True)
+
     if not port_list:
         error_message = "Add a custom portfolio!"
 
     return render_template(
         "portfolio/list_portfolios.html",
         port_list=port_list,
-        portfolio_tag=PortfolioTag,
         error_message=error_message,
     )
 
@@ -50,7 +50,7 @@ def add_portfolio():
 @portfolio_blueprint.route("/edit/<int:portfolio_id>", methods=["GET", "POST"])
 @login_required
 def edit_portfolio(portfolio_id):
-    port = Portfolio.query.filter_by(id=portfolio_id).first()
+    port = Portfolio.find_by_id(portfolio_id)
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
         port.edit(
@@ -65,7 +65,7 @@ def edit_portfolio(portfolio_id):
 @portfolio_blueprint.route("/delete/<int:portfolio_id>", methods=["GET"])
 @login_required
 def delete_portfolio(portfolio_id):
-    port = Portfolio.query.get(portfolio_id)
+    port = Portfolio.find_by_id(portfolio_id)
     port.delete_from_db()
     return redirect(url_for("portfolio.list_portfolios"))
 
@@ -75,16 +75,15 @@ def delete_portfolio(portfolio_id):
 def set_portfolio_primary(portfolio_id):
 
     primary_portfolio = Portfolio.query.filter_by(
-        user_id=current_user.id, portfolio_tag=PortfolioTag.primary
+        user=current_user, is_primary=True
     ).first()
 
     if primary_portfolio:
-        primary_portfolio.portfolio_tag = PortfolioTag.regular
+        primary_portfolio.is_primary = False
 
-    current_portfolio = Portfolio.query.filter_by(id=portfolio_id).first()
-    current_portfolio.portfolio_tag = PortfolioTag.primary
+    current_portfolio = Portfolio.find_by_id(portfolio_id)
+    current_portfolio.set_as_primary()
 
-    db.session.commit()
     return redirect(url_for("portfolio.list_portfolios"))
 
 

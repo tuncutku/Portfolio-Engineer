@@ -23,7 +23,7 @@ class User(BaseModel, UserMixin):
         self.email = email
 
     def __repr__(self):
-        return "<User {}>".format(self.email)
+        return "<User {}.>".format(self.email)
 
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password)
