@@ -158,7 +158,10 @@ def generate_edit_order_form(order: Order):
         )
         fee = FloatField(u"Order Fee", [Optional(), PositiveFloat()], default=order.fee)
         exec_datetime = DateTimeField(
-            u"Order Date", [Optional(), FutureDate()], default=order.exec_time
+            u"Order Date",
+            [Optional(), FutureDate()],
+            default=order.exec_time,
+            format=date_time_format,
         )
         price = FloatField(u"Quote", [Optional()], default=order.avg_exec_price)
 

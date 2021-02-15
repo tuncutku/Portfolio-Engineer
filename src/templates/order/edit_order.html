@@ -4,7 +4,7 @@
 
   <form class="card p-3 bg-light" action="{{ url_for('order.edit_order', order_id=order_id) }}" method="post">
 
-    <legend class="mb-3">Edit an existing order:</legend>
+    <legend class="mb-3">Edit order:</legend>
 
     {{ form.hidden_tag() }}
     {% for field in form %}

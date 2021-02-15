@@ -13,25 +13,7 @@ order_blueprint = Blueprint("order", __name__, url_prefix="/order")
 
 
 @order_blueprint.route(
-    "/<string:portfolio_name>/view_orders/<string:symbol>/", methods=["GET"]
-)
-@login_required
-def list_orders(portfolio_name: str, symbol: str):
-    port = Portfolio.find_by_name(portfolio_name, session["email"])
-    position = Position.find_by_symbol(symbol, port.portfolio_id)
-    all_orders = Order.find_all(position_id=position.position_id)
-    open_orders = _extract_open_orders(all_orders)
-    return render_template(
-        "order/order.html",
-        portfolio_name=portfolio_name,
-        symbol=position.symbol,
-        order_list=open_orders,
-        portfolio=port,
-    )
-
-
-@order_blueprint.route(
-    "/delete_order/<int:order_id>/",
+    "/delete_order/<int:order_id>",
     methods=["GET"],
 )
 @login_required
@@ -44,7 +26,7 @@ def delete_order(order_id: int):
 
 
 @order_blueprint.route(
-    "/edit_order/<int:order_id>/",
+    "/edit/<int:order_id>",
     methods=["GET", "POST"],
 )
 @login_required
@@ -61,16 +43,13 @@ def edit_order(order_id: int):
             exec_time=form.exec_datetime.data,
             fee=form.fee.data,
         )
-        return render_template(
-            "position/position_details.html",
-            position=order.position.to_dict(),
-        )
+        return redirect(url_for("portfolio.list_portfolios"))
 
     return render_template("order/edit_order.html", form=form, order_id=order_id)
 
 
 # TODO: required_amount can be negative (which means the position is "sell", fix it!)
-@order_blueprint.route("/<int:portfolio_id>/add_order/", methods=["GET", "POST"])
+@order_blueprint.route("/<int:portfolio_id>/add_order", methods=["GET", "POST"])
 @login_required
 def add_order(portfolio_id):
 
