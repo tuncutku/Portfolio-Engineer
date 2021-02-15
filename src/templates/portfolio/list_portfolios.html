@@ -13,6 +13,7 @@
 
 </div>
 
+
 {% for port in port_list %}
 <div class="container mt-4 mb-3">
     <div class="card">
@@ -53,7 +54,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for position in port["Positions"] %}
+                                    {% for position in port["Positions"] if position["Open"] %}
                                     <tr class="text-center">
 
                                         <td class="align-middle">{{ position["Name"] }}</td>
@@ -62,8 +63,10 @@
                                         <td class="align-middle">{{ position["Market Cap"] }}</td>
                                         <td class="align-middle">
 
-                                            <a href="" class="btn btn-outline-success">View details</a>
-                                            <a href="" class="btn btn-outline-danger">Close Position</a>
+                                            <a href="{{ url_for('position.position_details', position_id=position['ID']) }}"
+                                                class="btn btn-outline-success">View details</a>
+                                            <a href="{{ url_for('position.close_position', position_id=position['ID']) }}"
+                                                class="btn btn-outline-danger">Close Position</a>
 
                                         </td>
                                     </tr>
@@ -72,7 +75,6 @@
                             </table>
                         </div>
                     </div>
-
 
                 </div>
             </div>
@@ -89,7 +91,7 @@
                                         <ul class="list-group">
                                             <a href="" class="btn btn-outline-success">Manage Alerts</a>
                                             <a href="" class="btn btn-outline-success mt-2">View Reports</a>
-                                            {% if port["Portfolio tag"] == portfolio_tag.regular %}
+                                            {% if port["Primary"] == False%}
                                             <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>
                                             {% endif %}

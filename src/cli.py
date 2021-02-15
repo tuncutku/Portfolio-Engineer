@@ -4,6 +4,7 @@ import os
 import HtmlTestRunner
 
 from src.environment.user_activities.user import User
+from src.extensions import db
 
 
 def register(app):
@@ -33,11 +34,14 @@ def register(app):
             basedir = os.path.abspath(os.path.dirname(__file__))
             covdir = os.path.join(basedir, "../tmp/coverage")
             COV.html_report(directory=covdir)
+            COV.xml_report()
             print("HTML version: file://{}/index.html".format(covdir))
             COV.erase()
 
     @app.cli.command("create_user")
     def create_user():
+
+        db.create_all()
 
         user = User("tuncutku10@gmail.com")
         user.set_password("1234")

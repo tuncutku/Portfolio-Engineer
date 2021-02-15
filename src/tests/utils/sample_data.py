@@ -3,16 +3,18 @@ from src.environment.user_activities.portfolio import PortfolioType, Currency
 from src.environment.user_activities.order import OrderSideType, SecurityType
 
 
-user_1 = {"email": "tuncutku@gmail.com", "password": "1234"}
+user_1 = {"email": "test_user@gmail.com", "password": "1234"}
 portfolio_1 = {
     "name": "portfolio_1",
     "portfolio_type": PortfolioType.margin,
     "reporting_currency": Currency.USD,
+    "date": datetime(2020, 1, 1),
 }
 portfolio_2 = {
     "name": "portfolio_2",
     "portfolio_type": PortfolioType.cash,
     "reporting_currency": Currency.CAD,
+    "date": datetime(2020, 1, 1),
 }
 position_1 = {
     "symbol": "AAPL",
@@ -31,7 +33,7 @@ order_1 = {
     "quantity": 10,
     "side": OrderSideType.Buy,
     "avg_exec_price": 10.5,
-    "exec_time": datetime.now(),
+    "exec_time": datetime(2020, 1, 1),
     "fee": 0.123,
 }
 order_2 = {
@@ -39,6 +41,6 @@ order_2 = {
     "quantity": 2,
     "side": OrderSideType.Sell,
     "avg_exec_price": 11,
-    "exec_time": datetime.now(),
+    "exec_time": datetime(2020, 1, 1),
     "fee": 0,
 }

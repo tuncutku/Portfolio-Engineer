@@ -1,6 +1,5 @@
 from flask_login import current_user
 
-from src.tests.utils.sample_data import *
 from src.tests.utils.base import BaseTest
 from src.environment.user_activities.user import User
 from src.environment.user_activities.portfolio import Portfolio, PortfolioType, Currency
@@ -8,34 +7,20 @@ from src.environment.user_activities.position import Position
 from src.environment.user_activities.order import Order
 
 
-email = "tuncutku@gmail.com"
-password = "1234"
-
-
 class TestPortfolioURLs(BaseTest):
-    def login_user(self):
-        """Log in test user for URL tests."""
-        user = self.create_user(**user_1)
-        portfolio = self.create_portfolio(**portfolio_1, user=user)
-        position = self.create_position(**position_1, portfolio=portfolio)
-        order = self.create_order(**order_1, position=position)
-
-        self.client.post("/users/login", data=dict(**user_1))
-
-        return portfolio
-
     def test_portfolio_list(self):
 
-        portfolio = self.login_user()
+        self.login_user()
 
         response = self.client.get("/portfolio/list")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("portfolio/list_portfolios.html")
-        self.assertContext("port_list", [portfolio.to_dict()])
+        self.assertContext("port_list", [self.portfolio_test.to_dict()])
 
     def test_add_portfolio(self):
 
-        portfolio = self.login_user()
+        self.login_user()
+
         response = self.client.get("portfolio/add_portfolio")
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Add new custom portfolio" in response.get_data(as_text=True))
@@ -58,12 +43,19 @@ class TestPortfolioURLs(BaseTest):
         self.assertEqual(new_portfolio.portfolio_type, PortfolioType.margin)
         self.assertEqual(new_portfolio.reporting_currency, Currency.USD)
 
+    def test_add_portfolio_form(self):
+        pass
+
     def test_edit_portfolio(self):
-        portfolio = self.login_user()
+        self.login_user()
 
         response = self.client.get("portfolio/edit/1")
         self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("portfolio/edit_portfolio.html")
         self.assertTrue("Edit portfolio" in response.get_data(as_text=True))
+        self.assertTrue("portfolio_1" in response.get_data(as_text=True))
+        self.assertTrue("Margin" in response.get_data(as_text=True))
+        self.assertTrue("USD" in response.get_data(as_text=True))
 
         response = self.client.post(
             "portfolio/edit/1",
@@ -76,7 +68,31 @@ class TestPortfolioURLs(BaseTest):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("portfolio/list_portfolios.html")
+        self.assertEqual(self.portfolio_test.name, "edited_portfolio")
+        self.assertEqual(self.portfolio_test.portfolio_type, PortfolioType.custom)
+        self.assertEqual(self.portfolio_test.reporting_currency, Currency.CAD)
 
-        self.assertEqual(portfolio.name, "edited_portfolio")
-        self.assertEqual(portfolio.portfolio_type, PortfolioType.custom)
-        self.assertEqual(portfolio.reporting_currency, Currency.CAD)
+    def test_delete_portfolio(self):
+        self.login_user()
+
+        response = self.client.get(
+            "portfolio/delete/1",
+            follow_redirects=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("portfolio/list_portfolios.html")
+        self.assertIsNone(Portfolio.query.filter_by(user=self.user_test).first())
+
+    def test_set_portfolio_primary(self):
+        self.login_user()
+
+        portfolio = Portfolio.find_by_id(1)
+        self.assertEqual(portfolio.is_primary, False)
+        response = self.client.get(
+            "portfolio/set_primary/1",
+            follow_redirects=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed("portfolio/list_portfolios.html")
+        portfolio = Portfolio.find_by_id(1)
+        self.assertEqual(portfolio.is_primary, True)

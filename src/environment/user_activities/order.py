@@ -108,10 +108,20 @@ class Order(BaseModel):
 
     def to_dict(self):
         return {
+            "ID": self.id,
             "symbol": self.symbol,
             "quantity": self.quantity,
             "side": self.side,
             "avg_exec_price": self.avg_exec_price,
-            "exec_time": self.exec_time,
+            "exec_time": self.exec_time.strftime("%y-%m-%d %a %H:%M"),
             "fee": self.fee,
         }
+
+    def edit(self, symbol, quantity, side, avg_exec_price, exec_time, fee) -> None:
+        self.symbol = symbol
+        self.quantity = quantity
+        self.side = side
+        self.avg_exec_price = avg_exec_price
+        self.exec_time = exec_time
+        self.fee = fee
+        db.session.commit()

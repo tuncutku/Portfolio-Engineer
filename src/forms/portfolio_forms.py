@@ -31,7 +31,7 @@ class PortfolioName(object):
         portfolio_names = [
             port.name
             for port in Portfolio.query.filter_by(
-                user_id=current_user.id, name=field.data
+                user=current_user, name=field.data
             ).all()
         ]
         if self.exclude in portfolio_names:
@@ -56,14 +56,6 @@ class AddPortfolioForm(Form):
 
 def generate_edit_portfolio_form(portfolio: Portfolio):
     """Function that generates an instance of EditPortfolioForm and sets default arguments."""
-
-    portfolio_type_choice_index = [
-        port_type for port_type, _ in port_type_choices
-    ].index(portfolio.portfolio_type)
-
-    portfolio_currency_index = [currency for currency, _ in currency_choices].index(
-        portfolio.reporting_currency
-    )
 
     class EditPortfolioForm(Form):
         port_name = StringField(

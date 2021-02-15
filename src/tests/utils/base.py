@@ -7,9 +7,16 @@ from src.environment.user_activities.user import User
 from src.environment.user_activities.portfolio import Portfolio
 from src.environment.user_activities.position import Position
 from src.environment.user_activities.order import Order
+from src.tests.utils.sample_data import *
 
 
 class BaseTest(TestCase):
+
+    test_user = None
+    test_portfolio = None
+    test_position = None
+    test_order = None
+
     def create_app(self):
         return create_app("config.TestConfig")
 
@@ -28,13 +35,19 @@ class BaseTest(TestCase):
         return user
 
     def create_portfolio(
-        self, name: str, portfolio_type: str, reporting_currency: str, user: User
+        self,
+        name: str,
+        portfolio_type: str,
+        reporting_currency: str,
+        date: datetime,
+        user: User,
     ) -> Portfolio:
 
         portfolio = Portfolio(
             name=name,
             portfolio_type=portfolio_type,
             reporting_currency=reporting_currency,
+            date=datetime(2020, 1, 1),
             user=user,
         )
         portfolio.save_to_db()
@@ -81,3 +94,14 @@ class BaseTest(TestCase):
         )
         order.save_to_db()
         return order
+
+    def login_user(self):
+        """Log in test user for URL tests."""
+        self.user_test = self.create_user(**user_1)
+        self.portfolio_test = self.create_portfolio(**portfolio_1, user=self.user_test)
+        self.position_test = self.create_position(
+            **position_1, portfolio=self.portfolio_test
+        )
+        self.order_test = self.create_order(**order_1, position=self.position_test)
+
+        self.client.post("/users/login", data=dict(**user_1))
