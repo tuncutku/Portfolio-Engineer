@@ -14,8 +14,7 @@ from datetime import datetime, timedelta
 from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
 from src.environment.user_activities.order import Order, OrderSideType
-
-import yfinance as yf
+from src.market_data.yahoo import YFinance
 
 
 order_side_choices = [
@@ -24,19 +23,18 @@ order_side_choices = [
 ]
 
 date_time_format = "%Y-%m-%d %H:%M"
-date_format = "%Y-%m-%d"
 
 
 def valide_price_and_date(ticker, price, date: datetime):
 
     validation = True
     now = datetime.now()
-    security = yf.Ticker(ticker)
+    md_provider = YFinance(ticker)
 
     # Case where date and price are not given.
     if not price and not date:
         try:
-            price = float(round(security.history(period="1d")["Close"], 2))
+            price = md_provider.get_quote(decimal=2)
             date = now
         except:
             validation = False
@@ -50,18 +48,13 @@ def valide_price_and_date(ticker, price, date: datetime):
         # TODO: make this hourly and move to a new tahoo class.
         if date.date() == now.date():
             try:
-                df = security.history(period="1m", interval="1m")
-                price = float(df["Close"].round(2))
+                price = md_provider.get_quote(decimal=2)
                 date = now
             except:
                 validation = False
         else:
-            next_day = date + timedelta(days=1)
             try:
-                df = security.history(
-                    start=date.strftime(date_format), end=next_day.strftime(date_format)
-                )
-                price = float(df["Close"].round(2).values)
+                price = md_provider.get_historical_quote(date)
                 if not price:
                     raise ValueError
             except (OverflowError, ValueError, TypeError):
@@ -74,10 +67,8 @@ class Ticker(object):
         self.message = message
 
     def __call__(self, form, field):
-        security = yf.Ticker(field.data)
-        try:
-            security.info
-        except KeyError:
+        md_provider = YFinance(field.data)
+        if not md_provider.is_valid:
             if not self.message:
                 self.message = "Invalid Ticker!"
             raise ValidationError(self.message)

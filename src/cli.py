@@ -1,7 +1,7 @@
 import click
 import time
 import os
-import HtmlTestRunner
+from HtmlTestRunner import HTMLTestRunner
 
 from src.environment.user_activities.user import User
 from src.extensions import db
@@ -24,7 +24,7 @@ def register(app):
         import unittest
 
         tests = unittest.TestLoader().discover("src/tests")
-        unittest.TextTestRunner(verbosity=2).run(tests)
+        HTMLTestRunner(output="./tmp/reports", verbosity=2).run(tests)
 
         if coverage:
             COV.stop()

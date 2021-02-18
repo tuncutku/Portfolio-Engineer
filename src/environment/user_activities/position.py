@@ -2,9 +2,7 @@ import datetime
 
 from src.extensions import db
 from src.environment.user_activities.base import BaseModel
-
-import yfinance as yf
-import pandas as pd
+from src.market_data.yahoo import YFinance
 
 
 class Position(BaseModel):
@@ -33,11 +31,10 @@ class Position(BaseModel):
         return quantity
 
     @property
-    def market_cap(self, quote: pd.DataFrame = None) -> float:
+    def market_cap(self, quote: float = None) -> float:
         if quote is None:
-            md_provider = yf.Ticker(self.symbol)
-            quote = md_provider.history(period="1d")["Close"].head(1)
-        return round(float(quote * self.open_quantity), 2)
+            md_provider = YFinance(self.symbol)
+        return round(float(md_provider.get_quote() * self.open_quantity), 2)
 
     @property
     def open(self) -> bool:

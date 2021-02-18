@@ -1,12 +1,8 @@
 import datetime
-from typing import List
-from decimal import Decimal
 
 from src.environment.user_activities.base import BaseModel
-
 from src.extensions import db
-
-import yfinance as yf
+from src.market_data.yahoo import YFinance
 
 
 class Currency:
@@ -55,16 +51,15 @@ class Portfolio(BaseModel):
     @property
     def total_mkt_value(self) -> float:
 
-        md_provider = yf.Ticker("USDCAD=X")
-        df_fx_rate = md_provider.history(period="1d")["Close"].head(1)
-        fx_rate = float(round(df_fx_rate, 2))
+        fx_md = YFinance("USDCAD=X")
+        quote = fx_md.get_quote(decimal=2)
 
         value = 0
         for pos in self.positions:
             pos_mkt_cap = (
                 pos.market_cap
                 if pos.currency == self.reporting_currency
-                else pos.market_cap * fx_rate
+                else pos.market_cap * quote
             )
             value += pos_mkt_cap
         return value

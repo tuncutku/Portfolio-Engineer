@@ -1,12 +1,12 @@
 from flask import Blueprint, request, session, url_for, render_template, redirect
 from flask_login import login_required, current_user
 import datetime
-import pandas as pd
-import yfinance as yf
 
-from src.environment.user_activities import Position, Portfolio, Order
 from src.extensions import db
+from src.environment.user_activities import Position, Portfolio, Order
 from src.forms.order_forms import AddOrderForm, generate_edit_order_form
+
+from src.market_data.yahoo import YFinance
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
@@ -60,7 +60,9 @@ def add_order(portfolio_id):
         port = Portfolio.find_by_id(portfolio_id)
         pos = Position.query.filter_by(symbol=form.symbol.data, portfolio=port).first()
         if pos is None:
-            symbol_info = yf.Ticker(symbol).info
+            md_provider = YFinance(symbol)
+            symbol_info = md_provider.info()
+
             pos = Position(
                 symbol=symbol,
                 name=symbol_info.get("shortName", None),

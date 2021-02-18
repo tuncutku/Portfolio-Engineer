@@ -1,5 +1,6 @@
 from sqlalchemy.exc import StatementError
 from datetime import datetime
+from unittest import mock
 
 from src.tests.utils.base import BaseTest
 from src.tests.utils.sample_data import *
@@ -121,7 +122,8 @@ class ModelTest(BaseTest):
         self.assertIsNone(Position.query.filter_by(portfolio=port).first())
         self.assertIsNone(Order.query.filter_by(position=pos).first())
 
-    def test_portfolio_attributes(self):
+    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
+    def test_portfolio_attributes(self, md):
         """Unit test for portfolio attributes."""
 
         user = self.create_user(**user_1)
@@ -138,13 +140,13 @@ class ModelTest(BaseTest):
         self.assertEqual(port.reporting_currency, Currency.USD)
         self.assertEqual(port.portfolio_type, PortfolioType.rrsp)
 
-        # TODO: Test total market value
         pos = self.create_position(**position_1, portfolio=port)
         self.create_order(**order_1, position=pos)
         self.create_order(**order_2, position=pos)
-        # self.assertEqual(port.total_mkt_value, 1)
+        self.assertEqual(port.total_mkt_value, 8)
 
-    def test_position_attributes(self):
+    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
+    def test_position_attributes(self, md):
         """Unit test for position attributes."""
 
         user = self.create_user(**user_1)
@@ -154,7 +156,7 @@ class ModelTest(BaseTest):
         self.create_order(**order_2, position=pos)
 
         self.assertEqual(pos.open_quantity, 8)
-        self.assertEqual(pos.market_cap, 1082.96)
+        self.assertEqual(pos.market_cap, 8)
         self.assertEqual(pos.open, True)
 
     def test_order_attributes(self):
