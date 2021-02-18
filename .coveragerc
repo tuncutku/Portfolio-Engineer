@@ -6,4 +6,4 @@ omit =
     src/extensions.py 
 
 [report]
-show_missing = true
+show_missing = false

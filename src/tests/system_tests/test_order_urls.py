@@ -1,4 +1,5 @@
 from datetime import datetime
+from unittest import mock
 from flask_login import current_user
 
 from src.tests.utils.base import BaseTest
@@ -13,7 +14,15 @@ a = 1
 
 
 class TestOrderURLs(BaseTest):
-    def test_add_order(self):
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.info",
+        return_value={
+            "shortName": "Facebook Inc.",
+            "quoteType": "EQUITY",
+            "currency": "USD",
+        },
+    )
+    def test_add_order(self, md):
 
         self.login_user()
 
@@ -24,6 +33,8 @@ class TestOrderURLs(BaseTest):
         self.assertEqual(response.status_code, 200)
         self.assertTrue("Add new order:" in response.get_data(as_text=True))
 
+        self.assertIsNone(Position.find_by_id(2))
+        # Test to post an order that has a position.
         response = self.client.post(
             "order/1/add_order",
             data=dict(
@@ -36,6 +47,7 @@ class TestOrderURLs(BaseTest):
             ),
             follow_redirects=True,
         )
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed("portfolio/list_portfolios.html")
 
@@ -46,6 +58,12 @@ class TestOrderURLs(BaseTest):
         self.assertEqual(new_order.fee, 10)
         self.assertEqual(new_order.exec_time, datetime(2020, 1, 1, 3, 10))
         self.assertEqual(new_order.avg_exec_price, 100)
+
+        new_pos = Position.find_by_id(2)
+        self.assertIsNotNone(new_pos)
+        self.assertEqual(new_pos.name, "Facebook Inc.")
+        self.assertEqual(new_pos.security_type, "EQUITY")
+        self.assertEqual(new_pos.currency, "USD")
 
     def test_add_order_form(self):
         pass
