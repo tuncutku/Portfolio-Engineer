@@ -1,31 +1,9 @@
 import datetime
 
-from src.environment.user_activities.base import BaseModel
+from src.environment.base import BaseModel
 from src.extensions import db
 from src.market_data.yahoo import YFinance
-
-
-class Currency:
-    CAD = "CAD"
-    USD = "USD"
-
-
-class PortfolioType:
-    tfsa = "TFSA"
-    rrsp = "RRSP"
-    margin = "Margin"
-    cash = "Cash"
-    custom = "Custom"
-
-
-class PortfolioStatus:
-    active = "Active"
-    inactive = "Inactive"
-
-
-class PortfolioSource:
-    questrade = "Questrade"
-    custom = "Custom"
+from src.environment.types import *
 
 
 class Portfolio(BaseModel):

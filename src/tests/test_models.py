@@ -6,10 +6,10 @@ from src.tests.utils.base import BaseTest
 from src.tests.utils.sample_data import *
 
 from src.extensions import db
-from src.environment.user_activities.user import User
-from src.environment.user_activities.portfolio import Portfolio
-from src.environment.user_activities.position import Position
-from src.environment.user_activities.order import Order
+from src.environment.user import User
+from src.environment.portfolio import Portfolio
+from src.environment.position import Position
+from src.environment.order import Order
 
 
 class ModelTest(BaseTest):

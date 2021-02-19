@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, request, session, url_for, render_template, redirect, flash
 from flask_login import login_user, logout_user
 
-from src.environment.user_activities import User
+from src.environment.user import User
 from src.forms.user_forms import RegisterForm, LoginForm
 from src.extensions import db
 

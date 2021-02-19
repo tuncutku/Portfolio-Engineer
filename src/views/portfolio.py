@@ -3,8 +3,8 @@ from flask_login import login_required, current_user
 import pandas as pd
 import collections
 
-from src.environment.user_activities.portfolio import Portfolio
-from src.environment.user_activities.position import Position
+from src.environment.portfolio import Portfolio
+from src.environment.position import Position
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
 from src.extensions import db
 
@@ -110,7 +110,5 @@ def set_portfolio_primary(portfolio_id):
 #             check_and_update_portfolio(port_db, port_questrade)
 #         else:
 #             _add_portfolio(port_questrade, session["email"])
-
-#     # TODO: add functionality to delete portfolios if it doesn't exist on Questrade
 
 #     return redirect(url_for("portfolio.list_portfolios"))

@@ -3,7 +3,7 @@ import time
 import os
 from HtmlTestRunner import HTMLTestRunner
 
-from src.environment.user_activities.user import User
+from src.environment.user import User
 from src.extensions import db
 
 

@@ -3,7 +3,10 @@ from flask_login import login_required, current_user
 import datetime
 
 from src.extensions import db
-from src.environment.user_activities import Position, Portfolio, Order
+from src.environment.portfolio import Portfolio
+from src.environment.position import Position
+from src.environment.order import Order
+
 from src.forms.order_forms import AddOrderForm, generate_edit_order_form
 
 from src.market_data.yahoo import YFinance
@@ -48,7 +51,6 @@ def edit_order(order_id: int):
     return render_template("order/edit_order.html", form=form, order_id=order_id)
 
 
-# TODO: required_amount can be negative (which means the position is "sell", fix it!)
 @order_blueprint.route("/<int:portfolio_id>/add_order", methods=["GET", "POST"])
 @login_required
 def add_order(portfolio_id):

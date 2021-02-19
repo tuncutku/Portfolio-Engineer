@@ -1,6 +1,6 @@
 from datetime import datetime
-from src.environment.user_activities.portfolio import PortfolioType, Currency
-from src.environment.user_activities.order import OrderSideType, SecurityType
+from src.environment.portfolio import PortfolioType, Currency
+from src.environment.order import OrderSideType, SecurityType
 
 
 user_1 = {"email": "test_user@gmail.com", "password": "1234"}
