@@ -3,10 +3,12 @@ from unittest import mock
 from flask_login import current_user
 
 from src.tests.utils.base import BaseTest
-from src.environment.user_activities.user import User
-from src.environment.user_activities.portfolio import Portfolio, PortfolioType, Currency
-from src.environment.user_activities.position import Position
-from src.environment.user_activities.order import Order, OrderSideType
+from src.environment.user import User
+from src.environment.portfolio import Portfolio
+from src.environment.position import Position
+from src.environment.order import Order
+from src.environment.types import PortfolioType, OrderSideType, Currency
+
 
 from src.forms.order_forms import date_time_format
 

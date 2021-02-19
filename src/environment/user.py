@@ -1,9 +1,9 @@
 from flask_login import UserMixin
-from src.environment.user_activities.base import BaseModel
+from src.environment.base import BaseModel
 
 
 from src.extensions import db, bcrypt
-from src.environment.user_activities.utils.encryption import (
+from src.environment.utils.encryption import (
     encrypt_token,
     decrypt_token,
 )

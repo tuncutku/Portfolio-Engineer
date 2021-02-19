@@ -13,7 +13,7 @@ from wtforms import (
 from datetime import datetime, timedelta
 from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
-from src.environment.user_activities.order import Order, OrderSideType
+from src.environment.order import Order, OrderSideType
 from src.market_data.yahoo import YFinance
 
 

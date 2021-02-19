@@ -47,7 +47,7 @@ login_manager.login_message_category = "info"
 
 @login_manager.user_loader
 def load_user(userid):
-    from src.environment.user_activities.user import User
+    from src.environment.user import User
 
     return User.find_by_id(userid)
 

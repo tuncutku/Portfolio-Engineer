@@ -6,7 +6,7 @@
 
 <!-- PROJECT LOGO -->
 <p align="center">
-  <img src="./res/investment_image_1.jpg" alt="Size Limit CLI" width="450">
+  <img src="./src/static/gihub_logo.jpg" alt="Size Limit CLI" width="450">
 </p>
 
 

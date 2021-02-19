@@ -1,7 +1,7 @@
 import datetime
 
 from src.extensions import db
-from src.environment.user_activities.base import BaseModel
+from src.environment.base import BaseModel
 from src.market_data.yahoo import YFinance
 
 

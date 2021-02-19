@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm as Form
 from wtforms import PasswordField, BooleanField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
-from src.environment.user_activities.user import User
+from src.environment.user import User
 
 
 class RegisterForm(Form):
