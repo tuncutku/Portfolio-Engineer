@@ -11,6 +11,8 @@ from flask_login import current_user
 from src.environment.portfolio import Portfolio
 from src.environment.utils.types import *
 
+from src.market_data.yahoo import YFinance
+
 
 port_type_choices = [
     (PortfolioType.custom, PortfolioType.custom),
@@ -45,6 +47,18 @@ class PortfolioName(object):
             raise ValidationError(self.message)
 
 
+class Benchmark(object):
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        md_provider = YFinance(field.data)
+        if not md_provider.is_valid:
+            if not self.message:
+                self.message = "Invalid Ticker!"
+            raise ValidationError(self.message)
+
+
 class AddPortfolioForm(Form):
     port_name = StringField(
         u"Portfolio Name", [DataRequired(), Length(max=20), PortfolioName()]
@@ -52,6 +66,9 @@ class AddPortfolioForm(Form):
     port_type = SelectField(u"Portfolio Type", default=1, choices=port_type_choices)
     port_reporting_currency = SelectField(
         u"Reporting Currency", default=1, choices=currency_choices
+    )
+    benchmark = StringField(
+        u"Benchmark", [DataRequired(), Length(max=20), Benchmark()], default="^GSPC"
     )
 
 
@@ -73,6 +90,11 @@ def generate_edit_portfolio_form(portfolio: Portfolio):
             u"Reporting Currency",
             choices=currency_choices,
             default=portfolio.reporting_currency,
+        )
+        benchmark = StringField(
+            u"Benchmark",
+            [DataRequired(), Length(max=20), Benchmark()],
+            default=portfolio.benchmark,
         )
 
     return EditPortfolioForm()

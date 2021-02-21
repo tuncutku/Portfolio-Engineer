@@ -135,10 +135,11 @@ class ModelTest(BaseTest):
         self.assertEqual(port.is_primary, True)
 
         # Test edit portfolio attribute
-        port.edit("Hello World", Currency.USD, PortfolioType.rrsp)
+        port.edit("Hello World", Currency.USD, PortfolioType.rrsp, "^GSPC")
         self.assertEqual(port.name, "Hello World")
         self.assertEqual(port.reporting_currency, Currency.USD)
         self.assertEqual(port.portfolio_type, PortfolioType.rrsp)
+        self.assertEqual(port.benchmark, "^GSPC")
 
         pos = self.create_position(**position_1, portfolio=port)
         self.create_order(**order_1, position=pos)
@@ -189,3 +190,57 @@ class ModelTest(BaseTest):
         order_12 = self.create_order(**order_2, position=pos)
 
         pos.orders_df()
+
+    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
+    def test_to_dict(self, md):
+
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos = self.create_position(**position_1, portfolio=port)
+        order_11 = self.create_order(**order_1, position=pos)
+        order_12 = self.create_order(**order_2, position=pos)
+
+        port_dict = {
+            "id": 1,
+            "Name": "portfolio_1",
+            "Portfolio type": "Margin",
+            "Reporting currency": "USD",
+            "Primary": False,
+            "Creation date": datetime(2020, 1, 1, 0, 0),
+            "Total market value": "8.00",
+            "Benchmark": "^GSPC",
+            "Positions": [
+                {
+                    "ID": 1,
+                    "Symbol": "AAPL",
+                    "Name": "Apple Inc.",
+                    "Security Type": "Common and preferred equities, ETFs, ETNs, units, ADRs, etc.",
+                    "Currency": "USD",
+                    "Market Cap": "8.00",
+                    "Total Quantity": 8,
+                    "Open": True,
+                    "Orders": [
+                        {
+                            "ID": 2,
+                            "symbol": "AAPL",
+                            "quantity": 2,
+                            "side": "Sell",
+                            "avg_exec_price": 11.0,
+                            "exec_time": "20-04-06 Mon 05:30",
+                            "fee": 0.0,
+                        },
+                        {
+                            "ID": 1,
+                            "symbol": "AAPL",
+                            "quantity": 10,
+                            "side": "Buy",
+                            "avg_exec_price": 10.5,
+                            "exec_time": "20-01-01 Wed 01:01",
+                            "fee": 0.123,
+                        },
+                    ],
+                }
+            ],
+        }
+
+        self.assertEqual(port.to_dict(), port_dict)

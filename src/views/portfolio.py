@@ -40,6 +40,7 @@ def add_portfolio():
             name=form.port_name.data,
             portfolio_type=form.port_type.data,
             reporting_currency=form.port_reporting_currency.data,
+            benchmark=form.benchmark.data,
             user=current_user,
         )
         new_portfolio.save_to_db()
@@ -54,7 +55,10 @@ def edit_portfolio(portfolio_id):
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
         port.edit(
-            form.port_name.data, form.port_reporting_currency.data, form.port_type.data
+            form.port_name.data,
+            form.port_reporting_currency.data,
+            form.port_type.data,
+            form.benchmark.data,
         )
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template(

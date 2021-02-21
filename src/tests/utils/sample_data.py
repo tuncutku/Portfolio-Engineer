@@ -9,12 +9,14 @@ portfolio_1 = {
     "portfolio_type": PortfolioType.margin,
     "reporting_currency": Currency.USD,
     "date": datetime(2020, 1, 1),
+    "benchmark": "^GSPC",
 }
 portfolio_2 = {
     "name": "portfolio_2",
     "portfolio_type": PortfolioType.cash,
     "reporting_currency": Currency.CAD,
     "date": datetime(2020, 1, 1),
+    "benchmark": "^GSPC",
 }
 position_1 = {
     "symbol": "AAPL",

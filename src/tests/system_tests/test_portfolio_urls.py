@@ -33,6 +33,7 @@ class TestPortfolioURLs(BaseTest):
                 port_name="New",
                 port_type=PortfolioType.margin,
                 port_reporting_currency=Currency.USD,
+                benchmark="^GSPC",
             ),
             follow_redirects=True,
         )

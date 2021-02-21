@@ -14,6 +14,7 @@ class Portfolio(BaseModel):
     name = db.Column(db.String(255), nullable=False)
     portfolio_type = db.Column(db.String(255), nullable=False)
     reporting_currency = db.Column(db.String(3), nullable=False)
+    benchmark = db.Column(db.String(3), nullable=False)
 
     # Default attributes
     is_primary = db.Column(db.Boolean(), default=False)
@@ -42,10 +43,11 @@ class Portfolio(BaseModel):
             value += pos_mkt_cap
         return value
 
-    def edit(self, name, currency, port_type) -> None:
+    def edit(self, name, currency, port_type, benchmark) -> None:
         self.name = name
         self.reporting_currency = currency
         self.portfolio_type = port_type
+        self.benchmark = benchmark
         db.session.commit()
 
     def set_as_primary(self) -> None:
@@ -65,8 +67,12 @@ class Portfolio(BaseModel):
             "Primary": self.is_primary,
             "Creation date": self.date,
             "Total market value": "{:,.2f}".format(self.total_mkt_value),
+            "Benchmark": self.benchmark,
             "Positions": position_list,
         }
+
+    def get_overview_report(self):
+        pass
 
     # Questrade attributes
     # questrade_id = db.Column(db.Integer())
