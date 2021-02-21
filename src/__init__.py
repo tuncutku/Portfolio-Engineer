@@ -17,7 +17,9 @@ from src.views import (
     position_blueprint,
     order_blueprint,
     error_handler_blueprint,
+    report_blueprint,
 )
+from src.dashapp import register_dash_app
 
 
 def create_app(object_name=None):
@@ -30,6 +32,8 @@ def create_app(object_name=None):
     """
     app = Flask(__name__)
     app.config.from_object(object_name)
+
+    # register_dash_app(app)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -45,6 +49,7 @@ def create_app(object_name=None):
     app.register_blueprint(position_blueprint)
     app.register_blueprint(order_blueprint)
     app.register_blueprint(error_handler_blueprint)
+    app.register_blueprint(report_blueprint)
 
     @app.route("/")
     def home():

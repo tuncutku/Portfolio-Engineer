@@ -1,9 +1,9 @@
 import datetime
 
-from src.environment.base import BaseModel
+from src.environment.utils.base import BaseModel
 from src.extensions import db
 from src.market_data.yahoo import YFinance
-from src.environment.types import *
+from src.environment.utils.types import *
 
 
 class Portfolio(BaseModel):

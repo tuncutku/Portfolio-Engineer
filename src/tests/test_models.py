@@ -179,3 +179,13 @@ class ModelTest(BaseTest):
         self.assertEqual(order_buy.avg_exec_price, 100)
         self.assertEqual(order_buy.exec_time, datetime(2020, 1, 1))
         self.assertEqual(order_buy.fee, 10)
+
+    def test_to_df(self):
+
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos = self.create_position(**position_1, portfolio=port)
+        order_11 = self.create_order(**order_1, position=pos)
+        order_12 = self.create_order(**order_2, position=pos)
+
+        pos.orders_df()

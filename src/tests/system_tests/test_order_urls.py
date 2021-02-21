@@ -7,12 +7,10 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.types import PortfolioType, OrderSideType, Currency
+from src.environment.utils.types import *
 
 
 from src.forms.order_forms import date_time_format
-
-a = 1
 
 
 class TestOrderURLs(BaseTest):

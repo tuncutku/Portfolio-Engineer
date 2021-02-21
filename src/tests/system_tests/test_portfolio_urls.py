@@ -6,7 +6,7 @@ from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
 
-from src.environment.types import PortfolioType, Currency
+from src.environment.utils.types import *
 
 
 class TestPortfolioURLs(BaseTest):

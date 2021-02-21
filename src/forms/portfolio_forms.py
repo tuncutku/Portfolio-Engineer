@@ -9,7 +9,7 @@ from wtforms.validators import (
 from flask_login import current_user
 
 from src.environment.portfolio import Portfolio
-from src.environment.types import PortfolioType, Currency
+from src.environment.utils.types import *
 
 
 port_type_choices = [
