@@ -57,5 +57,5 @@ class Order(BaseModel):
         return pd.DataFrame(
             data=[[self.adjusted_quantity, self.avg_exec_price, self.fee]],
             index=[self.exec_time],
-            columns=["Quantity", "Cost", "Fee"],
+            columns=["Quantity", "Quote", "Fee"],
         )

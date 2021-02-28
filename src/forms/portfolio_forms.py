@@ -52,7 +52,7 @@ class Benchmark(object):
         self.message = message
 
     def __call__(self, form, field):
-        md_provider = YFinance(field.data)
+        md_provider = YFinance([field.data])
         if not md_provider.is_valid:
             if not self.message:
                 self.message = "Invalid Ticker!"

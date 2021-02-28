@@ -1,4 +1,5 @@
 import datetime
+import pandas as pd
 
 from src.environment.utils.base import BaseModel
 from src.extensions import db
@@ -24,21 +25,34 @@ class Portfolio(BaseModel):
         "Position", backref="portfolio", cascade="all, delete-orphan"
     )
 
+    reports = db.relationship(
+        "Report", backref="portfolio", cascade="all, delete-orphan"
+    )
+
     def __repr__(self) -> str:
         return "<Portfolio {}.>".format(self.name)
+
+    @classmethod
+    def get_primary(cls, user):
+        return cls.query.filter_by(user=user, is_primary=True).first()
+
+    @property
+    def symbols(self):
+        return [pos.symbol for pos in self.positions]
 
     @property
     def total_mkt_value(self) -> float:
 
-        fx_md = YFinance("USDCAD=X")
-        quote = fx_md.get_quote(decimal=2)
+        fx_symbol = "USDCAD=X"
+        fx_md = YFinance([fx_symbol])
+        quote = fx_md.get_current_quotes(decimal=2)
 
         value = 0
         for pos in self.positions:
             pos_mkt_cap = (
                 pos.market_cap
                 if pos.currency == self.reporting_currency
-                else pos.market_cap * quote
+                else pos.market_cap * float(quote[fx_symbol])
             )
             value += pos_mkt_cap
         return value
@@ -71,8 +85,13 @@ class Portfolio(BaseModel):
             "Positions": position_list,
         }
 
-    def get_overview_report(self):
-        pass
+    def positions_df(self) -> pd.DataFrame:
+
+        # Raise error if list is empty.
+        position_df_list = [position.orders_df() for position in self.positions]
+        position_symbol_list = [position.symbol for position in self.positions]
+
+        return pd.concat(position_df_list, axis=1, keys=position_symbol_list)
 
     # Questrade attributes
     # questrade_id = db.Column(db.Integer())

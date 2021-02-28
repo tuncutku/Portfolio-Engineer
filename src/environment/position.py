@@ -34,8 +34,9 @@ class Position(BaseModel):
     @property
     def market_cap(self, quote: float = None) -> float:
         if quote is None:
-            md_provider = YFinance(self.symbol)
-        return round(float(md_provider.get_quote() * self.open_quantity), 2)
+            md_provider = YFinance([self.symbol])
+            raw_quotes = md_provider.get_current_quotes()
+        return round(float(raw_quotes[self.symbol] * self.open_quantity), 2)
 
     @property
     def open(self) -> bool:

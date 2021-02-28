@@ -17,12 +17,14 @@ class TestOrderURLs(BaseTest):
     @mock.patch(
         "src.market_data.yahoo.YFinance.info",
         return_value={
-            "shortName": "Facebook Inc.",
-            "quoteType": "EQUITY",
-            "currency": "USD",
+            "FB": {
+                "shortName": "Facebook, Inc.",
+                "quoteType": "EQUITY",
+                "currency": "USD",
+            }
         },
     )
-    def test_add_order(self, md):
+    def test_add_order(self, md=None):
 
         self.login_user()
 
@@ -61,7 +63,7 @@ class TestOrderURLs(BaseTest):
 
         new_pos = Position.find_by_id(2)
         self.assertIsNotNone(new_pos)
-        self.assertEqual(new_pos.name, "Facebook Inc.")
+        self.assertEqual(new_pos.name, "Facebook, Inc.")
         self.assertEqual(new_pos.security_type, "EQUITY")
         self.assertEqual(new_pos.currency, "USD")
 

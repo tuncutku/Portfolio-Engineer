@@ -32,8 +32,8 @@ def close_position(position_id):
     position = Position.find_by_id(position_id)
 
     if position.open:
-        md_provider = YFinance(position.symbol)
-        quote = md_provider.get_quote(decimal=2)
+        md_provider = YFinance([position.symbol])
+        quote = md_provider.get_current_quotes(decimal=2)
 
         side = OrderSideType.Sell if position.open_quantity > 0 else OrderSideType.Buy
 
@@ -41,7 +41,7 @@ def close_position(position_id):
             symbol=position.symbol,
             quantity=abs(position.open_quantity),
             side=side,
-            avg_exec_price=quote,
+            avg_exec_price=quote[position.symbol],
             exec_time=datetime.now(),
             fee=0,
             position=position,

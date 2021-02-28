@@ -29,13 +29,14 @@ def valide_price_and_date(ticker, price, date: datetime):
 
     validation = True
     now = datetime.now()
-    md_provider = YFinance(ticker)
+    md_provider = YFinance([ticker])
 
     # Case where date and price are not given.
     if not price and not date:
         try:
-            price = md_provider.get_quote(decimal=2)
-            date = now
+            df_raw = md_provider.get_current_quotes(decimal=2)
+            price = float(df_raw[ticker])
+            date = df_raw.index.to_pydatetime()[0]
         except:
             validation = False
 
@@ -48,13 +49,13 @@ def valide_price_and_date(ticker, price, date: datetime):
         # TODO: make this hourly and move to a new tahoo class.
         if date.date() == now.date():
             try:
-                price = md_provider.get_quote(decimal=2)
+                price = md_provider.get_current_quotes(decimal=2)
                 date = now
             except:
                 validation = False
         else:
             try:
-                price = md_provider.get_historical_quote(date)
+                price = md_provider.get_historical_quote(date, get_all=False)
                 if not price:
                     raise ValueError
             except (OverflowError, ValueError, TypeError):
@@ -67,7 +68,7 @@ class Ticker(object):
         self.message = message
 
     def __call__(self, form, field):
-        md_provider = YFinance(field.data)
+        md_provider = YFinance([field.data])
         if not md_provider.is_valid:
             if not self.message:
                 self.message = "Invalid Ticker!"

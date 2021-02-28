@@ -1,6 +1,7 @@
 from sqlalchemy.exc import StatementError
 from datetime import datetime
 from unittest import mock
+import pandas as pd
 
 from src.tests.utils.base import BaseTest
 from src.tests.utils.sample_data import *
@@ -10,6 +11,7 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
+from src.environment.report import Report
 
 
 class ModelTest(BaseTest):
@@ -122,8 +124,11 @@ class ModelTest(BaseTest):
         self.assertIsNone(Position.query.filter_by(portfolio=port).first())
         self.assertIsNone(Order.query.filter_by(position=pos).first())
 
-    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
-    def test_portfolio_attributes(self, md):
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.get_current_quotes",
+        return_value=pd.DataFrame([1], columns=["AAPL"]),
+    )
+    def test_portfolio_attributes(self, md=None):
         """Unit test for portfolio attributes."""
 
         user = self.create_user(**user_1)
@@ -146,8 +151,11 @@ class ModelTest(BaseTest):
         self.create_order(**order_2, position=pos)
         self.assertEqual(port.total_mkt_value, 8)
 
-    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
-    def test_position_attributes(self, md):
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.get_current_quotes",
+        return_value=pd.DataFrame([1], columns=["AAPL"]),
+    )
+    def test_position_attributes(self, md=None):
         """Unit test for position attributes."""
 
         user = self.create_user(**user_1)
@@ -185,14 +193,21 @@ class ModelTest(BaseTest):
 
         user = self.create_user(**user_1)
         port = self.create_portfolio(**portfolio_1, user=user)
-        pos = self.create_position(**position_1, portfolio=port)
-        order_11 = self.create_order(**order_1, position=pos)
-        order_12 = self.create_order(**order_2, position=pos)
+        pos_1 = self.create_position(**position_1, portfolio=port)
+        pos_2 = self.create_position(**position_2, portfolio=port)
+        self.create_order(**order_1, position=pos_1)
+        self.create_order(**order_2, position=pos_1)
+        self.create_order(**order_3, position=pos_2)
 
-        pos.orders_df()
+        pos_1.orders_df()
 
-    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
-    def test_to_dict(self, md):
+        port.positions_df()
+
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.get_current_quotes",
+        return_value=pd.DataFrame([1], columns=["AAPL"]),
+    )
+    def test_to_dict(self, md=None):
 
         user = self.create_user(**user_1)
         port = self.create_portfolio(**portfolio_1, user=user)
@@ -235,7 +250,7 @@ class ModelTest(BaseTest):
                             "quantity": 10,
                             "side": "Buy",
                             "avg_exec_price": 10.5,
-                            "exec_time": "20-01-01 Wed 01:01",
+                            "exec_time": "20-01-03 Fri 01:01",
                             "fee": 0.123,
                         },
                     ],
@@ -244,3 +259,15 @@ class ModelTest(BaseTest):
         }
 
         self.assertEqual(port.to_dict(), port_dict)
+
+    def test_report(self):
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos_1 = self.create_position(**position_1, portfolio=port)
+        pos_2 = self.create_position(**position_2, portfolio=port)
+        self.create_order(**order_1, position=pos_1)
+        self.create_order(**order_2, position=pos_1)
+        self.create_order(**order_3, position=pos_2)
+
+        report = Report(portfolio=port)
+        hey = report.get_returns()

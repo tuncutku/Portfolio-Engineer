@@ -1,87 +1,109 @@
 import pandas as pd
 import plotly.express as px  # (version 4.7.0)
 import plotly.graph_objects as go
+from flask import redirect, url_for, session
 
 from dash import Dash  # (version 1.12.0) pip install dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
+
+from src.environment.user import User
+from src.environment.portfolio import Portfolio
+from src.environment.report import Report
 
 
-def register_dash_app(app):
+def register_dash_app(server):
     app = Dash(
         __name__,
-        server=app,
-        routes_pathname_prefix="/reports/",
+        server=server,
+        routes_pathname_prefix="/report/",
+        external_stylesheets=[dbc.themes.FLATLY],
     )
-
-    # ---------- Import and clean data (importing csv into pandas)
-    # df = pd.read_csv("intro_bees.csv")
-    df = pd.read_csv(
-        "https://raw.githubusercontent.com/Coding-with-Adam/Dash-by-Plotly/master/Other/Dash_Introduction/intro_bees.csv"
-    )
-
-    df = df.groupby(["State", "ANSI", "Affected by", "Year", "state_code"])[
-        ["Pct of Colonies Impacted"]
-    ].mean()
-    df.reset_index(inplace=True)
-    print(df[:5])
 
     # ------------------------------------------------------------------------------
     # App layout
     app.layout = html.Div(
         [
-            html.H1(
-                "Web Application Dashboards with Dash", style={"text-align": "center"}
+            # Hidden Items
+            dcc.Location(id="url", refresh=False),
+            html.Div(id="hidden_log_out"),
+            html.Div(id="hidden_account_view"),
+            # Navbar
+            dbc.Navbar(
+                dbc.Container(
+                    [
+                        dbc.NavbarBrand(
+                            children="Portfolio Engineer", className="text-light"
+                        ),
+                        dbc.Button("View my account", id="account_btn"),
+                        dbc.Button("Log Out", id="logout_btn"),
+                    ],
+                    fluid=True,
+                ),
+                color="success",
             ),
-            dcc.Dropdown(
-                id="slct_year",
-                options=[
-                    {"label": "2015", "value": 2015},
-                    {"label": "2016", "value": 2016},
-                    {"label": "2017", "value": 2017},
-                    {"label": "2018", "value": 2018},
-                ],
-                multi=False,
-                value=2015,
-                style={"width": "40%"},
-            ),
-            html.Div(id="output_container", children=[]),
             html.Br(),
-            dcc.Graph(id="my_bee_map", figure={}),
+            # Main
+            dbc.Container(
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                dcc.Dropdown(
+                                    id="portfolios",
+                                    multi=False,
+                                    searchable=False,
+                                    clearable=False,
+                                ),
+                            ],
+                        ),
+                        dbc.Col(dcc.Graph(id="return_graph"), width={"size": 8}),
+                    ]
+                ),
+                fluid=True,
+            ),
         ]
     )
 
-    # ------------------------------------------------------------------------------
-    # Connect the Plotly graphs with Dash Components
+    @app.callback(
+        Output("hidden_log_out", "children"),
+        [Input("logout_btn", "n_clicks")],
+    )
+    def logout(n):
+        if n is not None:
+            return dcc.Location(pathname="/users/logout", id="heey")
+
+    @app.callback(
+        Output("hidden_account_view", "children"),
+        [Input("account_btn", "n_clicks")],
+    )
+    def account(n):
+        if n is not None:
+            return dcc.Location(pathname="/portfolio/list", id="heey")
+
     @app.callback(
         [
-            Output(component_id="output_container", component_property="children"),
-            Output(component_id="my_bee_map", component_property="figure"),
+            Output("portfolios", "options"),
+            Output("portfolios", "value"),
+            Output("return_graph", "figure"),
         ],
-        [Input(component_id="slct_year", component_property="value")],
+        Input("url", "pathname"),
+        prevent_initial_call=False,
     )
-    def update_graph(option_slctd):
-        print(option_slctd)
-        print(type(option_slctd))
+    def set_default_options(url):
 
-        container = "The year chosen by user was: {}".format(option_slctd)
+        current_user = User.find_by_id(session["user_id"])
+        primary_port = Portfolio.get_primary(current_user)
+        report = Report(portfolio=primary_port)
 
-        dff = df.copy()
-        dff = dff[dff["Year"] == option_slctd]
-        dff = dff[dff["Affected by"] == "Varroa_mites"]
+        value = primary_port.id
+        options = [
+            {"label": port.name, "value": port.id}
+            for port in current_user.portfolios
+            if port.positions
+        ]
+        graph = px.line(report.cum_return)
 
-        # Plotly Express
-        fig = px.choropleth(
-            data_frame=dff,
-            locationmode="USA-states",
-            locations="state_code",
-            scope="usa",
-            color="Pct of Colonies Impacted",
-            hover_data=["State", "Pct of Colonies Impacted"],
-            color_continuous_scale=px.colors.sequential.YlOrRd,
-            labels={"Pct of Colonies Impacted": "% of Bee Colonies"},
-            template="plotly_dark",
-        )
-
-        return container, fig
+        return options, value, graph
