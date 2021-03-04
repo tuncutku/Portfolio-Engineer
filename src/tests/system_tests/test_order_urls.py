@@ -44,7 +44,7 @@ class TestOrderURLs(BaseTest):
                 quantity=6,
                 side=OrderSideType.Sell,
                 fee=10,
-                exec_datetime=datetime(2020, 1, 1, 3, 10).strftime(date_time_format),
+                exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
                 price=100,
             ),
             follow_redirects=True,
@@ -58,7 +58,7 @@ class TestOrderURLs(BaseTest):
         self.assertEqual(new_order.quantity, 6)
         self.assertEqual(new_order.side, OrderSideType.Sell)
         self.assertEqual(new_order.fee, 10)
-        self.assertEqual(new_order.exec_time, datetime(2020, 1, 1, 3, 10))
+        self.assertEqual(new_order.exec_time, datetime(2020, 1, 2))
         self.assertEqual(new_order.avg_exec_price, 100)
 
         new_pos = Position.find_by_id(2)
@@ -94,7 +94,7 @@ class TestOrderURLs(BaseTest):
                 quantity=6,
                 side=OrderSideType.Sell,
                 fee=10,
-                exec_datetime=datetime(2019, 1, 1, 3, 10).strftime(date_time_format),
+                exec_datetime=datetime(2019, 1, 2).strftime(date_time_format),
                 price=0.2,
             ),
             follow_redirects=True,
@@ -105,7 +105,7 @@ class TestOrderURLs(BaseTest):
         self.assertEqual(self.order_test.quantity, 6)
         self.assertEqual(self.order_test.side, OrderSideType.Sell)
         self.assertEqual(self.order_test.fee, 10)
-        self.assertEqual(self.order_test.exec_time, datetime(2019, 1, 1, 3, 10))
+        self.assertEqual(self.order_test.exec_time, datetime(2019, 1, 2))
         self.assertEqual(self.order_test.avg_exec_price, 0.2)
 
     def test_delete_order(self):

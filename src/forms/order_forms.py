@@ -1,3 +1,4 @@
+from trading_calendars import get_calendar
 from flask_wtf import FlaskForm as Form
 from wtforms import (
     StringField,
@@ -10,10 +11,11 @@ from wtforms import (
     DateTimeField,
     FloatField,
 )
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
-from src.environment.order import Order, OrderSideType
+from src.environment.order import Order
+from src.environment.utils.types import *
 from src.market_data.yahoo import YFinance
 
 
@@ -22,45 +24,7 @@ order_side_choices = [
     (OrderSideType.Sell, OrderSideType.Sell),
 ]
 
-date_time_format = "%Y-%m-%d %H:%M"
-
-
-def valide_price_and_date(ticker, price, date: datetime):
-
-    validation = True
-    now = datetime.now()
-    md_provider = YFinance([ticker])
-
-    # Case where date and price are not given.
-    if not price and not date:
-        try:
-            df_raw = md_provider.get_current_quotes(decimal=2)
-            price = float(df_raw[ticker])
-            date = df_raw.index.to_pydatetime()[0]
-        except:
-            validation = False
-
-    # Case where only price is given.
-    elif price and not date:
-        date = now
-
-    # Case where only the date is given.
-    elif not price and date:
-        # TODO: make this hourly and move to a new tahoo class.
-        if date.date() == now.date():
-            try:
-                price = md_provider.get_current_quotes(decimal=2)
-                date = now
-            except:
-                validation = False
-        else:
-            try:
-                price = md_provider.get_historical_quote(date, get_all=False)
-                if not price:
-                    raise ValueError
-            except (OverflowError, ValueError, TypeError):
-                validation = False
-    return validation, price, date
+date_time_format = "%Y-%m-%d"
 
 
 class Ticker(object):
@@ -72,6 +36,19 @@ class Ticker(object):
         if not md_provider.is_valid:
             if not self.message:
                 self.message = "Invalid Ticker!"
+            raise ValidationError(self.message)
+
+
+class Location(object):
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        md_provider = YFinance([field.data])
+        info = md_provider.info()
+        if info[field.data]["currency"] not in [Currency.USD, Currency.CAD]:
+            if not self.message:
+                self.message = "Only US and Canadian securities are supported!"
             raise ValidationError(self.message)
 
 
@@ -101,7 +78,7 @@ class PositiveFloat(object):
 
 class AddOrderForm(Form):
 
-    symbol = StringField(u"Ticker", [DataRequired(), Ticker()])
+    symbol = StringField(u"Ticker", [DataRequired(), Ticker(), Location()])
     quantity = IntegerField(u"Order Quantity", [DataRequired()])
     side = SelectField(
         u"Order Side", default=OrderSideType.Buy, choices=order_side_choices
@@ -121,18 +98,16 @@ class AddOrderForm(Form):
         if not check_validate:
             return False
 
-        valid, price, date = valide_price_and_date(
-            self.symbol.data, self.price.data, self.exec_datetime.data
-        )
+        date = self.exec_datetime.data.replace(tzinfo=timezone.utc)
 
-        if not valid:
-            self.price.errors.append(
-                "Couldn't find a valid quote, please insert a quote for the underlying."
-            )
+        md_provider = YFinance([self.symbol.data])
+        info = md_provider.info()
+        currency = info[self.symbol.data]["currency"]
+        calender = get_calendar(CurrencyExchangeMap[currency])
+
+        if not calender.is_session(date):
+            self.exec_datetime.errors.append("Selected date is holiday.")
             return False
-
-        self.price.data = price
-        self.exec_datetime.data = date
 
         return True
 
@@ -163,18 +138,14 @@ def generate_edit_order_form(order: Order):
             if not check_validate:
                 return False
 
-            valid, price, date = valide_price_and_date(
-                self.symbol.data, self.price.data, self.exec_datetime.data
-            )
+            md_provider = YFinance([self.symbol.data])
+            info = md_provider.info()
+            currency = info[self.symbol.data]["currency"]
+            calender = get_calendar(CurrencyExchangeMap[currency])
 
-            if not valid:
-                self.price.errors.append(
-                    "Couldn't find a valid quote, please insert a quote for the underlying."
-                )
+            if not calender.is_session(self.exec_datetime.data):
+                self.exec_datetime.errors.append("Selected date is holiday.")
                 return False
-
-            self.price.data = price
-            self.exec_datetime.data = date
 
             return True
 

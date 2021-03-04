@@ -241,7 +241,7 @@ class ModelTest(BaseTest):
                             "quantity": 2,
                             "side": "Sell",
                             "avg_exec_price": 11.0,
-                            "exec_time": "20-04-06 Mon 05:30",
+                            "exec_time": "20-04-06 Mon 00:00",
                             "fee": 0.0,
                         },
                         {
@@ -250,7 +250,7 @@ class ModelTest(BaseTest):
                             "quantity": 10,
                             "side": "Buy",
                             "avg_exec_price": 10.5,
-                            "exec_time": "20-01-03 Fri 01:01",
+                            "exec_time": "20-01-03 Fri 00:00",
                             "fee": 0.123,
                         },
                     ],

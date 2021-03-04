@@ -7,9 +7,7 @@ from src.environment.portfolio import Portfolio
 report_blueprint = Blueprint("report", __name__, url_prefix="/report")
 
 
-@report_blueprint.route("/report/<int:portfolio_id>", methods=["GET"])
+@report_blueprint.route("/report/", methods=["GET"])
 @login_required
-def view_report(portfolio_id):
-    session["user_id"] = current_user.id
-    session["portfolio_id"] = portfolio_id
+def view_report():
     return redirect("/report/")

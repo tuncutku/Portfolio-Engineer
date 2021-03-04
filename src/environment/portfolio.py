@@ -25,9 +25,9 @@ class Portfolio(BaseModel):
         "Position", backref="portfolio", cascade="all, delete-orphan"
     )
 
-    reports = db.relationship(
-        "Report", backref="portfolio", cascade="all, delete-orphan"
-    )
+    # reports = db.relationship(
+    #     "Report", backref="portfolio", cascade="all, delete-orphan"
+    # )
 
     def __repr__(self) -> str:
         return "<Portfolio {}.>".format(self.name)

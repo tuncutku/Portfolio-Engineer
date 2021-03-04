@@ -8,12 +8,12 @@ from src.market_data.yahoo import YFinance
 from src.environment.utils.types import *
 
 
-class Report(BaseModel):
-    __tablename__ = "report"
+class Report:
+    # __tablename__ = "report"
 
-    id = db.Column(db.Integer(), primary_key=True)
-    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    creation_date = db.Column(db.DateTime(), default=datetime.datetime.now)
+    # id = db.Column(db.Integer(), primary_key=True)
+    # portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
+    # creation_date = db.Column(db.DateTime(), default=datetime.datetime.now)
 
     def __init__(self, portfolio):
         self.portfolio = portfolio
@@ -21,7 +21,6 @@ class Report(BaseModel):
         self.set_portfolio_df()
         self.set_benchmark_df()
         self.set_value_df()
-        self.set_return_df()
 
     def set_default_dates(self):
         df_raw_data = self.portfolio.positions_df()
@@ -36,6 +35,7 @@ class Report(BaseModel):
         df_raw_data = self.portfolio.positions_df()
         df_raw_data.index = df_raw_data.index.date
         self.__raw_df = self.extend_df_with_market_data(df_raw_data)
+        self.observation_period = self.__raw_df.index
 
     def extend_df_with_market_data(self, df_port):
         md_provider = YFinance(self.portfolio.symbols)
@@ -68,7 +68,7 @@ class Report(BaseModel):
         self.position_values = position_values
         self.port_value = position_values.sum(axis=1)
 
-    def set_return_df(self, return_period=1):
+    def set_return_df(self, return_period):
 
         port_weights = self.position_values.div(self.port_value, axis=0)
 
@@ -79,15 +79,36 @@ class Report(BaseModel):
             columns=[self.portfolio.name],
         )
 
+    def set_cum_return_df(self, start_date, end_date):
         f = lambda df: (1 + df).cumprod()
-        self.benchmark_cum_return = f(self.benchmark_return)
-        self.portfolio_cum_return = f(self.portfolio_return)
+        self.benchmark_cum_return = f(self.benchmark_return[start_date:end_date])
+        self.portfolio_cum_return = f(self.portfolio_return[start_date:end_date])
 
-    def get_returns(self):
-        return {
-            "Position Return": self.position_return,
-            "Benchmark Return": self.benchmark_return,
-            "Portfolio Return": self.portfolio_return,
-            "Benchmark Cumulative Return": self.benchmark_cum_return,
-            "Portfolio Cumulative Return": self.portfolio_cum_return,
-        }
+    ################## Reports ##################
+
+    def get_date_range(self):
+        return self.port_value.index.min(), self.port_value.index.max()
+
+    def get_position_values(self, start_date, end_date, date=None):
+        return self.position_values[start_date:end_date]
+
+    def get_returns(self, return_period=1):
+        self.set_return_df(return_period)
+        return pd.concat(
+            [
+                self.position_return,
+                self.benchmark_return,
+                self.portfolio_return,
+            ],
+            axis=1,
+        )
+
+    def get_cum_returns(self, start_date, end_date, return_period=1):
+
+        self.set_return_df(return_period)
+        self.set_cum_return_df(start_date, end_date)
+        returns = pd.concat(
+            [self.portfolio_cum_return, self.benchmark_cum_return],
+            axis=1,
+        )
+        return returns
