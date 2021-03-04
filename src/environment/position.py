@@ -1,7 +1,8 @@
 import datetime
+import pandas as pd
 
 from src.extensions import db
-from src.environment.base import BaseModel
+from src.environment.utils.base import BaseModel
 from src.market_data.yahoo import YFinance
 
 
@@ -33,8 +34,9 @@ class Position(BaseModel):
     @property
     def market_cap(self, quote: float = None) -> float:
         if quote is None:
-            md_provider = YFinance(self.symbol)
-        return round(float(md_provider.get_quote() * self.open_quantity), 2)
+            md_provider = YFinance([self.symbol])
+            raw_quotes = md_provider.get_current_quotes()
+        return round(float(raw_quotes[self.symbol] * self.open_quantity), 2)
 
     @property
     def open(self) -> bool:
@@ -56,3 +58,10 @@ class Position(BaseModel):
             "Open": self.open,
             "Orders": order_list,
         }
+
+    def orders_df(self):
+        order_df_list = [order.to_df() for order in self.orders]
+        order_df = pd.concat(order_df_list)
+        order_df_sorted = order_df.sort_index()
+        order_df_sorted["Quantity"] = order_df_sorted["Quantity"].cumsum()
+        return order_df_sorted

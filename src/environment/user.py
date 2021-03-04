@@ -1,12 +1,7 @@
 from flask_login import UserMixin
-from src.environment.base import BaseModel
 
-
+from src.environment.utils.base import BaseModel
 from src.extensions import db, bcrypt
-from src.environment.utils.encryption import (
-    encrypt_token,
-    decrypt_token,
-)
 
 
 class User(BaseModel, UserMixin):

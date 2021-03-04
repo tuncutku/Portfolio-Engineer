@@ -1,6 +1,7 @@
 from sqlalchemy.exc import StatementError
 from datetime import datetime
 from unittest import mock
+import pandas as pd
 
 from src.tests.utils.base import BaseTest
 from src.tests.utils.sample_data import *
@@ -10,6 +11,7 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
+from src.environment.report import Report
 
 
 class ModelTest(BaseTest):
@@ -122,8 +124,11 @@ class ModelTest(BaseTest):
         self.assertIsNone(Position.query.filter_by(portfolio=port).first())
         self.assertIsNone(Order.query.filter_by(position=pos).first())
 
-    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
-    def test_portfolio_attributes(self, md):
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.get_current_quotes",
+        return_value=pd.DataFrame([1], columns=["AAPL"]),
+    )
+    def test_portfolio_attributes(self, md=None):
         """Unit test for portfolio attributes."""
 
         user = self.create_user(**user_1)
@@ -135,18 +140,22 @@ class ModelTest(BaseTest):
         self.assertEqual(port.is_primary, True)
 
         # Test edit portfolio attribute
-        port.edit("Hello World", Currency.USD, PortfolioType.rrsp)
+        port.edit("Hello World", Currency.USD, PortfolioType.rrsp, "^GSPC")
         self.assertEqual(port.name, "Hello World")
         self.assertEqual(port.reporting_currency, Currency.USD)
         self.assertEqual(port.portfolio_type, PortfolioType.rrsp)
+        self.assertEqual(port.benchmark, "^GSPC")
 
         pos = self.create_position(**position_1, portfolio=port)
         self.create_order(**order_1, position=pos)
         self.create_order(**order_2, position=pos)
         self.assertEqual(port.total_mkt_value, 8)
 
-    @mock.patch("src.market_data.yahoo.YFinance.get_quote", return_value=1)
-    def test_position_attributes(self, md):
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.get_current_quotes",
+        return_value=pd.DataFrame([1], columns=["AAPL"]),
+    )
+    def test_position_attributes(self, md=None):
         """Unit test for position attributes."""
 
         user = self.create_user(**user_1)
@@ -179,3 +188,86 @@ class ModelTest(BaseTest):
         self.assertEqual(order_buy.avg_exec_price, 100)
         self.assertEqual(order_buy.exec_time, datetime(2020, 1, 1))
         self.assertEqual(order_buy.fee, 10)
+
+    def test_to_df(self):
+
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos_1 = self.create_position(**position_1, portfolio=port)
+        pos_2 = self.create_position(**position_2, portfolio=port)
+        self.create_order(**order_1, position=pos_1)
+        self.create_order(**order_2, position=pos_1)
+        self.create_order(**order_3, position=pos_2)
+
+        pos_1.orders_df()
+
+        port.positions_df()
+
+    @mock.patch(
+        "src.market_data.yahoo.YFinance.get_current_quotes",
+        return_value=pd.DataFrame([1], columns=["AAPL"]),
+    )
+    def test_to_dict(self, md=None):
+
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos = self.create_position(**position_1, portfolio=port)
+        order_11 = self.create_order(**order_1, position=pos)
+        order_12 = self.create_order(**order_2, position=pos)
+
+        port_dict = {
+            "id": 1,
+            "Name": "portfolio_1",
+            "Portfolio type": "Margin",
+            "Reporting currency": "USD",
+            "Primary": False,
+            "Creation date": datetime(2020, 1, 1, 0, 0),
+            "Total market value": "8.00",
+            "Benchmark": "^GSPC",
+            "Positions": [
+                {
+                    "ID": 1,
+                    "Symbol": "AAPL",
+                    "Name": "Apple Inc.",
+                    "Security Type": "Common and preferred equities, ETFs, ETNs, units, ADRs, etc.",
+                    "Currency": "USD",
+                    "Market Cap": "8.00",
+                    "Total Quantity": 8,
+                    "Open": True,
+                    "Orders": [
+                        {
+                            "ID": 2,
+                            "symbol": "AAPL",
+                            "quantity": 2,
+                            "side": "Sell",
+                            "avg_exec_price": 11.0,
+                            "exec_time": "20-04-06 Mon 00:00",
+                            "fee": 0.0,
+                        },
+                        {
+                            "ID": 1,
+                            "symbol": "AAPL",
+                            "quantity": 10,
+                            "side": "Buy",
+                            "avg_exec_price": 10.5,
+                            "exec_time": "20-01-03 Fri 00:00",
+                            "fee": 0.123,
+                        },
+                    ],
+                }
+            ],
+        }
+
+        self.assertEqual(port.to_dict(), port_dict)
+
+    def test_report(self):
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos_1 = self.create_position(**position_1, portfolio=port)
+        pos_2 = self.create_position(**position_2, portfolio=port)
+        self.create_order(**order_1, position=pos_1)
+        self.create_order(**order_2, position=pos_1)
+        self.create_order(**order_3, position=pos_2)
+
+        report = Report(portfolio=port)
+        hey = report.get_returns()

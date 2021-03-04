@@ -1,10 +1,11 @@
 from pydantic.dataclasses import dataclass
+import pandas as pd
 from datetime import datetime
 from typing import List
 
 from src.extensions import db
-from src.environment.base import BaseModel
-from src.environment.types import *
+from src.environment.utils.base import BaseModel
+from src.environment.utils.types import *
 
 
 # TODO: Add support for opiton strategies.
@@ -51,3 +52,10 @@ class Order(BaseModel):
         self.exec_time = exec_time
         self.fee = fee
         db.session.commit()
+
+    def to_df(self):
+        return pd.DataFrame(
+            data=[[self.adjusted_quantity, self.avg_exec_price, self.fee]],
+            index=[self.exec_time],
+            columns=["Quantity", "Quote", "Fee"],
+        )

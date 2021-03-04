@@ -5,6 +5,7 @@ import collections
 
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
+from src.environment.report import Report
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
 from src.extensions import db
 
@@ -40,8 +41,11 @@ def add_portfolio():
             name=form.port_name.data,
             portfolio_type=form.port_type.data,
             reporting_currency=form.port_reporting_currency.data,
+            benchmark=form.benchmark.data,
             user=current_user,
         )
+        if len(current_user.portfolios) == 1:
+            new_portfolio.set_as_primary()
         new_portfolio.save_to_db()
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("portfolio/add_portfolio.html", form=form)
@@ -54,7 +58,10 @@ def edit_portfolio(portfolio_id):
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
         port.edit(
-            form.port_name.data, form.port_reporting_currency.data, form.port_type.data
+            form.port_name.data,
+            form.port_reporting_currency.data,
+            form.port_type.data,
+            form.benchmark.data,
         )
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template(
@@ -74,9 +81,7 @@ def delete_portfolio(portfolio_id):
 @login_required
 def set_portfolio_primary(portfolio_id):
 
-    primary_portfolio = Portfolio.query.filter_by(
-        user=current_user, is_primary=True
-    ).first()
+    primary_portfolio = Portfolio.get_primary(current_user)
 
     if primary_portfolio:
         primary_portfolio.is_primary = False

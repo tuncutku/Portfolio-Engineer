@@ -17,7 +17,9 @@ from src.views import (
     position_blueprint,
     order_blueprint,
     error_handler_blueprint,
+    report_blueprint,
 )
+from src.dashapp import register_dash_app
 
 
 def create_app(object_name=None):
@@ -31,20 +33,26 @@ def create_app(object_name=None):
     app = Flask(__name__)
     app.config.from_object(object_name)
 
+    # Should be before "debug_toolbar"
+
     db.init_app(app)
     migrate.init_app(app, db)
-    debug_toolbar.init_app(app)
+    # debug_toolbar.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
+
     # TODO: use the feature of bootstrap.
-    bootstrap.init_app(app)
 
     app.register_blueprint(user_blueprint)
     app.register_blueprint(portfolio_blueprint)
     app.register_blueprint(position_blueprint)
     app.register_blueprint(order_blueprint)
     app.register_blueprint(error_handler_blueprint)
+    app.register_blueprint(report_blueprint)
+
+    with app.app_context():
+        register_dash_app(app)
 
     @app.route("/")
     def home():

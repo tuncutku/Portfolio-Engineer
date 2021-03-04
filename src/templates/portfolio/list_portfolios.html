@@ -34,6 +34,7 @@
 
                     <p class="card-text">Reporting currency: {{ port["Reporting currency"] }}</p>
                     <p class="card-text">Total market value: {{ port["Total market value"] }}</p>
+                    <p class="card-text">Benchmark: {{ port["Benchmark"] }}</p>
 
                     <div class="card">
 
@@ -90,7 +91,6 @@
                                     <div class="col-11">
                                         <ul class="list-group">
                                             <a href="" class="btn btn-outline-success">Manage Alerts</a>
-                                            <a href="" class="btn btn-outline-success mt-2">View Reports</a>
                                             {% if port["Primary"] == False%}
                                             <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>

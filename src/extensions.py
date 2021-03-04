@@ -8,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap
+from flask_session import Session
 
 
 import ssl
@@ -37,6 +38,7 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()
 bootstrap = Bootstrap()
+sess = Session()
 
 # Configure login manager
 login_manager.login_view = "auth.login"
@@ -44,12 +46,21 @@ login_manager.session_protection = "strong"
 login_manager.login_message = "Please login to access this page"
 login_manager.login_message_category = "info"
 
+# Necessary for the Dash to functioni
+csrf._exempt_views.add("dash.dash.dispatch")
+
 
 @login_manager.user_loader
 def load_user(userid):
     from src.environment.user import User
 
     return User.find_by_id(userid)
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page."""
+    return redirect(url_for("users.login"))
 
 
 # celery = Celery()

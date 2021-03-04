@@ -7,24 +7,24 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.types import PortfolioType, OrderSideType, Currency
+from src.environment.utils.types import *
 
 
 from src.forms.order_forms import date_time_format
-
-a = 1
 
 
 class TestOrderURLs(BaseTest):
     @mock.patch(
         "src.market_data.yahoo.YFinance.info",
         return_value={
-            "shortName": "Facebook Inc.",
-            "quoteType": "EQUITY",
-            "currency": "USD",
+            "FB": {
+                "shortName": "Facebook, Inc.",
+                "quoteType": "EQUITY",
+                "currency": "USD",
+            }
         },
     )
-    def test_add_order(self, md):
+    def test_add_order(self, md=None):
 
         self.login_user()
 
@@ -44,7 +44,7 @@ class TestOrderURLs(BaseTest):
                 quantity=6,
                 side=OrderSideType.Sell,
                 fee=10,
-                exec_datetime=datetime(2020, 1, 1, 3, 10).strftime(date_time_format),
+                exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
                 price=100,
             ),
             follow_redirects=True,
@@ -58,12 +58,12 @@ class TestOrderURLs(BaseTest):
         self.assertEqual(new_order.quantity, 6)
         self.assertEqual(new_order.side, OrderSideType.Sell)
         self.assertEqual(new_order.fee, 10)
-        self.assertEqual(new_order.exec_time, datetime(2020, 1, 1, 3, 10))
+        self.assertEqual(new_order.exec_time, datetime(2020, 1, 2))
         self.assertEqual(new_order.avg_exec_price, 100)
 
         new_pos = Position.find_by_id(2)
         self.assertIsNotNone(new_pos)
-        self.assertEqual(new_pos.name, "Facebook Inc.")
+        self.assertEqual(new_pos.name, "Facebook, Inc.")
         self.assertEqual(new_pos.security_type, "EQUITY")
         self.assertEqual(new_pos.currency, "USD")
 
@@ -94,7 +94,7 @@ class TestOrderURLs(BaseTest):
                 quantity=6,
                 side=OrderSideType.Sell,
                 fee=10,
-                exec_datetime=datetime(2019, 1, 1, 3, 10).strftime(date_time_format),
+                exec_datetime=datetime(2019, 1, 2).strftime(date_time_format),
                 price=0.2,
             ),
             follow_redirects=True,
@@ -105,7 +105,7 @@ class TestOrderURLs(BaseTest):
         self.assertEqual(self.order_test.quantity, 6)
         self.assertEqual(self.order_test.side, OrderSideType.Sell)
         self.assertEqual(self.order_test.fee, 10)
-        self.assertEqual(self.order_test.exec_time, datetime(2019, 1, 1, 3, 10))
+        self.assertEqual(self.order_test.exec_time, datetime(2019, 1, 2))
         self.assertEqual(self.order_test.avg_exec_price, 0.2)
 
     def test_delete_order(self):

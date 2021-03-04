@@ -6,9 +6,7 @@ from src.extensions import db
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-
 from src.forms.order_forms import AddOrderForm, generate_edit_order_form
-
 from src.market_data.yahoo import YFinance
 
 
@@ -62,8 +60,8 @@ def add_order(portfolio_id):
         port = Portfolio.find_by_id(portfolio_id)
         pos = Position.query.filter_by(symbol=form.symbol.data, portfolio=port).first()
         if pos is None:
-            md_provider = YFinance(symbol)
-            symbol_info = md_provider.info()
+            md_provider = YFinance([symbol])
+            symbol_info = md_provider.info()[symbol]
 
             pos = Position(
                 symbol=symbol,

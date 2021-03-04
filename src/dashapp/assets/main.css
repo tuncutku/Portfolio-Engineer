@@ -1,0 +1,38 @@
+/* 
+.DateRangePickerInput_arrow_svg {
+    vertical-align: middle;
+    fill: #484848;
+    height: 24px;
+    width: 15px;
+}
+
+.DateInput_input {
+    font-weight: 100;
+    font-size: 16px;
+    line-height: 24px;
+    color: #484848;
+    background-color: #fff;
+    width: 100%;
+    padding: 11px 11px 9px;
+    border: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 2px solid transparent;
+    border-left: 0;
+    border-radius: 0;
+}
+
+.Select-control {
+    font-size: 16px;
+    height: 48px;
+}
+
+.Select--single > .Select-control .Select-value, .Select-placeholder {
+    line-height: 48px;
+}
+ */
+
+.pretty-card {
+    margin: 1%;
+    box-shadow: 1px 1px 1px slategrey;
+}

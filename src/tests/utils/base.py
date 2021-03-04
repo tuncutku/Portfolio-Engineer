@@ -40,6 +40,7 @@ class BaseTest(TestCase):
         portfolio_type: str,
         reporting_currency: str,
         date: datetime,
+        benchmark: str,
         user: User,
     ) -> Portfolio:
 
@@ -48,6 +49,7 @@ class BaseTest(TestCase):
             portfolio_type=portfolio_type,
             reporting_currency=reporting_currency,
             date=datetime(2020, 1, 1),
+            benchmark=benchmark,
             user=user,
         )
         portfolio.save_to_db()

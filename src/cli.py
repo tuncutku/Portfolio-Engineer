@@ -46,3 +46,8 @@ def register(app):
         user = User("tuncutku10@gmail.com")
         user.set_password("1234")
         user.save_to_db()
+
+    @app.cli.command("clear_database")
+    def clear_database():
+
+        db.drop_all()

@@ -1,15 +1,6 @@
 class Exchange:
-    TSX = "Toronto Stock Exchange"
-    TSXV = "Toronto Venture Exchange"
-    CNSX = "Canadian National Stock Exchange"
-    MX = "Montreal Exchange"
-    NASDAQ = "NASDAQ"
-    NYSE = "New York Stock Exchange"
-    NYSEAM = "NYSE AMERICAN"
-    ARCA = "NYSE Arca"
-    OPRA = "Option Reporting Authority"
-    PinkSheets = "Pink Sheets"
-    OTCBB = "OTC Bulletin Board"
+    XNYS = "XNYS"
+    XTSE = "XTSE"
 
 
 class OrderSideType:
@@ -93,3 +84,6 @@ class PortfolioStatus:
 class PortfolioSource:
     questrade = "Questrade"
     custom = "Custom"
+
+
+CurrencyExchangeMap = {Currency.USD: Exchange.XNYS, Currency.CAD: Exchange.XTSE}
