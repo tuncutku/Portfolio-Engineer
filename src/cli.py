@@ -7,7 +7,7 @@ from src.environment.user import User
 from src.extensions import db
 
 
-def register(app):
+def register_cli(app):
     @app.cli.command()
     @click.option(
         "--coverage/--no-coverage", default=False, help="Run tests under code coverage."

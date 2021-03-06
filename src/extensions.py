@@ -8,20 +8,17 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap
-from flask_session import Session
-
+from flask_caching import Cache
+from flask_mail import Mail
+from flask_jwt_extended import JWTManager
+from flask_celery import Celery
 
 import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
-
-
 load_dotenv()
 
-# from flask_celery import Celery
-# from flask_caching import Cache
-# from flask_mail import Mail
-# from flask_jwt_extended import JWTManager
+
 # from flask_limiter import Limiter
 # from flask_limiter.util import get_remote_address
 
@@ -38,7 +35,11 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()
 bootstrap = Bootstrap()
-sess = Session()
+cache = Cache()
+mail = Mail()
+jwt = JWTManager()
+celery = Celery()
+
 
 # Configure login manager
 login_manager.login_view = "auth.login"
@@ -63,6 +64,7 @@ def unauthorized():
     return redirect(url_for("users.login"))
 
 
-# celery = Celery()
 # cache = Cache()
 # mail = Mail()
+
+

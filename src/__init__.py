@@ -10,6 +10,10 @@ from src.extensions import (
     login_manager,
     csrf,
     bootstrap,
+    cache,
+    mail,
+    jwt,
+    celery,
 )
 from src.views import (
     user_blueprint,
@@ -24,8 +28,8 @@ from src.dashapp import register_dash_app
 
 def create_app(object_name=None):
     """
-    An flask application factory, as explained here:
-    http://flask.pocoo.org/docs/patterns/appfactories/
+    Flask application factory
+
     Arguments:
         object_name: the python path of the config object,
                      e.g. project.config.ProdConfig
@@ -41,6 +45,10 @@ def create_app(object_name=None):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
+    cache.init_app(app)
+    mail.init_app(app)
+    jwt.init_app(app)
+    celery.init_app(app)
 
     # TODO: use the feature of bootstrap.
 

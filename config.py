@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-# from celery.schedules import crontab
+from celery.schedules import crontab
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_file = tempfile.NamedTemporaryFile()
@@ -9,12 +9,10 @@ db_file = tempfile.NamedTemporaryFile()
 
 class Config(object):
     SECRET_KEY = "736670cb10a600b695a55839ca3a5aa54a7d7356cdef815d2ad6e19a2031182b"
-    # RECAPTCHA_PUBLIC_KEY = "6LdKkQQTAAAAAEH0GFj7NLg5tGicaoOus7G9Q5Uw"
-    # RECAPTCHA_PRIVATE_KEY = "6LdKkQQTAAAAAMYroksPTJ7pWhobYb88fTAcxcYn"
     # POSTS_PER_PAGE = 10
 
-    # CELERY_BROKER_URL = "amqp://rabbitmq:rabbitmq@localhost//"
-    # CELERY_BACKEND_URL = "amqp://rabbitmq:rabbitmq@localhost//"
+    CELERY_BROKER_URL = "redis://localhost:6379/0"
+    RESULT_BACKEND = "redis://localhost:6379/0"
 
     # MAIL_SERVER = "smtp.gmail.com"
     # MAIL_PORT = 465
@@ -23,12 +21,12 @@ class Config(object):
     # MAIL_PASSWORD = "password"
     # MAIL_DEFAULT_SENDER = "from@flask.com"
 
-    # CELERYBEAT_SCHEDULE = {
-    #     "weekly-digest": {
-    #         "task": "blog.tasks.digest",
-    #         "schedule": crontab(day_of_week=6, hour="10"),
-    #     },
-    # }
+    CELERYBEAT_SCHEDULE = {
+        "periodic_task-every-minute": {
+            "task": "periodic_task",
+            "schedule": crontab(minute="*"),
+        }
+    }
 
 
 class ProdConfig(Config):
@@ -36,7 +34,7 @@ class ProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DB_URI", "")
 
     CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "")
-    CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER_URL", "")
+    result_backend = os.environ.get("CELERY_BROKER_URL", "")
 
     CACHE_TYPE = "redis"
     CACHE_REDIS_HOST = os.environ.get("REDIS_HOST", "")
@@ -59,19 +57,14 @@ class DevConfig(Config):
 
 class TestConfig(Config):
 
-    db_file = tempfile.NamedTemporaryFile()
-
     DEBUG = True
     DEBUG_TB_ENABLED = False
 
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, db_file.name)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # CACHE_TYPE = "null"
     WTF_CSRF_ENABLED = False
 
-    # CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
-    # CELERY_RESULT_BACKEND = "amqp://guest:guest@localhost:5672//"
-
+    # CACHE_TYPE = "null"
     # MAIL_SERVER = "localhost"
     # MAIL_PORT = 25
     # MAIL_USERNAME = "username"
