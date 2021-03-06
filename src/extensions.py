@@ -64,7 +64,12 @@ def unauthorized():
     return redirect(url_for("users.login"))
 
 
-# cache = Cache()
-# mail = Mail()
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
 
 
+@celery.task(name="periodic_task")
+def periodic_task():
+    print("Hi! from periodic_task")
+    logger.info("Hello! from periodic task")
