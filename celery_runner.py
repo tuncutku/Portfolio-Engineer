@@ -1,6 +1,8 @@
 from src import create_app
 from celery import Celery
 
+from celery.schedules import crontab
+
 
 def make_celery(app):
     celery = Celery(
@@ -9,6 +11,12 @@ def make_celery(app):
         result_backend=app.config["RESULT_BACKEND"],
     )
     celery.conf.update(app.config)
+    celery.conf.beat_schedule = {
+        "periodic_task-every-minute": {
+            "task": "periodic_task",
+            "schedule": crontab(minute="*"),
+        }
+    }
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):

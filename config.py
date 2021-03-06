@@ -1,7 +1,6 @@
 import os
 import tempfile
 
-from celery.schedules import crontab
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_file = tempfile.NamedTemporaryFile()
@@ -20,13 +19,6 @@ class Config(object):
     # MAIL_USER = "somemail@gmail.com"
     # MAIL_PASSWORD = "password"
     # MAIL_DEFAULT_SENDER = "from@flask.com"
-
-    CELERYBEAT_SCHEDULE = {
-        "periodic_task-every-minute": {
-            "task": "periodic_task",
-            "schedule": crontab(minute="*"),
-        }
-    }
 
 
 class ProdConfig(Config):
