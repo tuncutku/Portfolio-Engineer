@@ -13,10 +13,7 @@ from src.market_data.yahoo import YFinance
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
 
 
-@order_blueprint.route(
-    "/delete_order/<int:order_id>",
-    methods=["GET"],
-)
+@order_blueprint.route("/delete_order/<int:order_id>", methods=["GET"])
 @login_required
 def delete_order(order_id: int):
 
@@ -26,10 +23,7 @@ def delete_order(order_id: int):
     return redirect(url_for("portfolio.list_portfolios"))
 
 
-@order_blueprint.route(
-    "/edit/<int:order_id>",
-    methods=["GET", "POST"],
-)
+@order_blueprint.route("/edit/<int:order_id>", methods=["GET", "POST"])
 @login_required
 def edit_order(order_id: int):
     order = Order.find_by_id(order_id)

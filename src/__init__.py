@@ -1,5 +1,4 @@
 from flask import Flask, render_template
-from werkzeug.exceptions import HTTPException
 import json
 
 from src.extensions import (
@@ -9,7 +8,6 @@ from src.extensions import (
     bcrypt,
     login_manager,
     csrf,
-    bootstrap,
     cache,
     mail,
     jwt,
@@ -22,6 +20,8 @@ from src.views import (
     order_blueprint,
     error_handler_blueprint,
     report_blueprint,
+    alert_blueprint,
+    home_blueprint,
 )
 from src.dashapp import register_dash_app
 
@@ -50,35 +50,14 @@ def create_app(object_name=None):
     jwt.init_app(app)
     celery.init_app(app)
 
-    # TODO: use the feature of bootstrap.
-
     app.register_blueprint(user_blueprint)
     app.register_blueprint(portfolio_blueprint)
     app.register_blueprint(position_blueprint)
     app.register_blueprint(order_blueprint)
     app.register_blueprint(error_handler_blueprint)
     app.register_blueprint(report_blueprint)
-
-    with app.app_context():
-        register_dash_app(app)
-
-    @app.route("/")
-    def home():
-        db.create_all()
-        return render_template("home.html")
-
-    @app.errorhandler(HTTPException)
-    def handle_exception(e):
-        response = e.get_response()
-        # replace the body with JSON
-        response.data = json.dumps(
-            {
-                "code": e.code,
-                "name": e.name,
-                "description": e.description,
-            }
-        )
-        response.content_type = "application/json"
-        return response
+    app.register_blueprint(alert_blueprint)
+    app.register_blueprint(home_blueprint)
+    register_dash_app(app)
 
     return app

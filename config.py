@@ -7,18 +7,28 @@ db_file = tempfile.NamedTemporaryFile()
 
 
 class Config(object):
-    SECRET_KEY = "736670cb10a600b695a55839ca3a5aa54a7d7356cdef815d2ad6e19a2031182b"
+    SECRET_KEY = os.environ.get("SECRET_KEY")
     # POSTS_PER_PAGE = 10
 
+    # Celery config
     CELERY_BROKER_URL = "redis://localhost:6379/0"
     RESULT_BACKEND = "redis://localhost:6379/0"
 
-    # MAIL_SERVER = "smtp.gmail.com"
-    # MAIL_PORT = 465
-    # MAIL_USE_SSL = True
-    # MAIL_USER = "somemail@gmail.com"
-    # MAIL_PASSWORD = "password"
-    # MAIL_DEFAULT_SENDER = "from@flask.com"
+    # Mail config
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USE_TLS = False
+    MAIL_USERNAME = os.environ.get("MAIL_SERVER_EMAIL")
+    MAIL_PASSWORD = os.environ.get("MAIL_SERVER_PASSWORD")
+    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_SERVER_EMAIL")
+
+    # Cash config
+    CACHE_TYPE = "redis"
+    CACHE_REDIS_HOST = os.environ.get("REDIS_HOST", "")
+    CACHE_REDIS_PORT = "6379"
+    CACHE_REDIS_PASSWORD = ""
+    CACHE_REDIS_DB = "0"
 
 
 class ProdConfig(Config):
@@ -26,13 +36,7 @@ class ProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DB_URI", "")
 
     CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "")
-    result_backend = os.environ.get("CELERY_BROKER_URL", "")
-
-    CACHE_TYPE = "redis"
-    CACHE_REDIS_HOST = os.environ.get("REDIS_HOST", "")
-    CACHE_REDIS_PORT = "6379"
-    CACHE_REDIS_PASSWORD = ""
-    CACHE_REDIS_DB = "0"
+    RESULT_BACKEND = os.environ.get("CELERY_BROKER_URL", "")
 
     WTF_CSRF_TIME_LIMIT = None
 
@@ -56,8 +60,7 @@ class TestConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
 
-    # CACHE_TYPE = "null"
-    # MAIL_SERVER = "localhost"
-    # MAIL_PORT = 25
-    # MAIL_USERNAME = "username"
-    # MAIL_PASSWORD = "password"
+    MAIL_SERVER = "localhost"
+    MAIL_PORT = 25
+    MAIL_USERNAME = "username"
+    MAIL_PASSWORD = "password"

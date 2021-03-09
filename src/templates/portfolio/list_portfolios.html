@@ -90,7 +90,8 @@
                                 <div class="row justify-content-center">
                                     <div class="col-11">
                                         <ul class="list-group">
-                                            <a href="" class="btn btn-outline-success">Manage Alerts</a>
+                                            <a href="{{ url_for('alert.view_alerts', portfolio_id=port['id']) }}"
+                                                class="btn btn-outline-success">Manage Alerts</a>
                                             {% if port["Primary"] == False%}
                                             <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>

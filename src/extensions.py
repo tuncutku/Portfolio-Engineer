@@ -1,5 +1,6 @@
-import logging
-from dotenv import load_dotenv
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,25 +8,18 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-from flask_bootstrap import Bootstrap
 from flask_caching import Cache
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from flask_celery import Celery
 
-import ssl
+import logging
+from celery.utils.log import get_task_logger
 
-ssl._create_default_https_context = ssl._create_unverified_context
-load_dotenv()
+celery_logger = get_task_logger(__name__)
 
-
-# from flask_limiter import Limiter
-# from flask_limiter.util import get_remote_address
-
-
-# logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-# logging.getLogger().setLevel(logging.DEBUG)
-# log = logging.getLogger(__name__)
+logging.basicConfig(format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+log = logging.getLogger(__name__)
 
 
 db = SQLAlchemy()
@@ -34,12 +28,10 @@ debug_toolbar = DebugToolbarExtension()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-bootstrap = Bootstrap()
 cache = Cache()
 mail = Mail()
 jwt = JWTManager()
 celery = Celery()
-
 
 # Configure login manager
 login_manager.login_view = "auth.login"
@@ -62,14 +54,3 @@ def load_user(userid):
 def unauthorized():
     """Redirect unauthorized users to Login page."""
     return redirect(url_for("users.login"))
-
-
-from celery.utils.log import get_task_logger
-
-logger = get_task_logger(__name__)
-
-
-@celery.task(name="periodic_task")
-def periodic_task():
-    print("Hi! from periodic_task")
-    logger.info("Hello! from periodic task")

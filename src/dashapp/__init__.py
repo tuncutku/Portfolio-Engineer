@@ -11,7 +11,7 @@ import dash_bootstrap_components as dbc
 
 from src.environment.user import User
 from src.environment.portfolio import Portfolio
-from src.environment.report import Report
+from src.reports.report import Report
 
 
 def register_dash_app(server):

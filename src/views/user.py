@@ -44,4 +44,4 @@ def guest():
 def logout():
     logout_user()
     flash("You have been logged out.", category="success")
-    return redirect(url_for("home"))
+    return redirect(url_for("home.home"))

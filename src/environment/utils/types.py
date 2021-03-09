@@ -86,4 +86,9 @@ class PortfolioSource:
     custom = "Custom"
 
 
+class AlertPeriod:
+    TradingDaysEvery5Min = "5m"
+    TradingDaysDaily = "1d"
+
+
 CurrencyExchangeMap = {Currency.USD: Exchange.XNYS, Currency.CAD: Exchange.XTSE}
