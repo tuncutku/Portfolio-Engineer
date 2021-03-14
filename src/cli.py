@@ -23,7 +23,7 @@ def register_cli(app):
 
         import unittest
 
-        tests = unittest.TestLoader().discover("src/tests")
+        tests = unittest.TestLoader().discover("tests")
         HTMLTestRunner(output="./tmp/reports", verbosity=2).run(tests)
 
         if coverage:

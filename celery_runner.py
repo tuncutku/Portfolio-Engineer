@@ -13,7 +13,7 @@ def make_celery(app):
     celery.conf.update(app.config)
     celery.conf.beat_schedule = {
         "periodic_task-every-minute": {
-            "task": "periodic_report",
+            "task": "daily_report_task",
             "schedule": crontab(minute="*"),
         }
     }

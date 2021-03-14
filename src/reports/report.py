@@ -98,7 +98,6 @@ class Report:
         )
 
     def get_cum_returns(self, start_date, end_date, return_period=1):
-
         self.set_return_df(return_period)
         self.set_cum_return_df(start_date, end_date)
         returns = pd.concat(

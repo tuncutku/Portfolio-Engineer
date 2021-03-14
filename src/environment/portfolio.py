@@ -1,6 +1,8 @@
 from datetime import datetime
 import pandas as pd
 
+from src.reports.report import Report
+
 from src.environment.utils.base import BaseModel
 from src.extensions import db
 from src.market_data.yahoo import YFinance
@@ -15,26 +17,21 @@ class Portfolio(BaseModel):
     portfolio_type = db.Column(db.String(255), nullable=False)
     reporting_currency = db.Column(db.String(3), nullable=False)
     benchmark = db.Column(db.String(3), nullable=False)
-
-    # Default attributes
     is_primary = db.Column(db.Boolean(), default=False)
-    date = db.Column(db.DateTime(), default=datetime.now)
+    date = db.Column(db.Date(), default=datetime.now)
 
+    user = db.relationship("User", back_populates="portfolios")
     positions = db.relationship(
         "Position",
         backref="portfolio",
         cascade="all, delete-orphan",
     )
-
-    # alerts = db.relationship(
-    #     "Alert",
-    #     backref="portfolio",
-    #     cascade="all, delete-orphan",
-    # )
-
-    # reports = db.relationship(
-    #     "Report", backref="portfolio", cascade="all, delete-orphan"
-    # )
+    daily_report = db.relationship(
+        "DailyReport",
+        back_populates="portfolio",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return "<Portfolio {}.>".format(self.name)
@@ -99,3 +96,6 @@ class Portfolio(BaseModel):
         position_symbol_list = [position.symbol for position in self.positions]
 
         return pd.concat(position_df_list, axis=1, keys=position_symbol_list)
+
+    def generate_report(self) -> Report:
+        return Report(self)

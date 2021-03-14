@@ -11,6 +11,7 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
+from src.environment.alert import DailyReport
 from src.reports.report import Report
 
 
@@ -26,9 +27,9 @@ class ModelTest(BaseTest):
 
         # Test basic attributes
         self.assertEqual(user.id, 1)
-        self.assertEqual(user.email, "test_user@gmail.com")
+        self.assertEqual(user.email, "tuncutku10@gmail.com")
         self.assertTrue(user.check_password(user_1["password"]))
-        self.assertEqual(repr(user), "<User test_user@gmail.com.>")
+        self.assertEqual(repr(user), "<User tuncutku10@gmail.com.>")
 
         # Delete user
         user.delete_from_db()
@@ -259,3 +260,14 @@ class ModelTest(BaseTest):
         }
 
         self.assertEqual(port.to_dict(), port_dict)
+
+    def test_alert(self):
+
+        user = self.create_user(**user_1)
+        port = self.create_portfolio(**portfolio_1, user=user)
+        pos = self.create_position(**position_1, portfolio=port)
+        order_11 = self.create_order(**order_1, position=pos)
+        order_12 = self.create_order(**order_2, position=pos)
+
+        daily_report = DailyReport(portfolio=port)
+        daily_report.generate_email()

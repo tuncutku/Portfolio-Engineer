@@ -32,7 +32,10 @@ class AlertBaseModel(BaseModel):
     __abstract__ = True
 
     is_active = db.Column(db.Boolean(), default=False)
-    quantity = db.Column(db.Integer(), nullable=False)
+
+    @property
+    def subject(self):
+        raise NotImplementedError
 
     @property
     def email_template(self):
@@ -41,7 +44,11 @@ class AlertBaseModel(BaseModel):
     def condition(self):
         raise NotImplementedError
 
-    def is_satisfied(self):
+    def generate_email_content(self):
+        raise NotImplementedError
+
+    @property
+    def is_triggered(self):
         return True if self.condition else False
 
     def activate(self) -> None:

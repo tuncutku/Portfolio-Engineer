@@ -11,7 +11,7 @@ class User(BaseModel, UserMixin):
     password = db.Column(db.String(255))
 
     portfolios = db.relationship(
-        "Portfolio", backref="user", cascade="all, delete-orphan"
+        "Portfolio", back_populates="user", cascade="all, delete-orphan"
     )
 
     def __init__(self, email: str):
