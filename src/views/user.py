@@ -17,7 +17,6 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).one()
         login_user(user)
-        flash("You have been logged in.", category="success")
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("user/login.html", form=form)
 
@@ -43,5 +42,4 @@ def guest():
 @user_blueprint.route("/logout", methods=["GET", "POST"])
 def logout():
     logout_user()
-    flash("You have been logged out.", category="success")
     return redirect(url_for("home.home"))

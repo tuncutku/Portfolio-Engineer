@@ -1,11 +1,12 @@
-from flask import Blueprint, url_for, render_template, redirect
+from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
 import pandas as pd
 import collections
 
 from src.environment.portfolio import Portfolio
-from src.environment.alert import DailyReport
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
+from src.environment.alert import DailyReport
+
 from src.extensions import db
 
 
@@ -21,12 +22,11 @@ def list_portfolios():
     port_list.sort(key=lambda x: x.get("Primary"), reverse=True)
 
     if not port_list:
-        error_message = "Add a custom portfolio!"
+        flash("Add a custom portfolio!")
 
     return render_template(
         "portfolio/list_portfolios.html",
         port_list=port_list,
-        error_message=error_message,
     )
 
 
@@ -47,6 +47,9 @@ def add_portfolio():
         if len(current_user.portfolios) == 1:
             new_portfolio.set_as_primary()
         new_portfolio.save_to_db()
+        # Generate new daily report
+        new_daily_alert = DailyReport(portfolio=new_portfolio)
+        new_daily_alert.save_to_db()
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("portfolio/add_portfolio.html", form=form)
 

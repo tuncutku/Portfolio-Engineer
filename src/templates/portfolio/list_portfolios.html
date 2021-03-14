@@ -5,11 +5,16 @@
         My Portfolios:
     </h2>
 
-    {% if error_message %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
     <div class="alert alert-danger" role="alert">
-        {{ error_message }}
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
     </div>
     {% endif %}
+    {% endwith %}
+
 
 </div>
 
@@ -90,7 +95,7 @@
                                 <div class="row justify-content-center">
                                     <div class="col-11">
                                         <ul class="list-group">
-                                            <a href="{{ url_for('alert.view_alerts', portfolio_id=port['id']) }}"
+                                            <a href="{{ url_for('alert.list_alerts', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success">Manage Alerts</a>
                                             {% if port["Primary"] == False%}
                                             <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
