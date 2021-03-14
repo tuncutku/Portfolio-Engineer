@@ -8,15 +8,10 @@ from src.environment.utils.base import BaseModel
 from src.environment.utils.types import *
 
 
-# TODO: Add support for opiton strategies.
 class Order(BaseModel):
     __tablename__ = "orders"
 
-    id = db.Column(db.Integer(), primary_key=True)
-    position_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("positions.id"),
-    )
+    position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
     symbol = db.Column(db.String(255), nullable=False)
     quantity = db.Column(db.Integer(), nullable=False)
     side = db.Column(db.String(255), nullable=False)

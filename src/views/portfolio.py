@@ -4,8 +4,7 @@ import pandas as pd
 import collections
 
 from src.environment.portfolio import Portfolio
-from src.environment.position import Position
-from src.environment.report import Report
+from src.environment.alert import DailyReport
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
 from src.extensions import db
 
@@ -37,6 +36,7 @@ def add_portfolio():
 
     form = AddPortfolioForm()
     if form.validate_on_submit():
+        # Generate new portfolio
         new_portfolio = Portfolio(
             name=form.port_name.data,
             portfolio_type=form.port_type.data,

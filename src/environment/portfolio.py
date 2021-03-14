@@ -1,5 +1,7 @@
-import datetime
+from datetime import datetime
 import pandas as pd
+
+from src.reports.report import Report
 
 from src.environment.utils.base import BaseModel
 from src.extensions import db
@@ -10,31 +12,29 @@ from src.environment.utils.types import *
 class Portfolio(BaseModel):
     __tablename__ = "portfolios"
 
-    id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     name = db.Column(db.String(255), nullable=False)
     portfolio_type = db.Column(db.String(255), nullable=False)
     reporting_currency = db.Column(db.String(3), nullable=False)
     benchmark = db.Column(db.String(3), nullable=False)
-
-    # Default attributes
     is_primary = db.Column(db.Boolean(), default=False)
-    date = db.Column(db.DateTime(), default=datetime.datetime.now)
+    date = db.Column(db.Date(), default=datetime.now)
 
+    user = db.relationship("User", back_populates="portfolios")
     positions = db.relationship(
-        "Position", backref="portfolio", cascade="all, delete-orphan"
+        "Position",
+        backref="portfolio",
+        cascade="all, delete-orphan",
     )
-
-    # reports = db.relationship(
-    #     "Report", backref="portfolio", cascade="all, delete-orphan"
-    # )
+    daily_report = db.relationship(
+        "DailyReport",
+        back_populates="portfolio",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return "<Portfolio {}.>".format(self.name)
-
-    @classmethod
-    def get_primary(cls, user):
-        return cls.query.filter_by(user=user, is_primary=True).first()
 
     @property
     def symbols(self):
@@ -57,15 +57,19 @@ class Portfolio(BaseModel):
             value += pos_mkt_cap
         return value
 
+    @classmethod
+    def get_primary(cls, user):
+        return cls.query.filter_by(user=user, is_primary=True).first()
+
+    def set_as_primary(self) -> None:
+        self.is_primary = True
+        db.session.commit()
+
     def edit(self, name, currency, port_type, benchmark) -> None:
         self.name = name
         self.reporting_currency = currency
         self.portfolio_type = port_type
         self.benchmark = benchmark
-        db.session.commit()
-
-    def set_as_primary(self) -> None:
-        self.is_primary = True
         db.session.commit()
 
     def to_dict(self) -> dict:
@@ -93,10 +97,5 @@ class Portfolio(BaseModel):
 
         return pd.concat(position_df_list, axis=1, keys=position_symbol_list)
 
-    # Questrade attributes
-    # questrade_id = db.Column(db.Integer())
-    # source = db.Column(db.String(255), default=PortfolioSource.custom)
-
-    # def set_questrade_attributes(questrade_id):
-    #     self.source = PortfolioSource.questrade
-    #     self.questrade_id = questrade_id
+    def generate_report(self) -> Report:
+        return Report(self)

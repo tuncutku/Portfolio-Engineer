@@ -6,12 +6,12 @@ from src.extensions import db, bcrypt
 
 class User(BaseModel, UserMixin):
     __tablename__ = "users"
-    id = db.Column(db.Integer(), primary_key=True)
+
     email = db.Column(db.String(255), nullable=False, index=True, unique=True)
     password = db.Column(db.String(255))
 
     portfolios = db.relationship(
-        "Portfolio", backref="user", cascade="all, delete-orphan"
+        "Portfolio", back_populates="user", cascade="all, delete-orphan"
     )
 
     def __init__(self, email: str):

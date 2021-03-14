@@ -9,15 +9,11 @@ from src.market_data.yahoo import YFinance
 class Position(BaseModel):
     __tablename__ = "positions"
 
-    id = db.Column(db.Integer(), primary_key=True)
     symbol = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     security_type = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), nullable=False)
-    portfolio_id = db.Column(
-        db.Integer(),
-        db.ForeignKey("portfolios.id"),
-    )
+    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
 
     orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
 
