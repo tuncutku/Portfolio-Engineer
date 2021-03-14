@@ -1,0 +1,29 @@
+{% extends "base/portfolio.html" %}
+{% block content %}
+
+
+<div class="container mt-5">
+    <h2 class="text-success">
+        My Alerts:
+    </h2>
+</div>
+
+<div class="container mt-5">
+    <h6 class="text-success">
+        Daily report:
+    </h6>
+</div>
+
+<div class="container mt-1">
+
+    {% if daily_alert_status %}
+    Your daily report is active, to deactivate please click
+    <a class="alert-link" href="{{ url_for('alert.deactivate', portfolio_id=portfolio_id) }}">here</a>.
+    {% else %}
+    Your daily report is deactive, to activate please click
+    <a class="alert-link" href="{{ url_for('alert.activate', portfolio_id=portfolio_id) }}">here</a>.
+    {% endif %}
+
+</div>
+
+{% endblock %}

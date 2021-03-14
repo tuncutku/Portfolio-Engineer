@@ -24,4 +24,4 @@ class MessangerTest(BaseTest):
         daily_report_object = DailyReport(portfolio=port)
         daily_report_object.activate()
 
-        # daily_report_task()
+        daily_report_task()
