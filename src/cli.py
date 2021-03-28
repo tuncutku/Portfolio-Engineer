@@ -3,7 +3,6 @@ import time
 import os
 import pytest
 import pytest_cov
-from HtmlTestRunner import HTMLTestRunner
 import subprocess
 
 from src.environment.user import User

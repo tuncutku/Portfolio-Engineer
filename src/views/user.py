@@ -35,7 +35,7 @@ def register():
 
 @user_blueprint.route("/guest", methods=["GET", "POST"])
 def guest():
-    session["email"] = os.environ["GUEST_EMAIL"]
+    session["email"] = "Hey"
     return redirect(url_for("portfolio.list_portfolios"))
 
 

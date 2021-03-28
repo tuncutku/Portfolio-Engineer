@@ -23,10 +23,9 @@ class YFinance:
         """Valide if the tickers exist in the database source."""
         validate = list()
         for provider in self.info_providers:
-            try:
-                provider.info
+            if provider.info.get("symbol"):
                 validate.append(True)
-            except:
+            else:
                 validate.append(False)
         return all(validate)
 

@@ -13,7 +13,7 @@ from tests.utils import *
 def app():
     """Create application for the tests."""
 
-    app = create_app("config.TestConfig")
+    app = create_app("testing")
     return app
 
 

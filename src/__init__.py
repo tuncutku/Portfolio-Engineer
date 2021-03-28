@@ -1,10 +1,12 @@
 from flask import Flask, render_template
-import json
+from celery import Celery
+from celery.schedules import crontab
+
+from config import config
 
 from src.extensions import (
     db,
     migrate,
-    debug_toolbar,
     bcrypt,
     login_manager,
     csrf,
@@ -35,20 +37,16 @@ def create_app(object_name=None):
                      e.g. project.config.ProdConfig
     """
     app = Flask(__name__)
-    app.config.from_object(object_name)
-
-    # Should be before "debug_toolbar"
+    app.config.from_object(config[object_name])
 
     db.init_app(app)
     migrate.init_app(app, db)
-    # debug_toolbar.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
     # cache.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
-    celery.init_app(app)
 
     app.register_blueprint(user_blueprint)
     app.register_blueprint(portfolio_blueprint)
@@ -58,6 +56,35 @@ def create_app(object_name=None):
     app.register_blueprint(report_blueprint)
     app.register_blueprint(alert_blueprint)
     app.register_blueprint(home_blueprint)
+
     register_dash_app(app)
+    make_celery(app)
 
     return app
+
+
+def make_celery(app):
+    celery = Celery(
+        app.import_name,
+        broker=app.config["CELERY_BROKER_URL"],
+        result_backend=app.config["RESULT_BACKEND"],
+    )
+    celery.conf.update(app.config)
+    celery.conf.beat_schedule = {
+        "periodic_task-every-minute": {
+            "task": "daily_report_task",
+            "schedule": crontab(minute="*"),
+        }
+    }
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+
+    celery.Task = ContextTask
+
+    return celery
