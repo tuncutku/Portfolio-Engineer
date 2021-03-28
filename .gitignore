@@ -6,5 +6,6 @@ env
 access_token.yml
 chromedriver
 database.db
-tmp
-coverage.xml
+
+.coverage
+cov.xml

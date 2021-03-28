@@ -1,9 +1,4 @@
 [run]
-branch = true
-omit =
-    src/tests/*
-    src/__init__.py
-    src/extensions.py 
-
-[report]
-show_missing = false
+omit = tests/*
+[html]
+directory = coverage_html_report

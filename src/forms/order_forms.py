@@ -138,12 +138,14 @@ def generate_edit_order_form(order: Order):
             if not check_validate:
                 return False
 
+            date = self.exec_datetime.data.replace(tzinfo=timezone.utc)
+
             md_provider = YFinance([self.symbol.data])
             info = md_provider.info()
             currency = info[self.symbol.data]["currency"]
             calender = get_calendar(CurrencyExchangeMap[currency])
 
-            if not calender.is_session(self.exec_datetime.data):
+            if not calender.is_session(date):
                 self.exec_datetime.errors.append("Selected date is holiday.")
                 return False
 

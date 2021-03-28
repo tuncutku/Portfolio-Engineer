@@ -1,4 +1,6 @@
 from datetime import datetime
+import pytz
+
 from src.environment.portfolio import PortfolioType, Currency
 from src.environment.order import OrderSideType, SecurityType
 
@@ -35,7 +37,7 @@ order_1 = {
     "quantity": 10,
     "side": OrderSideType.Buy,
     "avg_exec_price": 10.5,
-    "exec_time": datetime(2020, 1, 3),
+    "exec_time": datetime(2020, 1, 3, tzinfo=pytz.utc),
     "fee": 0.123,
 }
 order_2 = {
@@ -43,7 +45,7 @@ order_2 = {
     "quantity": 2,
     "side": OrderSideType.Sell,
     "avg_exec_price": 11,
-    "exec_time": datetime(2020, 4, 6),
+    "exec_time": datetime(2020, 4, 6, tzinfo=pytz.utc),
     "fee": 0,
 }
 order_3 = {
@@ -51,6 +53,6 @@ order_3 = {
     "quantity": 20,
     "side": OrderSideType.Buy,
     "avg_exec_price": 11,
-    "exec_time": datetime(2020, 8, 6),
+    "exec_time": datetime(2020, 8, 6, tzinfo=pytz.utc),
     "fee": 0,
 }
