@@ -1,7 +1,8 @@
 import os
 import tempfile
+from dotenv import load_dotenv
 
-
+load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_file = tempfile.NamedTemporaryFile()
 

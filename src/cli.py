@@ -1,7 +1,10 @@
 import click
 import time
 import os
+import pytest
+import pytest_cov
 from HtmlTestRunner import HTMLTestRunner
+import subprocess
 
 from src.environment.user import User
 from src.extensions import db
@@ -15,28 +18,17 @@ def register_cli(app):
     def test(coverage):
 
         if coverage:
-
-            import coverage
-
-            COV = coverage.coverage(branch=True, include="src/*")
-            COV.start()
-
-        import unittest
-
-        tests = unittest.TestLoader().discover("tests")
-        HTMLTestRunner(output="./tmp/reports", verbosity=2).run(tests)
-
-        if coverage:
-            COV.stop()
-            COV.save()
-            print("Coverage Summary:")
-            COV.report()
-            basedir = os.path.abspath(os.path.dirname(__file__))
-            covdir = os.path.join(basedir, "../tmp/coverage")
-            COV.html_report(directory=covdir)
-            COV.xml_report()
-            print("HTML version: file://{}/index.html".format(covdir))
-            COV.erase()
+            subprocess.call(
+                [
+                    "pytest",
+                    "--cov=src",
+                    "--cov-report",
+                    "xml:cov.xml",
+                    "--cov-config=.coveragerc",
+                ]
+            )
+        else:
+            subprocess.call(["pytest"])
 
     @app.cli.command("create_user")
     def create_user():

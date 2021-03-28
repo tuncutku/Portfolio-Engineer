@@ -45,7 +45,6 @@ def requires_questrade_access(f: Callable) -> Callable:
             return render_template(
                 "account/questrade_token.html", error_message=e.message
             )
-        # TODO add the error message to the webpage
         except InternalServerError as e:
             return redirect(url_for("portfolio.list_portfolios"))
         return f(q=q, *args, **kwargs)

@@ -1,4 +1,5 @@
 import ssl
+from flask import redirect, url_for
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -8,7 +9,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
-from flask_caching import Cache
+
+# from flask_caching import Cache
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from flask_celery import Celery
@@ -28,7 +30,7 @@ debug_toolbar = DebugToolbarExtension()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()
-cache = Cache()
+# cache = Cache()
 mail = Mail()
 jwt = JWTManager()
 celery = Celery()

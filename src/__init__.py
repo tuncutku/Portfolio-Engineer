@@ -8,7 +8,7 @@ from src.extensions import (
     bcrypt,
     login_manager,
     csrf,
-    cache,
+    # cache,
     mail,
     jwt,
     celery,
@@ -45,7 +45,7 @@ def create_app(object_name=None):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
-    cache.init_app(app)
+    # cache.init_app(app)
     mail.init_app(app)
     jwt.init_app(app)
     celery.init_app(app)
