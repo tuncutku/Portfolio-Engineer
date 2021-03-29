@@ -8,7 +8,6 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - test
       # - deploy:
       #     requires:
       #       - build
@@ -34,11 +33,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements/test.txt
-  test:
-    steps:
-      - run:
-          name: running tests
-          command: |
             export FLASK_APP=run.py
             flask test 
 
