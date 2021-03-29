@@ -33,9 +33,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements/docker.txt
-      - run:
-          name: Test
-          command: |
             export FLASK_APP=run.py
             flask test 
 
