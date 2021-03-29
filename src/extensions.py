@@ -5,7 +5,6 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_debugtoolbar import DebugToolbarExtension
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -13,7 +12,7 @@ from flask_wtf.csrf import CSRFProtect
 # from flask_caching import Cache
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
-from flask_celery import Celery
+from celery import Celery
 
 import logging
 from celery.utils.log import get_task_logger
@@ -26,7 +25,6 @@ log = logging.getLogger(__name__)
 
 db = SQLAlchemy()
 migrate = Migrate()
-debug_toolbar = DebugToolbarExtension()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()

@@ -1,17 +1,54 @@
 version: "3.8"
    
 services:
-  db:
-    image: postgres
-    environment:
-      - POSTGRES_DB=hello_flask_dev
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis:latest
     ports:
-      - "5432:5432"
-  web:
+      - "6379:6379"
+    restart: on-failure
+    networks:
+      - main
+
+  app:
     build: .
-    ports:
-      - "5000:5000"
+    container_name: app
+    hostname: app
     depends_on:
-      - db
+      - redis
+    expose:
+      - "5001"
+    ports:
+      - "5001:5001"
+    image: app-image
+    restart: on-failure
+    networks:
+      - main
+
+  worker:
+    image: app-image
+    command: celery -A celery_worker.celery worker --loglevel=info
+    container_name: celery_worker
+    depends_on:
+      - redis
+      - app
+    hostname: celery_worker
+    restart: on-failure
+    networks:
+      - main
+
+  celery_beat:
+    image: app-image
+    command: celery -A celery_worker.celery beat
+    container_name: celery_beat
+    depends_on:
+      - redis
+      - app
+    hostname: celery_beat
+    restart: on-failure
+    networks:
+      - main
+
+networks:
+  main:
