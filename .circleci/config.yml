@@ -8,6 +8,7 @@ workflows:
   build-deploy:
     jobs:
       - build
+      - test
       # - deploy:
       #     requires:
       #       - build
