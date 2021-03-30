@@ -35,8 +35,8 @@ def register_cli(app):
         db.create_all()
 
         user = User("tuncutku10@gmail.com")
-        user.set_password("1234")
         user.save_to_db()
+        user.set_password("1234")
 
     @app.cli.command("clear_database")
     def clear_database():

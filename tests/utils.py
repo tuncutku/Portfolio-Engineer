@@ -11,11 +11,13 @@ from src.reports.report import Report
 from tests.sample_data import *
 
 
-def create_user(email: str, password: str) -> User:
+def create_user(email: str, password: str, confirmed: bool = True) -> User:
 
     user = User(email=email)
-    user.set_password(password)
     user.save_to_db()
+    user.set_password(password)
+    if confirmed:
+        user.confirm_user()
     return user
 
 

@@ -6,7 +6,8 @@ db_file = tempfile.NamedTemporaryFile()
 
 
 class ConfigBase(object):
-    SECRET_KEY = "1234"
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    SECURITY_PASSWORD_SALT = os.environ.get("SECRET_KEY")
     # POSTS_PER_PAGE = 10
 
     # Celery config
@@ -50,6 +51,8 @@ class DevConfig(ConfigBase):
 
 
 class TestConfig(ConfigBase):
+
+    TESTING = True
 
     DEBUG = True
     DEBUG_TB_ENABLED = False
