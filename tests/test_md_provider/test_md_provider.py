@@ -19,7 +19,7 @@ def test_yfinance():
 
     pd_raw = md_provider.get_historical_quotes(datetime(2020, 1, 1, 4, 40))
     pd_quote = pd_raw["AAPL"].loc[pd.DatetimeIndex(["2020-01-02"])]
-    assert float(pd_quote) == pytest.approx(74.33351, 0.5)
+    assert float(pd_quote) == pytest.approx(74.33351, 1)
 
     # Test invalid symbol.
     md_provider = YFinance(["XYZ123456789GYT"])

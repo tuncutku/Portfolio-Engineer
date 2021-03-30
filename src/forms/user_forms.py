@@ -42,9 +42,13 @@ class LoginForm(Form):
                 return None
             if not user.check_password(password):
                 return None
+            if not user.confirmed:
+                return None
             return user
 
         if not authenticate(self.email.data, self.password.data):
-            self.email.errors.append("Invalid email or password")
+            self.email.errors.append(
+                "Invalid email, password or account has not been confirmed yet."
+            )
             return False
         return True

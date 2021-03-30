@@ -10,7 +10,7 @@ from src.extensions import db
 class DailyReport(AlertBaseModel):
     period = AlertPeriod.TradingDaysDaily
     subject = f"Daily portfolio report {datetime.today().date().strftime('%d %B, %Y')}"
-    template = "alert_mail/daily_report.html"
+    template = "email/daily_report.html"
 
     portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     portfolio = db.relationship("Portfolio", back_populates="daily_report")
