@@ -82,3 +82,10 @@ def create_order(
     )
     order.save_to_db()
     return order
+
+
+def create_daily_alert(portfolio: Portfolio) -> DailyReport:
+
+    report = DailyReport(portfolio=portfolio)
+    report.save_to_db()
+    return report

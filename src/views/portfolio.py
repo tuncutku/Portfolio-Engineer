@@ -47,9 +47,6 @@ def add_portfolio():
         if len(current_user.portfolios) == 1:
             new_portfolio.set_as_primary()
         new_portfolio.save_to_db()
-        # Generate new daily report
-        new_daily_alert = DailyReport(portfolio=new_portfolio)
-        new_daily_alert.save_to_db()
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("portfolio/add_portfolio.html", form=form)
 

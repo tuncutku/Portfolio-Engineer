@@ -8,17 +8,23 @@ from src.extensions import db
 
 
 class DailyReport(AlertBaseModel):
-    period = AlertPeriod.TradingDaysDaily
-    subject = f"Daily portfolio report {datetime.today().date().strftime('%d %B, %Y')}"
-    template = "email/daily_report.html"
+    __tablename__ = "daily_reports"
 
     portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     portfolio = db.relationship("Portfolio", back_populates="daily_report")
 
+    @property
+    def subject(self) -> str:
+        return f"Daily portfolio report {datetime.today().date().strftime('%d %B, %Y')}"
+
+    @property
+    def email_template(self):
+        return "email/daily_report.html"
+
     def condition(self) -> bool:
         return True
 
-    def _generate_contents(self) -> dict:
+    def _generate_email_content(self) -> dict:
         report = self.portfolio.generate_report()
 
         daily_return = report.get_returns().tail(1).T
@@ -40,7 +46,7 @@ class DailyReport(AlertBaseModel):
         }
 
     def generate_email(self):
-        contents = self._generate_contents()
+        contents = self._generate_email_content()
         return {
             "subject": self.subject,
             "recipient": [self.portfolio.user.email],

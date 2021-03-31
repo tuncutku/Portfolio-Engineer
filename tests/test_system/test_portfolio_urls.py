@@ -37,6 +37,8 @@ def test_add_portfolio(client, db, user, captured_templates):
     assert new_portfolio.portfolio_type == PortfolioType.margin
     assert new_portfolio.reporting_currency == Currency.USD
 
+    assert new_portfolio.daily_report
+
     template_list = ["portfolio/add_portfolio.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)
 

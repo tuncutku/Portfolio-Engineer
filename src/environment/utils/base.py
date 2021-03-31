@@ -43,12 +43,8 @@ class AlertBaseModel(BaseModel):
     def condition(self):
         raise NotImplementedError
 
-    def generate_email_content(self):
+    def generate_email(self):
         raise NotImplementedError
-
-    @property
-    def is_triggered(self):
-        return True if self.condition else False
 
     def activate(self) -> None:
         self.is_active = True
