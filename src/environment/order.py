@@ -18,10 +18,9 @@ class Order(BaseModel):
     exec_time = db.Column(db.DateTime, nullable=False)
     fee = db.Column(db.Float(), nullable=False)
     # strategyType: str  # ex:"SingleLeg"
-    # fee: int = 0
 
     def __repr__(self):
-        return "<Order {}.>".format(self.symbol)
+        return f"<Order {self.symbol}.>"
 
     @property
     def adjusted_quantity(self):

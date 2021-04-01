@@ -7,6 +7,7 @@ from tests.utils import create_user, create_portfolio, create_position, create_o
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
+from src.environment.alerts import DailyReport
 
 
 port_dict = {
@@ -65,6 +66,7 @@ def test_relationships(client, db):
     assert Portfolio.query.filter_by(user=user).first() == None
     assert Position.query.filter_by(portfolio=port).first() == None
     assert Order.query.filter_by(position=pos).first() == None
+    assert DailyReport.query.filter_by(portfolio=port).first() == None
 
 
 def test_to_df(client, db):

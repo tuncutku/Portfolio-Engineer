@@ -5,7 +5,7 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.alert import DailyReport
+from src.environment.alerts import DailyReport
 from src.reports.report import Report
 
 from tests.sample_data import *

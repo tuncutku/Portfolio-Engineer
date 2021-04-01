@@ -43,7 +43,7 @@ class AlertBaseModel(BaseModel):
     def condition(self):
         raise NotImplementedError
 
-    def generate_email(self):
+    def send_email(self):
         raise NotImplementedError
 
     def activate(self) -> None:
@@ -55,12 +55,22 @@ class AlertBaseModel(BaseModel):
         db.session.commit()
 
 
-class OrderBaseModel(BaseModel):
+class Security(BaseModel):
     __abstract__ = True
 
     symbol = db.Column(db.String(255), nullable=False)
-    quantity = db.Column(db.Integer(), nullable=False)
-    side = db.Column(db.String(255), nullable=False)
-    avg_exec_price = db.Column(db.Float(), nullable=False)
-    exec_time = db.Column(db.DateTime, nullable=False)
-    fee = db.Column(db.Float(), nullable=False)
+    short_name = db.Column(db.String(3), nullable=False)
+    currency = db.Column(db.String(3), nullable=False)
+
+    @classmethod
+    def find_by_symbol(cls, symbol: str):
+        return cls.query.filter_by(symbol=symbol).first()
+
+    def last_price(self):
+        raise NotImplementedError
+
+    def historical_price(self):
+        raise NotImplementedError
+
+    def periodic_prices(self):
+        raise NotImplementedError

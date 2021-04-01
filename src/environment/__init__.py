@@ -1,4 +1,4 @@
-from src.environment.alert import DailyReport
+from src.environment.alerts import DailyReport
 from src.environment.portfolio import Portfolio
 
 from flask_sqlalchemy import event

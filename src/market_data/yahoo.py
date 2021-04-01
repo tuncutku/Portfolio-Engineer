@@ -18,6 +18,9 @@ class YFinance:
             data.DataReader, name=self.tickers, data_source="yahoo"
         )
 
+    def __name__(self):
+        return "YFinance"
+
     @property
     def is_valid(self) -> bool:
         """Valide if the tickers exist in the database source."""

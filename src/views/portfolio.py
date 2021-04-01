@@ -5,7 +5,7 @@ import collections
 
 from src.environment.portfolio import Portfolio
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
-from src.environment.alert import DailyReport
+from src.environment.alerts import DailyReport
 
 from src.extensions import db
 

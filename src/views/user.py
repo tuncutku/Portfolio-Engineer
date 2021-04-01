@@ -33,14 +33,14 @@ def register():
 
         token = generate_confirmation_token(new_user.email)
         confirm_url = url_for("users.confirm_email", token=token, _external=True)
-        email = {
-            "subject": "Account confirmation - Portfolio Engineer",
-            "recipient": [new_user.email],
-            "html": render_template(
+
+        send_email(
+            subject="Account confirmation - Portfolio Engineer",
+            recipients=[new_user.email],
+            html=render_template(
                 "email/account_confirmation.html", confirm_url=confirm_url
             ),
-        }
-        send_email(email=email)
+        )
 
         flash("You have confirmed your account. Thanks!", "success")
 

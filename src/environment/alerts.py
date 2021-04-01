@@ -6,6 +6,8 @@ from src.environment.utils.base import AlertBaseModel
 from src.environment.utils.types import AlertPeriod
 from src.extensions import db
 
+from src.tasks.email import send_email
+
 
 class DailyReport(AlertBaseModel):
     __tablename__ = "daily_reports"
@@ -45,16 +47,28 @@ class DailyReport(AlertBaseModel):
             "Return_table": Markup(df.to_html()),
         }
 
-    def generate_email(self):
+    def send_async_email(self) -> None:
         contents = self._generate_email_content()
-        return {
-            "subject": self.subject,
-            "recipient": [self.portfolio.user.email],
-            "html": render_template(self.template, **contents),
-        }
+        send_email.apply_async(
+            subject=self.subject,
+            recipients=[self.portfolio.user.email],
+            html=render_template(self.email_template, **contents),
+        )
 
 
-class TechnicalAlert(AlertBaseModel):
+class PriceAlert(AlertBaseModel):
+    period = AlertPeriod.TradingDaysEvery5Min
+    subject = ""
+
+    def condition(self):
+        return True
+
+    @property
+    def email_template(self):
+        pass
+
+
+class ReturnAlert(AlertBaseModel):
     period = AlertPeriod.TradingDaysEvery5Min
     subject = ""
 

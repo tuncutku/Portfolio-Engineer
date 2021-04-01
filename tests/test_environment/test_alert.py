@@ -11,5 +11,4 @@ def test_alert_basics(client, db, user):
     """Integration test for alerts."""
 
     port = Portfolio.find_by_id(1)
-    port.daily_report
-    # daily_report.generate_email()
+    alert = port.daily_report

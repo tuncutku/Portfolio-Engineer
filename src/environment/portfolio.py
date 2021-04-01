@@ -34,7 +34,7 @@ class Portfolio(BaseModel):
     )
 
     def __repr__(self) -> str:
-        return "<Portfolio {}.>".format(self.name)
+        return f"<Portfolio {self.name}.>"
 
     @property
     def symbols(self):
