@@ -22,7 +22,7 @@ def test_order_basics(client, db):
     assert order.symbol == "AAPL"
     assert order.quantity == 10
     assert order.side == OrderSideType.Buy
-    assert order.avg_exec_price == 10.5
+    assert order.exec_price == 10.5
     assert isinstance(order.exec_time, datetime)
     assert order.fee == 0.123
     assert repr(order) == "<Order AAPL.>"
@@ -49,6 +49,6 @@ def test_order_attributes(client, db):
     assert order_buy.symbol == "FB"
     assert order_buy.quantity == 20
     assert order_buy.side == OrderSideType.Sell
-    assert order_buy.avg_exec_price == 100
+    assert order_buy.exec_price == 100
     assert order_buy.exec_time == datetime(2020, 1, 1)
     assert order_buy.fee == 10

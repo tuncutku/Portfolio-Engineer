@@ -21,6 +21,7 @@ class Portfolio(BaseModel):
     date = db.Column(db.Date(), default=datetime.now)
 
     user = db.relationship("User", back_populates="portfolios")
+    orders = db.relationship("Order", backref="portfolio", cascade="all, delete-orphan")
     positions = db.relationship(
         "Position",
         backref="portfolio",

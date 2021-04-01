@@ -36,7 +36,7 @@ order_1 = {
     "symbol": "AAPL",
     "quantity": 10,
     "side": OrderSideType.Buy,
-    "avg_exec_price": 10.5,
+    "exec_price": 10.5,
     "exec_time": datetime(2020, 1, 3, tzinfo=pytz.utc),
     "fee": 0.123,
 }
@@ -44,7 +44,7 @@ order_2 = {
     "symbol": "AAPL",
     "quantity": 2,
     "side": OrderSideType.Sell,
-    "avg_exec_price": 11,
+    "exec_price": 11,
     "exec_time": datetime(2020, 4, 6, tzinfo=pytz.utc),
     "fee": 0,
 }
@@ -52,7 +52,7 @@ order_3 = {
     "symbol": "FB",
     "quantity": 20,
     "side": OrderSideType.Buy,
-    "avg_exec_price": 11,
+    "exec_price": 11,
     "exec_time": datetime(2020, 8, 6, tzinfo=pytz.utc),
     "fee": 0,
 }

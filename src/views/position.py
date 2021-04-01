@@ -41,7 +41,7 @@ def close_position(position_id):
             symbol=position.symbol,
             quantity=abs(position.open_quantity),
             side=side,
-            avg_exec_price=quote[position.symbol],
+            exec_price=quote[position.symbol],
             exec_time=datetime.now(),
             fee=0,
             position=position,

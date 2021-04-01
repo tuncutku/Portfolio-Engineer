@@ -51,7 +51,7 @@ def test_add_order(client, db, user, captured_templates, mocker):
     assert new_order.side == OrderSideType.Sell
     assert new_order.fee == 10
     assert new_order.exec_time == datetime(2020, 1, 2)
-    assert new_order.avg_exec_price == 100
+    assert new_order.exec_price == 100
 
     new_pos = Position.find_by_id(2)
     assert new_pos != None
@@ -94,7 +94,7 @@ def test_edit_order(client, db, user, captured_templates):
     assert order_test.side == OrderSideType.Sell
     assert order_test.fee == 10
     assert order_test.exec_time == datetime(2019, 1, 2)
-    assert order_test.avg_exec_price == 0.2
+    assert order_test.exec_price == 0.2
 
     template_list = ["order/edit_order.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

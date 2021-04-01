@@ -34,7 +34,7 @@ def edit_order(order_id: int):
             symbol=form.symbol.data,
             quantity=form.quantity.data,
             side=form.side.data,
-            avg_exec_price=form.price.data,
+            exec_price=form.price.data,
             exec_time=form.exec_datetime.data,
             fee=form.fee.data,
         )
@@ -70,7 +70,7 @@ def add_order(portfolio_id):
             symbol=form.symbol.data,
             quantity=form.quantity.data,
             side=form.side.data,
-            avg_exec_price=form.price.data,
+            exec_price=form.price.data,
             exec_time=form.exec_datetime.data,
             fee=form.fee.data,
             position=pos,

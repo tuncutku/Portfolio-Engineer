@@ -130,7 +130,7 @@ def generate_edit_order_form(order: Order):
             default=order.exec_time,
             format=date_time_format,
         )
-        price = FloatField(u"Quote", [Optional()], default=order.avg_exec_price)
+        price = FloatField(u"Quote", [Optional()], default=order.exec_price)
 
         def validate(self):
             check_validate = super(EditOrderForm, self).validate()
