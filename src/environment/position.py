@@ -10,15 +10,30 @@ class Position(BaseModel):
     __tablename__ = "positions"
 
     symbol = db.Column(db.String(255), nullable=False)
-    name = db.Column(db.String(255), nullable=False)
     security_type = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), nullable=False)
-    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
 
+    # Equity
+    company = db.Column(db.String(255))
+
+    # ETF
+    holdings = db.Column(db.String(255))
+
+    # Option
+    strike = db.Column(db.Float())
+    notional = db.Column(db.Float())
+    expiry = db.Column(db.DateTime)
+
+    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Position {}.>".format(self.symbol)
+
+    @classmethod
+    def find_by_symbol(cls, symbol, portfolio):
+        return cls.query.filter_by(symbol=symbol, portfolio=portfolio).first()
 
     @property
     def open_quantity(self):

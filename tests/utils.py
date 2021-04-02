@@ -5,7 +5,8 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.alerts import DailyReport
+
+# from src.environment.alerts import DailyReport
 from src.reports.report import Report
 
 from tests.sample_data import *
@@ -82,10 +83,3 @@ def create_order(
     )
     order.save_to_db()
     return order
-
-
-def create_daily_alert(portfolio: Portfolio) -> DailyReport:
-
-    report = DailyReport(portfolio=portfolio)
-    report.save_to_db()
-    return report

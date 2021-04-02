@@ -23,13 +23,13 @@ portfolio_2 = {
 position_1 = {
     "symbol": "AAPL",
     "name": "Apple Inc.",
-    "security_type": SecurityType.Stock,
+    "security_type": SecurityType.Equity,
     "currency": Currency.USD,
 }
 position_2 = {
     "symbol": "FB",
     "name": "Facebook Inc.",
-    "security_type": SecurityType.Stock,
+    "security_type": SecurityType.Equity,
     "currency": Currency.USD,
 }
 order_1 = {

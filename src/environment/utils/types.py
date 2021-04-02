@@ -52,7 +52,7 @@ class OptionStrategyType:
 
 class SecurityType:
     Cash = "Cash"
-    Stock = "Common and preferred equities, ETFs, ETNs, units, ADRs, etc."
+    Equity = "Common and preferred equities"
     ETF = "Exchange traded fund"
     Option = "Equity and index options."
     Bond = "Debentures, notes, bonds, both corporate and government."
@@ -92,3 +92,8 @@ class AlertPeriod:
 
 
 CurrencyExchangeMap = {Currency.USD: Exchange.XNYS, Currency.CAD: Exchange.XTSE}
+YFinanceSecurityTypeMapping = {
+    "EQUITY": SecurityType.Equity,
+    "ETF": SecurityType.ETF,
+    "OPTION": SecurityType.Option,
+}

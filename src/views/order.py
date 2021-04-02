@@ -52,19 +52,9 @@ def add_order(portfolio_id):
         symbol = form.symbol.data
 
         port = Portfolio.find_by_id(portfolio_id)
-        pos = Position.query.filter_by(symbol=form.symbol.data, portfolio=port).first()
+        pos = Position.find_by_symbol(form.symbol.data, port)
         if pos is None:
-            md_provider = YFinance([symbol])
-            symbol_info = md_provider.info()[symbol]
-
-            pos = Position(
-                symbol=symbol,
-                name=symbol_info.get("shortName", None),
-                security_type=symbol_info.get("quoteType", None),
-                currency=symbol_info.get("currency", None),
-                portfolio=port,
-            )
-            pos.save_to_db()
+            add_new_position(symbol, port)
 
         new_order = Order(
             symbol=form.symbol.data,
@@ -81,3 +71,17 @@ def add_order(portfolio_id):
         return redirect(url_for("portfolio.list_portfolios"))
 
     return render_template("order/add_order.html", form=form, portfolio_id=portfolio_id)
+
+
+def add_new_position(symbol: str, portfolio: Portfolio) -> None:
+    md_provider = YFinance([symbol])
+    symbol_info = md_provider.info()[symbol]
+
+    pos = Position(
+        symbol=symbol,
+        name=symbol_info.get("shortName", None),
+        security_type=symbol_info.get("quoteType", None),
+        currency=symbol_info.get("currency", None),
+        portfolio=portfolio,
+    )
+    pos.save_to_db()

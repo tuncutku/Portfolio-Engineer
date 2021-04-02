@@ -22,7 +22,7 @@ def test_position_basics(client, db):
     assert pos.id == 1
     assert pos.symbol == "AAPL"
     assert pos.name == "Apple Inc."
-    assert pos.security_type == SecurityType.Stock
+    assert pos.security_type == SecurityType.Equity
     assert pos.currency == Currency.USD
     assert pos.portfolio_id == 1
     assert repr(pos) == "<Position AAPL.>"

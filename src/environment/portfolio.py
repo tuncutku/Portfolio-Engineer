@@ -13,25 +13,17 @@ class Portfolio(BaseModel):
     __tablename__ = "portfolios"
 
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    date = db.Column(db.Date(), default=datetime.now)
     name = db.Column(db.String(255), nullable=False)
     portfolio_type = db.Column(db.String(255), nullable=False)
     reporting_currency = db.Column(db.String(3), nullable=False)
     benchmark = db.Column(db.String(3), nullable=False)
     is_primary = db.Column(db.Boolean(), default=False)
-    date = db.Column(db.Date(), default=datetime.now)
+    daily_report = db.Column(db.Boolean(), default=False)
 
     user = db.relationship("User", back_populates="portfolios")
-    orders = db.relationship("Order", backref="portfolio", cascade="all, delete-orphan")
     positions = db.relationship(
-        "Position",
-        backref="portfolio",
-        cascade="all, delete-orphan",
-    )
-    daily_report = db.relationship(
-        "DailyReport",
-        back_populates="portfolio",
-        uselist=False,
-        cascade="all, delete-orphan",
+        "Position", backref="portfolio", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:

@@ -3,7 +3,8 @@ from src.extensions import mail, celery_logger, log
 
 from src.extensions import celery
 from src.environment.user import User
-from src.environment.alerts import DailyReport
+
+# from src.environment.alerts import DailyReport
 from flask_mail import Message
 
 

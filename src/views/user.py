@@ -7,7 +7,7 @@ from itsdangerous import URLSafeTimedSerializer
 from src.environment.user import User
 from src.forms.user_forms import RegisterForm, LoginForm
 from src.extensions import db
-from src.tasks.email import send_email
+from src.messanger.tasks.email import send_email
 
 
 user_blueprint = Blueprint("users", __name__, url_prefix="/users")

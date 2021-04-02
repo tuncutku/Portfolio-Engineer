@@ -7,7 +7,8 @@ from tests.utils import create_user, create_portfolio, create_position, create_o
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.alerts import DailyReport
+
+# from src.environment.alerts import DailyReport
 
 
 port_dict = {
@@ -24,7 +25,7 @@ port_dict = {
             "ID": 1,
             "Symbol": "AAPL",
             "Name": "Apple Inc.",
-            "Security Type": "Common and preferred equities, ETFs, ETNs, units, ADRs, etc.",
+            "Security Type": "Common and preferred equities",
             "Currency": "USD",
             "Market Cap": "8.00",
             "Total Quantity": 8,
@@ -66,7 +67,6 @@ def test_relationships(client, db):
     assert Portfolio.query.filter_by(user=user).first() == None
     assert Position.query.filter_by(portfolio=port).first() == None
     assert Order.query.filter_by(position=pos).first() == None
-    assert DailyReport.query.filter_by(portfolio=port).first() == None
 
 
 def test_to_df(client, db):

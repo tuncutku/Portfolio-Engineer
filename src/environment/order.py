@@ -10,15 +10,14 @@ from src.environment.utils.types import *
 class Order(BaseModel):
     __tablename__ = "orders"
 
-    position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
-    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    symbol = db.Column(db.String(255), nullable=False)
+    symbol: str = db.Column(db.String(255), nullable=False)
     quantity = db.Column(db.Integer(), nullable=False)
     side = db.Column(db.String(255), nullable=False)
     exec_price = db.Column(db.Float(), nullable=False)
     exec_time = db.Column(db.DateTime, nullable=False)
     fee = db.Column(db.Float(), nullable=False)
-    # strategyType: str  # ex:"SingleLeg"
+
+    position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
 
     def __repr__(self):
         return f"<Order {self.symbol}.>"
