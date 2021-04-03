@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from src.environment.utils.base import BaseModel
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 from src.environment.utils.types import *
 
 

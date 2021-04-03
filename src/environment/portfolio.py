@@ -4,8 +4,9 @@ import pandas as pd
 from src.reports.report import Report
 
 from src.environment.utils.base import BaseModel
+from src.environment.user import User
 from src.extensions import db
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 from src.environment.utils.types import *
 
 
@@ -21,7 +22,7 @@ class Portfolio(BaseModel):
     is_primary = db.Column(db.Boolean(), default=False)
     daily_report = db.Column(db.Boolean(), default=False)
 
-    user = db.relationship("User", back_populates="portfolios")
+    user: User = db.relationship(User, back_populates="portfolios")
     positions = db.relationship(
         "Position", backref="portfolio", cascade="all, delete-orphan"
     )

@@ -26,6 +26,15 @@ class Order(BaseModel):
     def adjusted_quantity(self):
         return self.quantity if self.side == OrderSideType.Buy else (-1) * self.quantity
 
+    def edit(self, symbol, quantity, side, exec_price, exec_time, fee) -> None:
+        self.symbol = symbol
+        self.quantity = quantity
+        self.side = side
+        self.exec_price = exec_price
+        self.exec_time = exec_time
+        self.fee = fee
+        db.session.commit()
+
     def to_dict(self):
         return {
             "ID": self.id,
@@ -36,15 +45,6 @@ class Order(BaseModel):
             "exec_time": self.exec_time.strftime("%y-%m-%d %a %H:%M"),
             "fee": self.fee,
         }
-
-    def edit(self, symbol, quantity, side, exec_price, exec_time, fee) -> None:
-        self.symbol = symbol
-        self.quantity = quantity
-        self.side = side
-        self.exec_price = exec_price
-        self.exec_time = exec_time
-        self.fee = fee
-        db.session.commit()
 
     def to_df(self):
         return pd.DataFrame(

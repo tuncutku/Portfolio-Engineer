@@ -16,7 +16,7 @@ from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
 from src.environment.order import Order
 from src.environment.utils.types import *
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 
 
 order_side_choices = [

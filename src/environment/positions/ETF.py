@@ -6,38 +6,31 @@ from src.environment.utils.base import BaseModel
 from src.market_data.provider import YFinance
 
 
-class Position(BaseModel):
-    __tablename__ = "positions"
+class ETFPosition(BaseModel):
+    __tablename__ = "etf_positions"
 
     symbol = db.Column(db.String(255), nullable=False)
     security_type = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), nullable=False)
 
-    # Equity
-    company = db.Column(db.String(255))
-
-    # ETF
-    holdings = db.Column(db.String(255))
-
-    # Option
-    strike = db.Column(db.Float())
-    notional = db.Column(db.Float())
-    expiry = db.Column(db.DateTime)
-
     portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
+    orders = db.relationship(
+        "Order", backref="etf_position", cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return "<Position {}.>".format(self.symbol)
 
-    @classmethod
-    def find_by_symbol(cls, symbol, portfolio):
-        return cls.query.filter_by(symbol=symbol, portfolio=portfolio).first()
+    @staticmethod
+    def holdings(self):
+        pass
 
-    @property
     def open_quantity(self):
-        return sum([order.adjusted_quantity for order in self.orders])
+        pass
+
+    def total_market_cap(self):
+        pass
 
     @property
     def market_cap(self, quote: float = None) -> float:
