@@ -6,7 +6,7 @@ from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order, OrderSideType
 from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 from src.extensions import db
 
 
@@ -41,7 +41,7 @@ def close_position(position_id):
             symbol=position.symbol,
             quantity=abs(position.open_quantity),
             side=side,
-            avg_exec_price=quote[position.symbol],
+            exec_price=quote[position.symbol],
             exec_time=datetime.now(),
             fee=0,
             position=position,

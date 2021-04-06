@@ -11,7 +11,7 @@ from flask_login import current_user
 from src.environment.portfolio import Portfolio
 from src.environment.utils.types import *
 
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 
 
 port_type_choices = [

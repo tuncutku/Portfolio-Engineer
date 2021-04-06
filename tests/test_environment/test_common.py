@@ -8,6 +8,8 @@ from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
 
+# from src.environment.alerts import DailyReport
+
 
 port_dict = {
     "id": 1,
@@ -23,7 +25,7 @@ port_dict = {
             "ID": 1,
             "Symbol": "AAPL",
             "Name": "Apple Inc.",
-            "Security Type": "Common and preferred equities, ETFs, ETNs, units, ADRs, etc.",
+            "Security Type": "Common and preferred equities",
             "Currency": "USD",
             "Market Cap": "8.00",
             "Total Quantity": 8,
@@ -34,7 +36,7 @@ port_dict = {
                     "symbol": "AAPL",
                     "quantity": 2,
                     "side": "Sell",
-                    "avg_exec_price": 11.0,
+                    "exec_price": 11.0,
                     "exec_time": "20-04-06 Mon 00:00",
                     "fee": 0.0,
                 },
@@ -43,7 +45,7 @@ port_dict = {
                     "symbol": "AAPL",
                     "quantity": 10,
                     "side": "Buy",
-                    "avg_exec_price": 10.5,
+                    "exec_price": 10.5,
                     "exec_time": "20-01-03 Fri 00:00",
                     "fee": 0.123,
                 },
@@ -89,7 +91,7 @@ def test_to_dict(client, db, mocker):
         return pd.DataFrame([1], columns=["AAPL"])
 
     mocker.patch(
-        "src.market_data.yahoo.YFinance.get_current_quotes",
+        "src.market_data.provider.YFinance.get_current_quotes",
         mock_func,
     )
 

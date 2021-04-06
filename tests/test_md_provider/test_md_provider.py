@@ -2,14 +2,14 @@ from datetime import datetime
 import pandas as pd
 import pytest
 
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 
 
 def test_yfinance():
     """Test for Yfinance wrapper and connection."""
 
     # Test a Stock and an ETF.
-    securities = ["AAPL", "PBW"]
+    securities = ["AAPL", "PBW", "ES=F"]
     quotes = [73.61084, 34.4514]
     md_provider = YFinance(securities)
 

@@ -27,20 +27,20 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(form.email.data)
+        new_user = User(email=form.email.data)
         new_user.save_to_db()
         new_user.set_password(form.password.data)
 
         token = generate_confirmation_token(new_user.email)
         confirm_url = url_for("users.confirm_email", token=token, _external=True)
-        email = {
-            "subject": "Account confirmation - Portfolio Engineer",
-            "recipient": [new_user.email],
-            "html": render_template(
+
+        send_email(
+            subject="Account confirmation - Portfolio Engineer",
+            recipients=[new_user.email],
+            html=render_template(
                 "email/account_confirmation.html", confirm_url=confirm_url
             ),
-        }
-        send_email(email=email)
+        )
 
         flash("You have confirmed your account. Thanks!", "success")
 

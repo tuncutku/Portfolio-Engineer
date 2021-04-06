@@ -7,7 +7,7 @@ from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
 from src.forms.order_forms import AddOrderForm, generate_edit_order_form
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
@@ -34,7 +34,7 @@ def edit_order(order_id: int):
             symbol=form.symbol.data,
             quantity=form.quantity.data,
             side=form.side.data,
-            avg_exec_price=form.price.data,
+            exec_price=form.price.data,
             exec_time=form.exec_datetime.data,
             fee=form.fee.data,
         )
@@ -52,25 +52,15 @@ def add_order(portfolio_id):
         symbol = form.symbol.data
 
         port = Portfolio.find_by_id(portfolio_id)
-        pos = Position.query.filter_by(symbol=form.symbol.data, portfolio=port).first()
+        pos = Position.find_by_symbol(form.symbol.data, port)
         if pos is None:
-            md_provider = YFinance([symbol])
-            symbol_info = md_provider.info()[symbol]
-
-            pos = Position(
-                symbol=symbol,
-                name=symbol_info.get("shortName", None),
-                security_type=symbol_info.get("quoteType", None),
-                currency=symbol_info.get("currency", None),
-                portfolio=port,
-            )
-            pos.save_to_db()
+            add_new_position(symbol, port)
 
         new_order = Order(
             symbol=form.symbol.data,
             quantity=form.quantity.data,
             side=form.side.data,
-            avg_exec_price=form.price.data,
+            exec_price=form.price.data,
             exec_time=form.exec_datetime.data,
             fee=form.fee.data,
             position=pos,
@@ -81,3 +71,17 @@ def add_order(portfolio_id):
         return redirect(url_for("portfolio.list_portfolios"))
 
     return render_template("order/add_order.html", form=form, portfolio_id=portfolio_id)
+
+
+def add_new_position(symbol: str, portfolio: Portfolio) -> None:
+    md_provider = YFinance([symbol])
+    symbol_info = md_provider.info()[symbol]
+
+    pos = Position(
+        symbol=symbol,
+        name=symbol_info.get("shortName", None),
+        security_type=symbol_info.get("quoteType", None),
+        currency=symbol_info.get("currency", None),
+        portfolio=portfolio,
+    )
+    pos.save_to_db()

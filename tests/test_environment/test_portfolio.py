@@ -23,7 +23,7 @@ def test_portfolio_basics(client, db):
     assert port.name == "portfolio_1"
     assert port.reporting_currency == Currency.USD
     assert port.portfolio_type == PortfolioType.margin
-    assert port.is_primary == False
+    assert port.primary == False
     assert port.user_id == 1
     assert isinstance(port.date, date)
     assert repr(port) == "<Portfolio portfolio_1.>"
@@ -40,7 +40,7 @@ def test_portfolio_attributes(client, db, mocker):
         return pd.DataFrame([1], columns=["AAPL"])
 
     mocker.patch(
-        "src.market_data.yahoo.YFinance.get_current_quotes",
+        "src.market_data.provider.YFinance.get_current_quotes",
         mock_func,
     )
 
@@ -51,9 +51,9 @@ def test_portfolio_attributes(client, db, mocker):
     create_order(**order_2, position=pos)
 
     # Test primary attribute
-    assert port.is_primary == False
+    assert port.primary == False
     port.set_as_primary()
-    assert port.is_primary == True
+    assert port.primary == True
 
     # Test edit portfolio attribute
     port.edit("Hello World", Currency.USD, PortfolioType.rrsp, "^GSPC")

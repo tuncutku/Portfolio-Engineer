@@ -1,26 +1,25 @@
 from datetime import datetime
 from flask_login import UserMixin
+from typing import List
 
 from src.environment.utils.base import BaseModel
+from src.environment.portfolio import Portfolio
 from src.extensions import db, bcrypt
 
 
 class User(BaseModel, UserMixin):
     __tablename__ = "users"
 
-    email = db.Column(db.String(255), nullable=False, index=True, unique=True)
-    password = db.Column(db.String(255))
-    confirmed = db.Column(db.Boolean(), default=False)
+    email: str = db.Column(db.String(255), nullable=False, index=True, unique=True)
+    password: str = db.Column(db.String(255))
+    confirmed: bool = db.Column(db.Boolean(), default=False)
 
-    portfolios = db.relationship(
-        "Portfolio", back_populates="user", cascade="all, delete-orphan"
+    portfolios: List[Portfolio] = db.relationship(
+        "Portfolio", backref="user", cascade="all, delete-orphan"
     )
 
-    def __init__(self, email: str):
-        self.email = email
-
     def __repr__(self):
-        return "<User {}.>".format(self.email)
+        return f"<User {self.email}.>"
 
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password)

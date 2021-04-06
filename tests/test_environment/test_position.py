@@ -22,7 +22,7 @@ def test_position_basics(client, db):
     assert pos.id == 1
     assert pos.symbol == "AAPL"
     assert pos.name == "Apple Inc."
-    assert pos.security_type == SecurityType.Stock
+    assert pos.security_type == SecurityType.Equity
     assert pos.currency == Currency.USD
     assert pos.portfolio_id == 1
     assert repr(pos) == "<Position AAPL.>"
@@ -39,7 +39,7 @@ def test_position_attributes(client, db, mocker):
         return pd.DataFrame([1], columns=["AAPL"])
 
     mocker.patch(
-        "src.market_data.yahoo.YFinance.get_current_quotes",
+        "src.market_data.provider.YFinance.get_current_quotes",
         mock_func,
     )
 

@@ -16,7 +16,7 @@ from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, Length, ValidationError, Optional
 from src.environment.order import Order
 from src.environment.utils.types import *
-from src.market_data.yahoo import YFinance
+from src.market_data.provider import YFinance
 
 
 order_side_choices = [
@@ -130,7 +130,7 @@ def generate_edit_order_form(order: Order):
             default=order.exec_time,
             format=date_time_format,
         )
-        price = FloatField(u"Quote", [Optional()], default=order.avg_exec_price)
+        price = FloatField(u"Quote", [Optional()], default=order.exec_price)
 
         def validate(self):
             check_validate = super(EditOrderForm, self).validate()

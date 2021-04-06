@@ -5,7 +5,8 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.alert import DailyReport
+
+# from src.environment.alerts import DailyReport
 from src.reports.report import Report
 
 from tests.sample_data import *
@@ -65,7 +66,7 @@ def create_order(
     symbol: str,
     quantity: int,
     side: str,
-    avg_exec_price: float,
+    exec_price: float,
     exec_time: datetime,
     fee: float,
     position: Position,
@@ -75,7 +76,7 @@ def create_order(
         symbol=symbol,
         quantity=quantity,
         side=side,
-        avg_exec_price=avg_exec_price,
+        exec_price=exec_price,
         exec_time=exec_time,
         fee=fee,
         position=position,
