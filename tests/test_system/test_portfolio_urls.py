@@ -84,11 +84,11 @@ def test_delete_portfolio(client, db, user, captured_templates):
 def test_set_portfolio_primary(client, db, user, captured_templates):
 
     portfolio = Portfolio.find_by_id(1)
-    assert portfolio.is_primary == False
+    assert portfolio.primary == False
     response = client.get("portfolio/set_primary/1", follow_redirects=True)
     assert response.status_code == 200
     portfolio = Portfolio.find_by_id(1)
-    assert portfolio.is_primary == True
+    assert portfolio.primary == True
 
     template_list = ["portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

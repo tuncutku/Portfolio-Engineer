@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
@@ -11,11 +11,11 @@ class Order(BaseModel):
     __tablename__ = "orders"
 
     symbol: str = db.Column(db.String(255), nullable=False)
-    quantity = db.Column(db.Integer(), nullable=False)
-    side = db.Column(db.String(255), nullable=False)
-    exec_price = db.Column(db.Float(), nullable=False)
-    exec_time = db.Column(db.DateTime, nullable=False)
-    fee = db.Column(db.Float(), nullable=False)
+    quantity: float = db.Column(db.Integer(), nullable=False)
+    side: str = db.Column(db.String(255), nullable=False)
+    exec_price: float = db.Column(db.Float(), nullable=False)
+    exec_time: datetime = db.Column(db.DateTime, nullable=False)
+    fee: float = db.Column(db.Float(), nullable=False)
 
     position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
 

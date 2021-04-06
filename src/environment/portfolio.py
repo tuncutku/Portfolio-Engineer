@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, date
 import pandas as pd
 
 from src.reports.report import Report
 
 from src.environment.utils.base import BaseModel
-from src.environment.user import User
+from src.environment.alerts.daily import DailyReport
 from src.extensions import db
 from src.market_data.provider import YFinance
 from src.environment.utils.types import *
@@ -13,18 +13,25 @@ from src.environment.utils.types import *
 class Portfolio(BaseModel):
     __tablename__ = "portfolios"
 
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    date = db.Column(db.Date(), default=datetime.now)
-    name = db.Column(db.String(255), nullable=False)
-    portfolio_type = db.Column(db.String(255), nullable=False)
-    reporting_currency = db.Column(db.String(3), nullable=False)
-    benchmark = db.Column(db.String(3), nullable=False)
-    is_primary = db.Column(db.Boolean(), default=False)
-    daily_report = db.Column(db.Boolean(), default=False)
+    user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    date: date = db.Column(db.Date(), default=datetime.now)
+    name: str = db.Column(db.String(255), nullable=False)
+    portfolio_type: str = db.Column(db.String(255), nullable=False)
+    reporting_currency: str = db.Column(db.String(3), nullable=False)
+    benchmark: str = db.Column(db.String(3), nullable=False)
+    primary: bool = db.Column(db.Boolean(), default=False)
 
-    user: User = db.relationship(User, back_populates="portfolios")
+    daily_report = db.Column(db.Boolean(), default=False)
     positions = db.relationship(
-        "Position", backref="portfolio", cascade="all, delete-orphan"
+        "Position",
+        backref="portfolio",
+        cascade="all, delete-orphan",
+    )
+    daily_report: DailyReport = db.relationship(
+        "DailyReport",
+        back_populates="portfolio",
+        uselist=False,
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:
@@ -53,10 +60,10 @@ class Portfolio(BaseModel):
 
     @classmethod
     def get_primary(cls, user):
-        return cls.query.filter_by(user=user, is_primary=True).first()
+        return cls.query.filter_by(user=user, primary=True).first()
 
     def set_as_primary(self) -> None:
-        self.is_primary = True
+        self.primary = True
         db.session.commit()
 
     def edit(self, name, currency, port_type, benchmark) -> None:
@@ -76,7 +83,7 @@ class Portfolio(BaseModel):
             "Name": self.name,
             "Portfolio type": self.portfolio_type,
             "Reporting currency": self.reporting_currency,
-            "Primary": self.is_primary,
+            "Primary": self.primary,
             "Creation date": self.date,
             "Total market value": "{:,.2f}".format(self.total_mkt_value),
             "Benchmark": self.benchmark,

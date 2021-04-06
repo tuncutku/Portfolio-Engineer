@@ -34,7 +34,7 @@ def register_cli(app):
 
         db.create_all()
 
-        user = User("tuncutku10@gmail.com")
+        user = User(email="tuncutku10@gmail.com")
         user.save_to_db()
         user.set_password("1234")
 

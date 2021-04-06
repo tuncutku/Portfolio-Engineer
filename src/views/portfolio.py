@@ -83,7 +83,7 @@ def set_portfolio_primary(portfolio_id):
     primary_portfolio = Portfolio.get_primary(current_user)
 
     if primary_portfolio:
-        primary_portfolio.is_primary = False
+        primary_portfolio.primary = False
 
     current_portfolio = Portfolio.find_by_id(portfolio_id)
     current_portfolio.set_as_primary()

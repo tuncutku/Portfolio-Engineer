@@ -7,7 +7,7 @@ from itsdangerous import URLSafeTimedSerializer
 from src.environment.user import User
 from src.forms.user_forms import RegisterForm, LoginForm
 from src.extensions import db
-from src.messanger.tasks.email import send_email
+from src.tasks.email import send_email
 
 
 user_blueprint = Blueprint("users", __name__, url_prefix="/users")
@@ -27,7 +27,7 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(form.email.data)
+        new_user = User(email=form.email.data)
         new_user.save_to_db()
         new_user.set_password(form.password.data)
 

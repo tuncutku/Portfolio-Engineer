@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import TypeVar, List
 
 from src.extensions import db
+
+T = TypeVar("T", bound="BaseModel")
 
 
 class BaseModel(db.Model):
@@ -11,11 +14,11 @@ class BaseModel(db.Model):
     creation_date = db.Column(db.DateTime(), default=datetime.now)
 
     @classmethod
-    def find_by_id(cls, _id: int):
+    def find_by_id(cls: T, _id: int) -> T:
         return cls.query.get(_id)
 
     @classmethod
-    def find_all(cls) -> list:
+    def find_all(cls: T) -> List[T]:
         return cls.query.all()
 
     def save_to_db(self):
@@ -27,50 +30,31 @@ class BaseModel(db.Model):
         db.session.commit()
 
 
-class AlertBaseModel(BaseModel):
+class AlertBase(BaseModel):
     __abstract__ = True
 
-    is_active = db.Column(db.Boolean(), default=False)
+    @property
+    def recipients(self) -> List[str]:
+        raise NotImplementedError
 
     @property
-    def subject(self):
+    def subject(self) -> str:
         raise NotImplementedError
 
     @property
     def email_template(self):
         raise NotImplementedError
 
-    def condition(self):
+    def condition(self) -> bool:
         raise NotImplementedError
 
-    def send_email(self):
+    def generate_email_content(self) -> dict:
         raise NotImplementedError
 
-    def activate(self) -> None:
-        self.is_active = True
-        db.session.commit()
-
-    def deactivate(self) -> None:
-        self.is_active = False
-        db.session.commit()
-
-
-class Security(BaseModel):
-    __abstract__ = True
-
-    symbol = db.Column(db.String(255), nullable=False)
-    short_name = db.Column(db.String(3), nullable=False)
-    currency = db.Column(db.String(3), nullable=False)
-
-    @classmethod
-    def find_by_symbol(cls, symbol: str):
-        return cls.query.filter_by(symbol=symbol).first()
-
-    def last_price(self):
-        raise NotImplementedError
-
-    def historical_price(self):
-        raise NotImplementedError
-
-    def periodic_prices(self):
-        raise NotImplementedError
+    def send_async_email(self) -> None:
+        contents = self.generate_email_content()
+        send_email.apply_async(
+            subject=self.subject,
+            recipients=self.recipients,
+            html=render_template(self.email_template, **contents),
+        )

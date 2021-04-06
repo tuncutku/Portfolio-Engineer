@@ -1,18 +1,21 @@
+from __future__ import annotations
+
 from flask import render_template, Markup
 import pandas as pd
+from typing import TYPE_CHECKING
 
 from datetime import datetime
-from dataclasses import dataclass
+from src.environment.utils.base import AlertBase
+from src.extensions import db
 
-from src.messanger.alerts.base import AlertBase
+if TYPE_CHECKING:
+    from src.environment.portfolio import Portfolio
 
-from src.reports.report import Report
 
-
-@dataclass
 class DailyReport(AlertBase):
 
-    # report: Report
+    portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
+    portfolio: Portfolio = db.relationship("Portfolio", back_populates="daily_report")
 
     @property
     def subject(self) -> str:
@@ -45,3 +48,19 @@ class DailyReport(AlertBase):
             },
             "Return_table": Markup(df.to_html()),
         }
+
+
+class PriceAlert(AlertBase):
+    pass
+
+
+class ReturnAlert(AlertBase):
+    pass
+
+
+class NewsAlert(AlertBase):
+    pass
+
+
+class EconomicAlert(AlertBase):
+    pass

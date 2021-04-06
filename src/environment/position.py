@@ -1,35 +1,41 @@
 import datetime
 import pandas as pd
+from functools import cached_property
+from typing import List
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
+from src.environment.order import Order
 from src.market_data.provider import YFinance
 
 
 class Position(BaseModel):
     __tablename__ = "positions"
 
+    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     symbol = db.Column(db.String(255), nullable=False)
     security_type = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), nullable=False)
 
-    # Equity
-    company = db.Column(db.String(255))
-
-    # ETF
-    holdings = db.Column(db.String(255))
-
-    # Option
-    strike = db.Column(db.Float())
-    notional = db.Column(db.Float())
-    expiry = db.Column(db.DateTime)
-
-    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    orders = db.relationship("Order", backref="position", cascade="all, delete-orphan")
+    orders: List[Order] = db.relationship(
+        "Order", backref="position", cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return "<Position {}.>".format(self.symbol)
+
+    @cached_property
+    def underlying_instrument(self):
+        pass
+
+    @cached_property
+    def current_market_cap(self, reporting_currency: str):
+        pass
+
+    @cached_property
+    def historical_market_cap(self, reporting_currency: str):
+        pass
 
     @classmethod
     def find_by_symbol(cls, symbol, portfolio):
