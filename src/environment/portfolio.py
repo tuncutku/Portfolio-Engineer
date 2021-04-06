@@ -4,7 +4,7 @@ import pandas as pd
 from src.reports.report import Report
 
 from src.environment.utils.base import BaseModel
-from src.environment.alerts.daily import DailyReport
+from src.environment.alerts.daily_report import DailyReport
 from src.extensions import db
 from src.market_data.provider import YFinance
 from src.environment.utils.types import *
@@ -21,7 +21,6 @@ class Portfolio(BaseModel):
     benchmark: str = db.Column(db.String(3), nullable=False)
     primary: bool = db.Column(db.Boolean(), default=False)
 
-    daily_report = db.Column(db.Boolean(), default=False)
     positions = db.relationship(
         "Position",
         backref="portfolio",

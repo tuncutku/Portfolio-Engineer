@@ -9,7 +9,7 @@ def test_yfinance():
     """Test for Yfinance wrapper and connection."""
 
     # Test a Stock and an ETF.
-    securities = ["AAPL", "PBW", "ES=F", "AAPL230616C00125000"]
+    securities = ["AAPL", "PBW", "ES=F"]
     quotes = [73.61084, 34.4514]
     md_provider = YFinance(securities)
 
