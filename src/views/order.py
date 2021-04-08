@@ -7,7 +7,7 @@ from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
 from src.forms.order_forms import AddOrderForm, generate_edit_order_form
-from src.market_data.provider import YFinance
+from src.market.provider import YFinance
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")

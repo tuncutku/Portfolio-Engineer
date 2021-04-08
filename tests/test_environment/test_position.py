@@ -39,7 +39,7 @@ def test_position_attributes(client, db, mocker):
         return pd.DataFrame([1], columns=["AAPL"])
 
     mocker.patch(
-        "src.market_data.provider.YFinance.get_current_quotes",
+        "src.market.provider.YFinance.get_current_quotes",
         mock_func,
     )
 

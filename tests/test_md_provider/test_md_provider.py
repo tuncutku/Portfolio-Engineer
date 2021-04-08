@@ -1,8 +1,22 @@
-from datetime import datetime
+from datetime import datetime, date
 import pandas as pd
 import pytest
 
-from src.market_data.provider import YFinance
+from src.market.provider import YFinance
+from src.market.security.etf import ETF
+from src.market.symbol import Symbol
+
+
+def test_hey():
+
+    A = Symbol("PBW")
+    etf = ETF(A)
+
+    etf.current_value
+
+    etf.index(date(2019, 1, 10), date.today())
+
+    a = 1
 
 
 def test_yfinance():

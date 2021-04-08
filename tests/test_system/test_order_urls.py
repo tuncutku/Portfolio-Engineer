@@ -20,7 +20,7 @@ def test_add_order(client, db, user, captured_templates, mocker):
         }
 
     mocker.patch(
-        "src.market_data.provider.YFinance.info",
+        "src.market.provider.YFinance.info",
         mock_func,
     )
 

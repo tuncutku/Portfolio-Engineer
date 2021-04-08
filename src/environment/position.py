@@ -6,7 +6,8 @@ from typing import List
 from src.extensions import db
 from src.environment.utils.base import BaseModel
 from src.environment.order import Order
-from src.market_data.provider import YFinance
+from src.market.provider import YFinance
+from src.market.utils.base import Security
 
 
 class Position(BaseModel):
@@ -18,6 +19,8 @@ class Position(BaseModel):
     name = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.String(3), nullable=False)
 
+    security: Security = db.Column(db.PickleType())
+
     orders: List[Order] = db.relationship(
         "Order", backref="position", cascade="all, delete-orphan"
     )
@@ -25,17 +28,11 @@ class Position(BaseModel):
     def __repr__(self):
         return "<Position {}.>".format(self.symbol)
 
-    @cached_property
-    def underlying_instrument(self):
-        pass
+    # def current_market_cap(self, reporting_currency: str):
+    #     pass
 
-    @cached_property
-    def current_market_cap(self, reporting_currency: str):
-        pass
-
-    @cached_property
-    def historical_market_cap(self, reporting_currency: str):
-        pass
+    # def historical_market_cap(self, reporting_currency: str):
+    #     pass
 
     @classmethod
     def find_by_symbol(cls, symbol, portfolio):
@@ -54,7 +51,7 @@ class Position(BaseModel):
 
     @property
     def open(self) -> bool:
-        return True if self.open_quantity != 0 else False
+        return self.open_quantity != 0
 
     def to_dict(self):
 
