@@ -1,5 +1,8 @@
+# pylint: disable=no-member, not-an-iterable
+
 from datetime import datetime, date
 import pandas as pd
+from typing import List
 
 from src.reports.report import Report
 
@@ -7,6 +10,7 @@ from src.environment.utils.base import BaseModel
 from src.environment.alerts.daily_report import DailyReport
 from src.extensions import db
 from src.market.provider import YFinance
+from src.environment.position import Position
 from src.environment.utils.types import *
 
 
@@ -21,7 +25,7 @@ class Portfolio(BaseModel):
     benchmark: str = db.Column(db.String(3), nullable=False)
     primary: bool = db.Column(db.Boolean(), default=False)
 
-    positions = db.relationship(
+    positions: List[Position] = db.relationship(
         "Position",
         backref="portfolio",
         cascade="all, delete-orphan",

@@ -12,9 +12,9 @@ def test_order_basics(client, db):
     pos = create_position(**position_1, portfolio=port)
 
     # Create order
-    assert Order.query.filter_by(position=pos).first() == None
+    assert Order.query.filter_by(position=pos).first() is None
     order = create_order(**order_1, position=pos)
-    assert Order.query.filter_by(position=pos).all() != None
+    assert Order.query.filter_by(position=pos).all() is not None
     assert Order.find_by_id(1) != None
 
     # Check basic attributes
@@ -29,7 +29,7 @@ def test_order_basics(client, db):
 
     # Delete order
     order.delete_from_db()
-    assert Order.query.filter_by(position=pos).first() == None
+    assert Order.query.filter_by(position=pos).first() is None
 
 
 def test_order_attributes(client, db):

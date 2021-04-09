@@ -19,6 +19,9 @@ class ETF(Security):
     # def holding_companies(self):
     #     pass
 
+    def __repr__(self):
+        return "<ETF {}.>".format(self.symbol.symbol)
+
     @property
     def short_name(self) -> str:
         """Short description of the underlying etf."""
