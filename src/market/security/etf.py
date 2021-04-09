@@ -2,10 +2,13 @@
 
 from datetime import date
 from pandas import Series
+from pydantic.dataclasses import dataclass
+
 from src.market.utils.base import Security
 from src.market.symbol import Symbol
 
 
+@dataclass
 class ETF(Security):
     """Form exchange traded fund object."""
 

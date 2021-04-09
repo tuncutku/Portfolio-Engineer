@@ -1,12 +1,13 @@
 """Base for securities."""
 # pylint: disable=no-name-in-module
 from abc import abstractmethod, ABC
-from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
 from pandas import DataFrame
 from src.market.currency import Currency
 
 
-class Security(BaseModel, ABC):
+@dataclass
+class Security(ABC):
     """Base class for securities."""
 
     @property

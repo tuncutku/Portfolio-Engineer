@@ -24,10 +24,9 @@ def test_yfinance():
 
     # Test a Stock and an ETF.
     securities = ["AAPL", "PBW", "ES=F"]
-    quotes = [73.61084, 34.4514]
     md_provider = YFinance(securities)
 
-    assert md_provider.is_valid == True
+    assert md_provider.is_valid is True
     assert isinstance(md_provider.info(), dict)
     assert isinstance(md_provider.get_current_quotes(), pd.DataFrame)
 
@@ -37,4 +36,4 @@ def test_yfinance():
 
     # Test invalid symbol.
     md_provider = YFinance(["XYZ123456789GYT"])
-    assert md_provider.is_valid == False
+    assert md_provider.is_valid is False
