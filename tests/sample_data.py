@@ -1,55 +1,47 @@
 from datetime import datetime
 import pytz
 
-from src.environment.portfolio import PortfolioType, Currency
-from src.environment.order import OrderSideType, SecurityType
+from src.environment.portfolio import PortfolioType
+from src.environment.order import OrderSideType
+
+from src.market import Currency, Symbol, Equity
 
 
 user_1 = {"email": "tuncutku10@gmail.com", "password": "1234"}
 portfolio_1 = {
     "name": "portfolio_1",
     "portfolio_type": PortfolioType.margin,
-    "reporting_currency": Currency.USD,
-    "date": datetime(2020, 1, 1),
-    "benchmark": "^GSPC",
+    "reporting_currency": Currency("USD"),
+    "benchmark": Symbol("^GSPC"),
 }
 portfolio_2 = {
     "name": "portfolio_2",
     "portfolio_type": PortfolioType.cash,
-    "reporting_currency": Currency.CAD,
-    "date": datetime(2020, 1, 1),
-    "benchmark": "^GSPC",
+    "reporting_currency": Currency("CAD"),
+    "benchmark": Symbol("^GSPC"),
 }
 position_1 = {
-    "symbol": "AAPL",
-    "name": "Apple Inc.",
-    "security_type": SecurityType.Equity,
-    "currency": Currency.USD,
+    "security": Equity(asset_currency="USD", symbol="AAPL"),
 }
 position_2 = {
-    "symbol": "FB",
-    "name": "Facebook Inc.",
-    "security_type": SecurityType.Equity,
-    "currency": Currency.USD,
+    "security": Equity(asset_currency="USD", symbol="FB"),
 }
-order_1 = {
-    "symbol": "AAPL",
+
+order_1_1 = {
     "quantity": 10,
-    "side": OrderSideType.Buy,
-    "exec_price": 10.5,
-    "exec_time": datetime(2020, 1, 3, tzinfo=pytz.utc),
+    "direction": OrderSideType.Buy,
+    "price": 10.5,
+    "time": datetime(2020, 1, 3, tzinfo=pytz.utc),
     "fee": 0.123,
 }
-order_2 = {
-    "symbol": "AAPL",
+order_1_2 = {
     "quantity": 2,
-    "side": OrderSideType.Sell,
-    "exec_price": 11,
-    "exec_time": datetime(2020, 4, 6, tzinfo=pytz.utc),
+    "direction": OrderSideType.Sell,
+    "price": 11,
+    "time": datetime(2020, 4, 6, tzinfo=pytz.utc),
     "fee": 0,
 }
-order_3 = {
-    "symbol": "FB",
+order_2 = {
     "quantity": 20,
     "side": OrderSideType.Buy,
     "exec_price": 11,

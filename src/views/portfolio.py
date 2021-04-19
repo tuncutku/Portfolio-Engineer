@@ -15,6 +15,7 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 @portfolio_blueprint.route("/list", methods=["GET"])
 @login_required
 def list_portfolios():
+    """List portfolios of the user including current market values."""
 
     error_message = None
     port_list = [portfolio.to_dict() for portfolio in current_user.portfolios]
@@ -32,6 +33,7 @@ def list_portfolios():
 @portfolio_blueprint.route("/add_portfolio", methods=["GET", "POST"])
 @login_required
 def add_portfolio():
+    """Add a new portfolio."""
 
     form = AddPortfolioForm()
     if form.validate_on_submit():
@@ -53,6 +55,7 @@ def add_portfolio():
 @portfolio_blueprint.route("/edit/<int:portfolio_id>", methods=["GET", "POST"])
 @login_required
 def edit_portfolio(portfolio_id):
+    """Edit an existing portfolio."""
     port = Portfolio.find_by_id(portfolio_id)
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
@@ -71,6 +74,7 @@ def edit_portfolio(portfolio_id):
 @portfolio_blueprint.route("/delete/<int:portfolio_id>", methods=["GET"])
 @login_required
 def delete_portfolio(portfolio_id):
+    """Delete an existing portfolio along with its positions as well as orders."""
     port = Portfolio.find_by_id(portfolio_id)
     port.delete_from_db()
     return redirect(url_for("portfolio.list_portfolios"))
@@ -79,6 +83,7 @@ def delete_portfolio(portfolio_id):
 @portfolio_blueprint.route("/set_primary/<int:portfolio_id>", methods=["GET"])
 @login_required
 def set_portfolio_primary(portfolio_id):
+    """Set a portfolio primary which will be viewed at the top when listing portfolios."""
 
     primary_portfolio = Portfolio.get_primary(current_user)
 

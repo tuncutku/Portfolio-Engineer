@@ -4,7 +4,7 @@ from tests.test_system.common import templete_used
 from tests.sample_data import *
 
 
-def test_portfolio_list(client, db, user, captured_templates):
+def test_portfolio_list(client, _db, user, captured_templates):
 
     response = client.get("/portfolio/list")
     assert response.status_code == 200
@@ -13,7 +13,7 @@ def test_portfolio_list(client, db, user, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_add_portfolio(client, db, user, captured_templates):
+def test_add_portfolio(client, _db, user, captured_templates):
 
     response = client.get("portfolio/add_portfolio")
     assert response.status_code == 200
@@ -41,7 +41,7 @@ def test_add_portfolio(client, db, user, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_edit_portfolio(client, db, user, captured_templates):
+def test_edit_portfolio(client, _db, user, captured_templates):
 
     response = client.get("portfolio/edit/1")
     assert response.status_code == 200
@@ -71,24 +71,24 @@ def test_edit_portfolio(client, db, user, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_delete_portfolio(client, db, user, captured_templates):
+def test_delete_portfolio(client, _db, user, captured_templates):
 
     response = client.get("portfolio/delete/1", follow_redirects=True)
     assert response.status_code == 200
-    assert Portfolio.find_by_id(1) == None
+    assert Portfolio.find_by_id(1) is None
 
     template_list = ["portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)
 
 
-def test_set_portfolio_primary(client, db, user, captured_templates):
+def test_set_portfolio_primary(client, _db, user, captured_templates):
 
     portfolio = Portfolio.find_by_id(1)
-    assert portfolio.primary == False
+    assert portfolio.primary is False
     response = client.get("portfolio/set_primary/1", follow_redirects=True)
     assert response.status_code == 200
     portfolio = Portfolio.find_by_id(1)
-    assert portfolio.primary == True
+    assert portfolio.primary is True
 
     template_list = ["portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

@@ -1,4 +1,4 @@
-from trading_calendars import get_calendar
+from pandas_market_calendars import get_calendar
 from flask_wtf import FlaskForm as Form
 from wtforms import (
     StringField,

@@ -9,7 +9,7 @@ from tests.sample_data import *
 from tests.test_system.common import templete_used
 
 
-def test_add_order(client, db, user, captured_templates, mocker):
+def test_add_order(client, _db, login, captured_templates, mocker):
     def mock_func(self):
         return {
             "FB": {
@@ -28,7 +28,7 @@ def test_add_order(client, db, user, captured_templates, mocker):
     assert response.status_code == 200
     assert "Add new order" in response.get_data(as_text=True)
 
-    assert Position.find_by_id(2) == None
+    assert Position.find_by_id(2) is None
     # Test to post an order that has a position.
     response = client.post(
         "order/1/add_order",
@@ -54,7 +54,7 @@ def test_add_order(client, db, user, captured_templates, mocker):
     assert new_order.exec_price == 100
 
     new_pos = Position.find_by_id(2)
-    assert new_pos != None
+    assert new_pos is not None
     assert new_pos.name == "Facebook, Inc."
     assert new_pos.security_type == "EQUITY"
     assert new_pos.currency == "USD"
@@ -63,7 +63,7 @@ def test_add_order(client, db, user, captured_templates, mocker):
     templete_used(template_list, captured_templates)
 
 
-def test_edit_order(client, db, user, captured_templates):
+def test_edit_order(client, _db, captured_templates):
 
     response = client.get("order/edit/1", follow_redirects=True)
     assert response.status_code == 200
@@ -100,12 +100,12 @@ def test_edit_order(client, db, user, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_delete_order(client, db, user, captured_templates):
+def test_delete_order(client, _db, captured_templates):
 
-    assert Order.find_by_id(1) != None
+    assert Order.find_by_id(1) is not None
     response = client.get("order/delete_order/1", follow_redirects=True)
     assert response.status_code == 200
-    assert Order.find_by_id(1) == None
+    assert Order.find_by_id(1) is None
 
     template_list = ["portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

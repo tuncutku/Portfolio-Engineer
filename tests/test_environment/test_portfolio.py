@@ -1,39 +1,35 @@
 from datetime import date
 import pandas as pd
 
-from tests.sample_data import *
-from tests.utils import create_user, create_portfolio, create_position, create_order
+from tests.sample_data import portfolio_2
+from src.environment.portfolio import Portfolio, PortfolioType
+from src.market import Currency
 
-from src.environment.portfolio import Portfolio
 
-
-def test_portfolio_basics(client, db):
+def test_portfolio_basics(client, _db, test_data):
     """Integration test for portfolios."""
 
-    user = create_user(**user_1)
-
     # Create portfolio
-    assert Portfolio.query.filter_by(user=user).first() == None
-    port = create_portfolio(**portfolio_1, user=user)
-    assert Portfolio.query.filter_by(user=user).all() != None
-    assert Portfolio.find_by_id(1) != None
+    assert Portfolio.find_by_id(2) is None
+    port = Portfolio(**portfolio_2, user=test_data.user)
+    assert Portfolio.find_by_id(2) is not None
 
     # Check basic attributes
-    assert port.id == 1
-    assert port.name == "portfolio_1"
-    assert port.reporting_currency == Currency.USD
-    assert port.portfolio_type == PortfolioType.margin
-    assert port.primary == False
+    assert port.id == 2
+    assert port.name == "portfolio_2"
+    assert port.reporting_currency == Currency("CAD")
+    assert port.portfolio_type == PortfolioType.cash
+    assert port.primary is False
     assert port.user_id == 1
     assert isinstance(port.date, date)
-    assert repr(port) == "<Portfolio portfolio_1.>"
+    assert repr(port) == "<Portfolio portfolio_2.>"
 
     # Delete portfolio
     port.delete_from_db()
-    assert Portfolio.query.filter_by(user=user).first() == None
+    assert Portfolio.find_by_id(2) is None
 
 
-def test_portfolio_attributes(client, db, mocker):
+def test_portfolio_attributes(client, _db, mocker, test_data):
     """Unit test for portfolio attributes."""
 
     def mock_func(self, decimal=2):
@@ -44,21 +40,16 @@ def test_portfolio_attributes(client, db, mocker):
         mock_func,
     )
 
-    user = create_user(**user_1)
-    port = create_portfolio(**portfolio_1, user=user)
-    pos = create_position(**position_1, portfolio=port)
-    create_order(**order_1, position=pos)
-    create_order(**order_2, position=pos)
+    port = test_data.portfolio
 
     # Test primary attribute
-    assert port.primary == False
+    assert port.primary is False
     port.set_as_primary()
-    assert port.primary == True
+    assert port.primary is True
 
     # Test edit portfolio attribute
-    port.edit("Hello World", Currency.USD, PortfolioType.rrsp, "^GSPC")
+    port.edit("Hello World", Currency("CAD"), PortfolioType.rrsp, "^GSPC")
     assert port.name == "Hello World"
-    assert port.reporting_currency == Currency.USD
+    assert port.reporting_currency == Currency("CAD")
     assert port.portfolio_type == PortfolioType.rrsp
     assert port.benchmark == "^GSPC"
-    assert port.total_mkt_value == 8

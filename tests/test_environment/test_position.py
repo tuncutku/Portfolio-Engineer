@@ -1,54 +1,55 @@
-import pandas as pd
+from pandas import DataFrame
+from datetime import date
 
 from tests.sample_data import *
-from tests.utils import create_user, create_portfolio, create_position, create_order
-
 from src.environment.position import Position
+from src.environment.order import Order
+from src.market import Equity
 
 
-def test_position_basics(client, db):
+def test_position_basics(client, _db, test_data):
     """Integration test for positions."""
 
-    user = create_user(**user_1)
-    port = create_portfolio(**portfolio_1, user=user)
-
     # Create position
-    assert Position.query.filter_by(portfolio=port).first() == None
-    pos = create_position(**position_1, portfolio=port)
-    assert Position.query.filter_by(portfolio=port).all() != None
-    assert Position.find_by_id(1) != None
+    assert Position.find_by_id(2) is None
+    pos = Position(**position_2, portfolio=test_data.portfolio)
+    assert Position.find_by_id(2) is not None
 
     # Check basic attributes
-    assert pos.id == 1
-    assert pos.symbol == "AAPL"
-    assert pos.name == "Apple Inc."
-    assert pos.security_type == SecurityType.Equity
-    assert pos.currency == Currency.USD
-    assert pos.portfolio_id == 1
-    assert repr(pos) == "<Position AAPL.>"
+    assert pos.id == 2
+    assert pos.security == Equity(asset_currency="USD", symbol="FB")
+    assert repr(pos) == "<Position asset_currency=USD symbol=FB.>"
 
     # Delete position
     pos.delete_from_db()
-    assert Position.query.filter_by(portfolio=port).first() == None
+    assert Position.find_by_id(2) is None
 
 
-def test_position_attributes(client, db, mocker):
+def test_position_attributes(client, _db, mocker, test_data):
     """Unit test for position attributes."""
 
     def mock_func(self, decimal=2):
-        return pd.DataFrame([1], columns=["AAPL"])
+        return DataFrame([1], columns=["AAPL"])
 
     mocker.patch(
         "src.market.provider.YFinance.get_current_quotes",
         mock_func,
     )
 
-    user = create_user(**user_1)
-    port = create_portfolio(**portfolio_1, user=user)
-    pos = create_position(**position_1, portfolio=port)
-    create_order(**order_1, position=pos)
-    create_order(**order_2, position=pos)
+    assert Order.find_by_id(2) is None
+    pos = test_data.position
+    pos.add_order(**order_1_2)
+    assert Order.find_by_id(2) is not None
 
-    assert pos.open_quantity == 8
-    assert pos.market_cap == 8
-    assert pos.open == True
+    pos.open_quantity == 8
+
+    df = DataFrame(
+        data=[[0.123, 10, 10.5], [0.000, -2, 11.0]],
+        index=[date(2020, 1, 3), date(2020, 4, 6)],
+        columns=["Fee", "Quantity", "Quote"],
+    )
+    assert df.equals(pos.orders_df)
+
+    # assert pos.open_quantity == 8
+    # assert pos.market_cap == 8
+    # assert pos.open is True

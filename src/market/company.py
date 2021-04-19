@@ -1,2 +1,2 @@
 class Company:
-    pass
+    """Form a company class."""

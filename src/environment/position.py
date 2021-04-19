@@ -1,78 +1,60 @@
-import datetime
-import pandas as pd
-from functools import cached_property
+# pylint: disable=no-member, not-an-iterable, too-many-arguments
+
+from datetime import datetime
 from typing import List
+import pandas as pd
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
 from src.environment.order import Order
-from src.market.provider import YFinance
-from src.market.utils.base import Security
+from src.market import Observable
 
 
 class Position(BaseModel):
+    """Form a position class."""
+
     __tablename__ = "positions"
 
-    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    symbol = db.Column(db.String(255), nullable=False)
-    security_type = db.Column(db.String(255), nullable=False)
-    name = db.Column(db.String(255), nullable=False)
-    currency = db.Column(db.String(3), nullable=False)
+    security: Observable = db.Column(db.PickleType(), nullable=False)
 
-    security: Security = db.Column(db.PickleType())
-
+    portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     orders: List[Order] = db.relationship(
         "Order", backref="position", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
-        return "<Position {}.>".format(self.symbol)
-
-    # def current_market_cap(self, reporting_currency: str):
-    #     pass
-
-    # def historical_market_cap(self, reporting_currency: str):
-    #     pass
-
-    @classmethod
-    def find_by_symbol(cls, symbol, portfolio):
-        return cls.query.filter_by(symbol=symbol, portfolio=portfolio).first()
+        return f"<Position {self.security}.>"
 
     @property
     def open_quantity(self):
+        """Current open quantity of the position."""
         return sum([order.adjusted_quantity for order in self.orders])
 
     @property
-    def market_cap(self, quote: float = None) -> float:
-        if quote is None:
-            md_provider = YFinance([self.symbol])
-            raw_quotes = md_provider.get_current_quotes()
-        return round(float(raw_quotes[self.symbol] * self.open_quantity), 2)
+    def orders_df(self) -> pd.DataFrame:
+        """Get orders as dataframe."""
+        return pd.concat([order.to_df() for order in self.orders], sort=True)
 
-    @property
-    def open(self) -> bool:
-        return self.open_quantity != 0
+    def current_value(self, reporting_currency: str = None):
+        """Current value of the security."""
+        value = self.security.current_value
+        # if reporting_currency and self.security.asset_currency != reporting_currency:
+        #     pass
 
-    def to_dict(self):
+    # def historical_value(self, reporting_currency: str):
+    #     pass
 
-        order_list = [order.to_dict() for order in self.orders]
-        order_list.sort(key=lambda x: x.get("exec_time"), reverse=True)
-
-        return {
-            "ID": self.id,
-            "Symbol": self.symbol,
-            "Name": self.name,
-            "Security Type": self.security_type,
-            "Currency": self.currency,
-            "Market Cap": "{:,.2f}".format(self.market_cap),
-            "Total Quantity": self.open_quantity,
-            "Open": self.open,
-            "Orders": order_list,
-        }
-
-    def orders_df(self):
-        order_df_list = [order.to_df() for order in self.orders]
-        order_df = pd.concat(order_df_list)
-        order_df_sorted = order_df.sort_index()
-        order_df_sorted["Quantity"] = order_df_sorted["Quantity"].cumsum()
-        return order_df_sorted
+    def add_order(
+        self, quantity: float, direction: str, price: float, time: datetime, fee: float
+    ) -> Order:
+        """Add new order."""
+        order = Order(
+            quantity=quantity,
+            direction=direction,
+            price=price,
+            time=time,
+            fee=fee,
+            position=self,
+        )
+        order.save_to_db()
+        return order

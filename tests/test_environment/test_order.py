@@ -1,54 +1,58 @@
-from tests.sample_data import *
+# pylint: disable=unused-argument
+
+from datetime import datetime
+from pandas import DataFrame
+
+from tests.sample_data import order_1_2
 from tests.utils import create_user, create_portfolio, create_position, create_order
 
-from src.environment.order import Order
+from src.environment.order import Order, OrderSideType
 
 
-def test_order_basics(client, db):
+def test_order_object(client, _db, test_data):
     """Integration test for orders."""
 
-    user = create_user(**user_1)
-    port = create_portfolio(**portfolio_1, user=user)
-    pos = create_position(**position_1, portfolio=port)
-
     # Create order
-    assert Order.query.filter_by(position=pos).first() is None
-    order = create_order(**order_1, position=pos)
-    assert Order.query.filter_by(position=pos).all() is not None
-    assert Order.find_by_id(1) != None
+    assert Order.find_by_id(2) is None
+    order = Order(**order_1_2, position=test_data.position)
+    order.save_to_db()
+    assert Order.find_by_id(2) is not None
 
     # Check basic attributes
-    assert order.id == 1
-    assert order.symbol == "AAPL"
-    assert order.quantity == 10
-    assert order.side == OrderSideType.Buy
-    assert order.exec_price == 10.5
-    assert isinstance(order.exec_time, datetime)
-    assert order.fee == 0.123
-    assert repr(order) == "<Order AAPL.>"
+    assert order.id == 2
+    assert order.quantity == 2
+    assert order.direction == OrderSideType.Sell
+    assert order.price == 11
+    assert isinstance(order.time, datetime)
+    assert order.fee == 0
+    assert repr(order) == "<Order quantity: 2, direction: Sell.>"
 
     # Delete order
     order.delete_from_db()
-    assert Order.query.filter_by(position=pos).first() is None
+    assert Order.find_by_id(2) is None
 
 
-def test_order_attributes(client, db):
+def test_order_methods(client, _db, test_data):
     """Unit test for additional order attributes."""
 
-    user = create_user(**user_1)
-    port = create_portfolio(**portfolio_1, user=user)
-    pos = create_position(**position_1, portfolio=port)
-    order_buy = create_order(**order_1, position=pos)
-    order_sell = create_order(**order_2, position=pos)
+    order = Order(**order_1_2, position=test_data.position)
+    order.save_to_db()
 
-    assert order_buy.adjusted_quantity == 10
-    assert order_sell.adjusted_quantity == -2
+    assert test_data.order.adjusted_quantity == 10
+    assert order.adjusted_quantity == -2
 
     # Edit Order
-    order_buy.edit("FB", 20, OrderSideType.Sell, 100, datetime(2020, 1, 1), 10)
-    assert order_buy.symbol == "FB"
-    assert order_buy.quantity == 20
-    assert order_buy.side == OrderSideType.Sell
-    assert order_buy.exec_price == 100
-    assert order_buy.exec_time == datetime(2020, 1, 1)
-    assert order_buy.fee == 10
+    order.edit(20, OrderSideType.Buy, 100, datetime(2020, 1, 1), 10)
+    assert order.quantity == 20
+    assert order.direction == OrderSideType.Buy
+    assert order.price == 100
+    assert order.time == datetime(2020, 1, 1)
+    assert order.fee == 10
+
+    # Test df
+    order_df = DataFrame(
+        data=[[20, 100.0, 10.0]],
+        index=[datetime(2020, 1, 1, 0, 0)],
+        columns=["Quantity", "Quote", "Fee"],
+    )
+    assert order_df.equals(order.to_df())

@@ -1,3 +1,4 @@
+# pylint: disable=no-value-for-parameter, bare-except
 import os
 
 from flask import Blueprint, request, session, url_for, render_template, redirect, flash
@@ -6,7 +7,6 @@ from itsdangerous import URLSafeTimedSerializer
 
 from src.environment.user import User
 from src.forms.user_forms import RegisterForm, LoginForm
-from src.extensions import db
 from src.tasks.email import send_email
 
 
@@ -15,9 +15,10 @@ user_blueprint = Blueprint("users", __name__, url_prefix="/users")
 
 @user_blueprint.route("/login", methods=["GET", "POST"])
 def login():
+    """Log in user."""
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).one()
+        user = User.find_by_email(form.email.data)
         login_user(user)
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("user/login.html", form=form)
@@ -25,6 +26,7 @@ def login():
 
 @user_blueprint.route("/register", methods=["GET", "POST"])
 def register():
+    """Register user and send a confirmation email."""
     form = RegisterForm()
     if form.validate_on_submit():
         new_user = User(email=form.email.data)
@@ -50,12 +52,13 @@ def register():
 
 @user_blueprint.route("/confirm/<string:token>", methods=["GET"])
 def confirm_email(token):
+    """Confirm user."""
     email = confirm_token(token)
 
     if email:
         user = User.find_by_email(email)
         user.confirm_user()
-        db.session.commit()
+        user.save_to_db()
         flash("You have confirmed your account. Thanks!", "success")
     else:
         flash("The confirmation link is invalid or has expired.", "danger")
@@ -70,16 +73,19 @@ def guest():
 
 @user_blueprint.route("/logout", methods=["GET", "POST"])
 def logout():
+    """Log out user."""
     logout_user()
     return redirect(url_for("home.home"))
 
 
-def generate_confirmation_token(email: str):
+def generate_confirmation_token(email: str) -> str:
+    """Generate token to be sent to the new user for registering."""
     serializer = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
     return serializer.dumps(email, salt=os.environ.get("SECURITY_PASSWORD_SALT"))
 
 
 def confirm_token(token, expiration=3600):
+    """Use serializer to parse the token and to confirm the new user."""
     serializer = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
     try:
         email = serializer.loads(

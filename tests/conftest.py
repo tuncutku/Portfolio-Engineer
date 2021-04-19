@@ -1,12 +1,14 @@
+# pylint: disable=redefined-outer-name, unused-argument
+
+from collections import namedtuple
 import pytest
-import pytest_flask
 
 from flask import template_rendered
 
+from src.environment.user import User
 from src import create_app
-from src.extensions import db as _db
-from tests.sample_data import *
-from tests.utils import *
+from src.extensions import db
+from tests.sample_data import user_1, portfolio_1, position_1, order_1_1
 
 
 @pytest.fixture
@@ -18,30 +20,44 @@ def app():
 
 
 @pytest.fixture
-def db(client):
+def _db(client):
     """Create database for the tests."""
 
-    _db.create_all()
-    yield _db
-    _db.session.remove()
-    _db.drop_all()
+    db.create_all()
+    yield db
+    db.session.remove()
+    db.drop_all()
 
 
 @pytest.fixture
-def user(client):
+def test_data(client):
+    """Provides sample user, portfolio, position and order."""
+
+    _user = User(email=user_1.get("email"))
+    _user.save_to_db()
+    _user.set_password(user_1.get("password"))
+    _user.confirm_user()
+
+    _port = _user.add_portfolio(**portfolio_1)
+    _pos = _port.add_position(**position_1)
+    _order = _pos.add_order(**order_1_1)
+
+    test_data = namedtuple("test_data", ["user", "portfolio", "position", "order"])
+
+    yield test_data(_user, _port, _pos, _order)
+
+
+@pytest.fixture
+def login(client, test_data):
     """Log in test user for URL tests."""
-    user_test = create_user(**user_1)
-    portfolio_test = create_portfolio(**portfolio_1, user=user_test)
-    position_test = create_position(**position_1, portfolio=portfolio_test)
-    order_test = create_order(**order_1, position=position_test)
 
     client.post("/users/login", data=dict(**user_1))
-
-    yield user_test
 
 
 @pytest.fixture
 def captured_templates(app):
+    """Capture templates used as during system tests."""
+
     recorded = []
 
     def record(sender, template, context, **extra):

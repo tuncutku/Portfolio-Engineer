@@ -91,7 +91,7 @@ class AlertPeriod:
     TradingDaysDaily = "1d"
 
 
-CurrencyExchangeMap = {Currency.USD: Exchange.XNYS, Currency.CAD: Exchange.XTSE}
+CurrencyExchangeMap = {"USD": "XNYS", "CAD": "XTSE"}
 YFinanceSecurityTypeMapping = {
     "EQUITY": SecurityType.Equity,
     "ETF": SecurityType.ETF,

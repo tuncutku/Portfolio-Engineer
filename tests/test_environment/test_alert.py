@@ -7,8 +7,7 @@ from src.environment.portfolio import Portfolio
 from src.environment.order import Order
 
 
-def test_alert_basics(client, db, user):
+def test_alert_basics(client, _db, test_data):
     """Integration test for alerts."""
 
-    port = Portfolio.find_by_id(1)
-    alert = port.daily_report
+    a = 1

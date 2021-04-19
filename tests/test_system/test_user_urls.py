@@ -12,7 +12,7 @@ email = "tuncutku@gmail.com"
 password = "1234"
 
 
-def test_home(client, db, captured_templates):
+def test_home(client, _db, captured_templates):
     response = client.get("/")
     assert response.status_code == 200
 
@@ -20,14 +20,14 @@ def test_home(client, db, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_register_user(client, db, captured_templates, request, mocker):
+def test_register_user(client, _db, captured_templates, request, mocker):
 
     mail = Mail()
 
     response = client.get("/users/register")
 
     assert response.status_code == 200
-    assert User.find_by_email("test@gmail.com") == None
+    assert User.find_by_email("test@gmail.com") is None
 
     with mail.record_messages() as outbox:
 
@@ -40,7 +40,7 @@ def test_register_user(client, db, captured_templates, request, mocker):
         assert len(outbox) == 1
         assert outbox[0].subject == "Account confirmation - Portfolio Engineer"
 
-    assert User.find_by_email("test@gmail.com") != None
+    assert User.find_by_email("test@gmail.com") is not None
     assert response.status_code == 200
 
     response = client.post(
@@ -50,7 +50,7 @@ def test_register_user(client, db, captured_templates, request, mocker):
     )
 
     assert "Field must be equal to password." in response.get_data(as_text=True)
-    assert User.find_by_email("test_2@gmail.com") == None
+    assert User.find_by_email("test_2@gmail.com") is None
 
     response = client.post(
         "/users/register",
@@ -72,11 +72,11 @@ def test_register_user(client, db, captured_templates, request, mocker):
     templete_used(template_list, captured_templates)
 
 
-def test_login_user(client, db, captured_templates):
+def test_login_user(client, _db, captured_templates):
     response = client.get("/users/login")
     assert response.status_code == 200
 
-    assert User.find_by_email("test@gmail.com") == None
+    assert User.find_by_email("test@gmail.com") is None
     create_user(email="test@gmail.com", password="1234")
 
     # Test wrong password
@@ -123,16 +123,16 @@ def test_login_user(client, db, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_email_confirmation(client, db, captured_templates, request):
+def test_email_confirmation(client, _db, captured_templates, request):
 
     create_user(email="test@gmail.com", password="1234", confirmed=False)
     user = User.find_by_id(1)
-    assert user.confirmed == False
+    assert user.confirmed is False
 
     token = generate_confirmation_token(user.email)
     response = client.get(f"/users/confirm/{token}", follow_redirects=True)
 
-    assert user.confirmed == True
+    assert user.confirmed is True
 
     template_list = ["user/login.html"]
     templete_used(template_list, captured_templates)

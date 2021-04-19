@@ -1,54 +1,59 @@
-import pandas as pd
+# pylint: disable=no-member, too-many-arguments
+
 from datetime import datetime
-from typing import List, TYPE_CHECKING
+from pandas import DataFrame
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
-from src.environment.utils.types import *
+from src.environment.utils.types import OrderSideType
 
 
 class Order(BaseModel):
+    """Form an order class."""
+
     __tablename__ = "orders"
 
-    symbol: str = db.Column(db.String(255), nullable=False)
     quantity: float = db.Column(db.Integer(), nullable=False)
-    side: str = db.Column(db.String(255), nullable=False)
-    exec_price: float = db.Column(db.Float(), nullable=False)
-    exec_time: datetime = db.Column(db.DateTime, nullable=False)
-    fee: float = db.Column(db.Float(), nullable=False)
+    direction: str = db.Column(db.String(255), nullable=False)
+    price: float = db.Column(db.Float(), nullable=False)
+    time: datetime = db.Column(db.DateTime, nullable=False)
+    fee: float = db.Column(db.Float(), default=0)
 
     position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
 
     def __repr__(self):
-        return f"<Order {self.symbol}.>"
+        return f"<Order quantity: {self.quantity}, direction: {self.direction}.>"
 
     @property
     def adjusted_quantity(self):
-        return self.quantity if self.side == OrderSideType.Buy else (-1) * self.quantity
+        """Quantity of the order adjusted by the direction."""
+        return (
+            self.quantity
+            if self.direction == OrderSideType.Buy
+            else (-1) * self.quantity
+        )
 
-    def edit(self, symbol, quantity, side, exec_price, exec_time, fee) -> None:
-        self.symbol = symbol
+    def edit(
+        self,
+        quantity: float,
+        direction: str,
+        price: float,
+        time: datetime,
+        fee: float,
+    ) -> None:
+        """Edit an existing order."""
+
         self.quantity = quantity
-        self.side = side
-        self.exec_price = exec_price
-        self.exec_time = exec_time
+        self.direction = direction
+        self.price = price
+        self.time = time
         self.fee = fee
         db.session.commit()
 
-    def to_dict(self):
-        return {
-            "ID": self.id,
-            "symbol": self.symbol,
-            "quantity": self.quantity,
-            "side": self.side,
-            "exec_price": self.exec_price,
-            "exec_time": self.exec_time.strftime("%y-%m-%d %a %H:%M"),
-            "fee": self.fee,
-        }
-
-    def to_df(self):
-        return pd.DataFrame(
-            data=[[self.adjusted_quantity, self.exec_price, self.fee]],
-            index=[self.exec_time],
+    def to_df(self) -> DataFrame:
+        """Convert order to dataframe."""
+        return DataFrame(
+            data=[[self.adjusted_quantity, self.price, self.fee]],
+            index=[self.time],
             columns=["Quantity", "Quote", "Fee"],
         )
