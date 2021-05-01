@@ -1,3 +1,14 @@
+from dataclasses import dataclass
+
+
+@dataclass
+class Direction:
+    """Form direction object."""
+
+    direction: str
+    n: int
+
+
 class Exchange:
     XNYS = "XNYS"
     XTSE = "XTSE"

@@ -1,3 +1,5 @@
+"""User endpoints."""
+
 # pylint: disable=no-value-for-parameter, bare-except
 import os
 
@@ -6,7 +8,7 @@ from flask_login import login_user, logout_user
 from itsdangerous import URLSafeTimedSerializer
 
 from src.environment.user import User
-from src.forms.user_forms import RegisterForm, LoginForm
+from src.forms.user import RegisterForm, LoginForm
 from src.tasks.email import send_email
 
 

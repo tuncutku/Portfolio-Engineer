@@ -1,3 +1,6 @@
+"""Home endpoints."""
+
+
 from flask import Blueprint, request, session, url_for, render_template, redirect
 from src.extensions import db
 

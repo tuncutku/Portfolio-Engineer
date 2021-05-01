@@ -1,7 +1,7 @@
 """Exchange traded fund."""
 
 
-from src.market.base import Security
+from src.market.security.base import Security
 
 
 class ETF(Security):
@@ -17,5 +17,5 @@ class ETF(Security):
 
     @property
     def holding_companies(self):
-        """Majot holding companies of the ETF."""
+        """Major holding companies of the ETF."""
         return

@@ -1,10 +1,14 @@
+"""Portfolio endpoints."""
+
 from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
 import pandas as pd
 import collections
 
-from src.environment.portfolio import Portfolio
-from src.forms.portfolio_forms import AddPortfolioForm, generate_edit_portfolio_form
+from src.environment import Portfolio
+from src.market import Symbol
+from src.forms.portfolio import AddPortfolioForm, generate_edit_portfolio_form
+from src.views.utils.common import get_security
 
 from src.extensions import db
 
@@ -17,9 +21,9 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 def list_portfolios():
     """List portfolios of the user including current market values."""
 
-    error_message = None
-    port_list = [portfolio.to_dict() for portfolio in current_user.portfolios]
-    port_list.sort(key=lambda x: x.get("Primary"), reverse=True)
+    port_list = current_user.portfolios
+    port_list.sort(key=lambda x: x.primary, reverse=True)
+    port_list = []
 
     if not port_list:
         flash("Add a custom portfolio!")
@@ -37,17 +41,18 @@ def add_portfolio():
 
     form = AddPortfolioForm()
     if form.validate_on_submit():
-        # Generate new portfolio
-        new_portfolio = Portfolio(
-            name=form.port_name.data,
-            portfolio_type=form.port_type.data,
-            reporting_currency=form.port_reporting_currency.data,
-            benchmark=form.benchmark.data,
-            user=current_user,
+
+        symbol = Symbol(form.benchmark.data)
+        security = get_security(symbol)
+
+        portfolio = current_user.add_portfolio(
+            form.port_name.data,
+            form.port_type.data,
+            form.port_reporting_currency.data,
+            security,
         )
         if len(current_user.portfolios) == 1:
-            new_portfolio.set_as_primary()
-        new_portfolio.save_to_db()
+            portfolio.set_as_primary()
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("portfolio/add_portfolio.html", form=form)
 

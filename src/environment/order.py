@@ -1,11 +1,17 @@
 # pylint: disable=no-member, too-many-arguments
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 from datetime import datetime
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
 from src.environment.utils.types import OrderSideType
+
+if TYPE_CHECKING:
+    from src.environment.position import Position
 
 
 class Order(BaseModel):
@@ -15,9 +21,8 @@ class Order(BaseModel):
 
     quantity: float = db.Column(db.Integer(), nullable=False)
     direction: str = db.Column(db.String(255), nullable=False)
-    price: float = db.Column(db.Float(), nullable=False)
+    cost: float = db.Column(db.Float(), nullable=False)
     time: datetime = db.Column(db.DateTime, nullable=False)
-    fee: float = db.Column(db.Float(), default=0)
 
     position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
 
@@ -33,27 +38,27 @@ class Order(BaseModel):
             else (-1) * self.quantity
         )
 
+    @property
+    def cost_df(self) -> Series:
+        """Purchase price and fee of the order."""
+        return Series([self.cost], index=[self.time], name="Cost")
+
+    @property
+    def quantity_df(self) -> Series:
+        """Quantity of the order."""
+        return Series([self.adjusted_quantity], index=[self.time], name="Quantity")
+
     def edit(
         self,
         quantity: float,
         direction: str,
-        price: float,
+        cost: float,
         time: datetime,
-        fee: float,
     ) -> None:
         """Edit an existing order."""
 
         self.quantity = quantity
         self.direction = direction
-        self.price = price
+        self.cost = cost
         self.time = time
-        self.fee = fee
         db.session.commit()
-
-    def to_df(self) -> DataFrame:
-        """Convert order to dataframe."""
-        return DataFrame(
-            data=[[self.adjusted_quantity, self.price, self.fee]],
-            index=[self.time],
-            columns=["Quantity", "Quote", "Fee"],
-        )

@@ -4,8 +4,8 @@ from flask_mail import Mail
 from src.environment.user import User
 from src.views.user import generate_confirmation_token
 
-from tests.test_system.common import templete_used
-from tests.utils import create_user
+from tests.system.common import templete_used
+from tests.sample_data import user_1
 
 
 email = "tuncutku@gmail.com"
@@ -13,6 +13,7 @@ password = "1234"
 
 
 def test_home(client, _db, captured_templates):
+    """System test for home endpoint."""
     response = client.get("/")
     assert response.status_code == 200
 
@@ -20,44 +21,46 @@ def test_home(client, _db, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_register_user(client, _db, captured_templates, request, mocker):
+def test_register_user(client, _db, captured_templates):
+    """System test for user register endpoint."""
 
-    mail = Mail()
+    email = "test@gmail.com"
+    password = "1234"
 
     response = client.get("/users/register")
 
     assert response.status_code == 200
-    assert User.find_by_email("test@gmail.com") is None
+    assert User.find_by_email(email) is None
 
-    with mail.record_messages() as outbox:
+    with Mail().record_messages() as outbox:
 
         response = client.post(
             "/users/register",
-            data=dict(email="test@gmail.com", password="1234", confirm="1234"),
+            data=dict(email=email, password=password, confirm=password),
             follow_redirects=True,
         )
 
         assert len(outbox) == 1
         assert outbox[0].subject == "Account confirmation - Portfolio Engineer"
 
-    assert User.find_by_email("test@gmail.com") is not None
     assert response.status_code == 200
+    assert User.find_by_email(email)
 
+    # Test wrong confirmation email.
     response = client.post(
         "/users/register",
         data=dict(email="test_2@gmail.com", password="1234", confirm="12345"),
         follow_redirects=True,
     )
-
     assert "Field must be equal to password." in response.get_data(as_text=True)
-    assert User.find_by_email("test_2@gmail.com") is None
+    assert not User.find_by_email("test_2@gmail.com")
 
+    # Test registering existing user.
     response = client.post(
         "/users/register",
-        data=dict(email="test@gmail.com", password="1234", confirm="1234"),
+        data=dict(email=email, password=password, confirm=password),
         follow_redirects=True,
     )
-
     assert "User with that email address already exists." in response.get_data(
         as_text=True
     )
@@ -72,19 +75,11 @@ def test_register_user(client, _db, captured_templates, request, mocker):
     templete_used(template_list, captured_templates)
 
 
-def test_login_user(client, _db, captured_templates):
+def test_login_user(client, _db, captured_templates, test_user):
+    """System test for user login endpoint."""
+
     response = client.get("/users/login")
     assert response.status_code == 200
-
-    assert User.find_by_email("test@gmail.com") is None
-    create_user(email="test@gmail.com", password="1234")
-
-    # Test wrong password
-    response = client.post(
-        "/users/login",
-        data=dict(email="test@gmail.com", password="12345"),
-        follow_redirects=True,
-    )
 
     # Test wrong email
     emails = ["test@gmail.com", "test_3@gmail.com"]
@@ -106,7 +101,7 @@ def test_login_user(client, _db, captured_templates):
     # Test correct email and password
     response = client.post(
         "/users/login",
-        data=dict(email="test@gmail.com", password="1234"),
+        data=dict(email=user_1["email"], password=user_1["password"]),
         follow_redirects=True,
     )
 
@@ -117,22 +112,23 @@ def test_login_user(client, _db, captured_templates):
         "user/login.html",
         "user/login.html",
         "user/login.html",
-        "user/login.html",
         "portfolio/list_portfolios.html",
     ]
     templete_used(template_list, captured_templates)
 
 
-def test_email_confirmation(client, _db, captured_templates, request):
+def test_email_confirmation(client, _db, captured_templates):
+    """System test for user email confirmation endpoint."""
 
-    create_user(email="test@gmail.com", password="1234", confirmed=False)
-    user = User.find_by_id(1)
-    assert user.confirmed is False
+    user = User(email="hello_world")
+    user.save_to_db()
+
+    assert not user.confirmed
 
     token = generate_confirmation_token(user.email)
     response = client.get(f"/users/confirm/{token}", follow_redirects=True)
 
-    assert user.confirmed is True
+    assert user.confirmed
 
     template_list = ["user/login.html"]
     templete_used(template_list, captured_templates)

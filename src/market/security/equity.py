@@ -1,6 +1,6 @@
 """Equity security."""
 
-from src.market.base import Security
+from src.market.security.base import Security
 
 
 class Equity(Security):

@@ -4,6 +4,7 @@ from datetime import date
 import pytest
 
 from src.market import Equity, ETF, Currency, Symbol, Security, SingleValue, IndexValue
+from tests.sample_data import mock_series
 
 start_date = date(2020, 1, 4)
 
@@ -17,7 +18,7 @@ equity = Equity(asset_currency=currency, symbol=Symbol("AAPL"))
     [(etf, Symbol("PBW")), (equity, Symbol("AAPL"))],
     ids=["ETF", "Equity"],
 )
-def test_common(security: Security, symbol: Symbol):
+def test_common(security: Security, symbol: Symbol, mock_symbol):
     """Test common methods """
 
     assert security.asset_currency == currency

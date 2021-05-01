@@ -1,18 +1,15 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, PasswordField, BooleanField, SelectField
-from wtforms.fields.html5 import EmailField
+from wtforms import StringField, SelectField
 from wtforms.validators import (
     DataRequired,
     Length,
-    ValidationError,
 )
-from flask_login import current_user
 
-from src.environment.portfolio import Portfolio
-from src.environment.utils.types import *
+from src.environment import Portfolio
+from src.environment.utils.types import PortfolioType
+from src.market import Currency
 
-from src.market.provider import YFinance
-
+from src.forms.validators import PortfolioName, Ticker
 
 port_type_choices = [
     (PortfolioType.custom, PortfolioType.custom),
@@ -22,41 +19,7 @@ port_type_choices = [
     (PortfolioType.rrsp, PortfolioType.rrsp),
 ]
 
-currency_choices = [(Currency.CAD, Currency.CAD), (Currency.USD, Currency.USD)]
-
-
-class PortfolioName(object):
-    def __init__(self, exclude=None, message=None):
-        self.message = message
-        self.exclude = exclude
-
-    def __call__(self, form, field):
-        portfolio_names = [
-            port.name
-            for port in Portfolio.query.filter_by(
-                user=current_user, name=field.data
-            ).all()
-        ]
-        if self.exclude in portfolio_names:
-            portfolio_names.remove(self.exclude)
-        if portfolio_names:
-            if not self.message:
-                self.message = u"Portfolio with the name {} already exists.".format(
-                    field.data
-                )
-            raise ValidationError(self.message)
-
-
-class Benchmark(object):
-    def __init__(self, message=None):
-        self.message = message
-
-    def __call__(self, form, field):
-        md_provider = YFinance([field.data])
-        if not md_provider.is_valid:
-            if not self.message:
-                self.message = "Invalid Ticker!"
-            raise ValidationError(self.message)
+currency_choices = [("CAD", Currency("CAD")), ("USD", Currency("USD"))]
 
 
 class AddPortfolioForm(Form):
@@ -68,7 +31,7 @@ class AddPortfolioForm(Form):
         u"Reporting Currency", default=1, choices=currency_choices
     )
     benchmark = StringField(
-        u"Benchmark", [DataRequired(), Length(max=20), Benchmark()], default="^GSPC"
+        u"Benchmark", [DataRequired(), Length(max=20), Ticker()], default="^GSPC"
     )
 
 
@@ -93,7 +56,7 @@ def generate_edit_portfolio_form(portfolio: Portfolio):
         )
         benchmark = StringField(
             u"Benchmark",
-            [DataRequired(), Length(max=20), Benchmark()],
+            [DataRequired(), Length(max=20), Ticker()],
             default=portfolio.benchmark,
         )
 

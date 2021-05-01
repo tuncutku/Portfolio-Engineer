@@ -1,13 +1,13 @@
 # pylint: disable=no-member, not-an-iterable, too-many-arguments
 
-from datetime import datetime
+from datetime import datetime, date
 from typing import List
-import pandas as pd
+from pandas import concat, DataFrame, Series
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
 from src.environment.order import Order
-from src.market import Observable
+from src.market import Security, Currency, SingleValue, IndexValue
 
 
 class Position(BaseModel):
@@ -15,7 +15,7 @@ class Position(BaseModel):
 
     __tablename__ = "positions"
 
-    security: Observable = db.Column(db.PickleType(), nullable=False)
+    security: Security = db.Column(db.PickleType(), nullable=False)
 
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     orders: List[Order] = db.relationship(
@@ -26,34 +26,43 @@ class Position(BaseModel):
         return f"<Position {self.security}.>"
 
     @property
-    def open_quantity(self):
-        """Current open quantity of the position."""
-        return sum([order.adjusted_quantity for order in self.orders])
+    def is_open(self) -> bool:
+        """True if current open quantity is different than 0."""
+        return bool(self.quantity.sum())
 
     @property
-    def orders_df(self) -> pd.DataFrame:
-        """Get orders as dataframe."""
-        return pd.concat([order.to_df() for order in self.orders], sort=True)
+    def quantity(self) -> Series:
+        """Quantity of the position."""
+        return concat([order.quantity_df for order in self.orders]).sort_index()
 
-    def current_value(self, reporting_currency: str = None):
+    @property
+    def cost(self) -> Series:
+        """Cost of the position including purchase price and fee."""
+        return concat([order.cost_df for order in self.orders]).sort_index()
+
+    def current_value(self, currency: Currency) -> SingleValue:
         """Current value of the security."""
-        value = self.security.current_value
-        # if reporting_currency and self.security.asset_currency != reporting_currency:
-        #     pass
+        new_value = self.security.value.to(currency)
+        return new_value * self.quantity.sum()
 
-    # def historical_value(self, reporting_currency: str):
-    #     pass
+    def historical_value(
+        self, currency: Currency, start: date, end: date = date.today()
+    ) -> IndexValue:
+        """Get value index of the underlying position."""
+        security_index = self.security.index(start, end)
+        security_index.replace(self.cost)
+        new_index = security_index.to(currency)
+        return new_index.multiply(self.quantity)
 
     def add_order(
-        self, quantity: float, direction: str, price: float, time: datetime, fee: float
+        self, quantity: float, direction: str, cost: float, time: datetime
     ) -> Order:
         """Add new order."""
         order = Order(
             quantity=quantity,
             direction=direction,
-            price=price,
+            cost=cost,
             time=time,
-            fee=fee,
             position=self,
         )
         order.save_to_db()
