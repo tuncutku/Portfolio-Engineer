@@ -16,18 +16,18 @@ position_blueprint = Blueprint("position", __name__, url_prefix="/position")
 @position_blueprint.route("/<int:position_id>/details", methods=["GET"])
 @login_required
 def position_details(position_id):
-
-    position = Position.find_by_id(position_id)
+    """Get position details."""
 
     return render_template(
         "position/position_details.html",
-        position=position.to_dict(),
+        position=Position.find_by_id(position_id),
     )
 
 
 @position_blueprint.route("/<int:position_id>/close", methods=["GET"])
 @login_required
 def close_position(position_id):
+    """Close existing position by adding closing order."""
 
     position = Position.find_by_id(position_id)
 

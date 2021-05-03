@@ -35,7 +35,7 @@ class AddOrderForm(Form):
     cost = FloatField(u"Cost", [Optional(), PositiveFloat()], default=0)
     exec_datetime = DateTimeField(
         u"Order Date",
-        [Optional(), FutureDate()],
+        [DataRequired(), FutureDate()],
         render_kw={"placeholder": datetime.now().strftime(date_time_format)},
         format=date_time_format,
     )

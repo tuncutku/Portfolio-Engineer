@@ -30,9 +30,7 @@ class AddPortfolioForm(Form):
     port_reporting_currency = SelectField(
         u"Reporting Currency", default=1, choices=currency_choices
     )
-    benchmark = StringField(
-        u"Benchmark", [DataRequired(), Length(max=20), Ticker()], default="^GSPC"
-    )
+    benchmark = StringField(u"Benchmark", [DataRequired(), Ticker()], default="^GSPC")
 
 
 def generate_edit_portfolio_form(portfolio: Portfolio):
@@ -56,8 +54,8 @@ def generate_edit_portfolio_form(portfolio: Portfolio):
         )
         benchmark = StringField(
             u"Benchmark",
-            [DataRequired(), Length(max=20), Ticker()],
-            default=portfolio.benchmark,
+            [DataRequired(), Ticker()],
+            default=portfolio.benchmark.symbol.symbol,
         )
 
     return EditPortfolioForm()

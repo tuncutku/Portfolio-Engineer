@@ -53,7 +53,7 @@ def test_edit_order(client, _db, test_user, login, captured_templates):
     assert "AAPL" in response.get_data(as_text=True)
     assert "10" in response.get_data(as_text=True)
     assert "130" in response.get_data(as_text=True)
-    assert "2020-02-01" in response.get_data(as_text=True)
+    assert "2020-02-03" in response.get_data(as_text=True)
     assert "Buy" in response.get_data(as_text=True)
 
     response = client.post(

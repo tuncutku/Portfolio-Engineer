@@ -19,7 +19,7 @@
 </div>
 
 
-{% for port in port_list %}
+{% for port in portfolios %}
 <div class="container mt-4 mb-3">
     <div class="card">
         <h5 class="card-header">
@@ -38,8 +38,8 @@
                 <div class="card-body">
 
                     <p class="card-text">Reporting currency: {{ port.reporting_currency }}</p>
-                    <p class="card-text">Total market value: {{ port.current_value }}</p>
-                    <p class="card-text">Benchmark: {{ port.benchmark }}</p>
+                    <p class="card-text">Total market value: {{ "%.2f"|format(port.current_value.value) }}</p>
+                    <p class="card-text">Benchmark: {{ port.benchmark.symbol }}</p>
 
                     <div class="card">
 
@@ -59,6 +59,25 @@
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    {% for position in port.positions if position.is_open %}
+                                    <tr class="text-center">
+
+                                        <td class="align-middle">{{ position.security.symbol }}</td>
+                                        <td class="align-middle">{{ position.security.security_type }}</td>
+                                        <td class="align-middle">{{ position.security.asset_currency }}</td>
+                                        <td class="align-middle">{{ position.current_value() }}</td>
+                                        <td class="align-middle">
+
+                                            <a href="{{ url_for('position.position_details', position_id=position.id) }}"
+                                                class="btn btn-outline-success">View details</a>
+                                            <a href="{{ url_for('position.close_position', position_id=position.id) }}"
+                                                class="btn btn-outline-danger">Close Position</a>
+
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
                             </table>
                         </div>
                     </div>

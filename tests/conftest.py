@@ -93,7 +93,7 @@ def mock_symbol(mocker):
         return_value={"regularMarketPrice": 50},
     )
 
-    def mock_load(self, start, end):
-        return mock_series
+    # def mock_load(self, start, end):
+    #     return mock_series
 
-    mocker.patch("src.market.basic.Symbol.index", mock_load)
+    # mocker.patch("src.market.basic.Symbol.index", mock_load)

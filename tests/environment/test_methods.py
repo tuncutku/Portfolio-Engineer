@@ -1,14 +1,19 @@
 from datetime import date, datetime
 from pandas import Series
+from pytest import approx
 
 from src.environment.portfolio import Portfolio, PortfolioType
 from src.environment.utils.types import OrderSideType
 from src.market import Currency, SingleValue, IndexValue, Symbol, Equity, ETF
 from src.environment import User, Portfolio, Position, Order
 from tests.sample_data import user_1
+from tests.raw_data.portfolio import portfolio_index
+from tests.raw_data.position import position_index
 
-start_date = date(2018, 1, 1)
+start_date = date(2020, 1, 1)
+end_date = date(2021, 1, 1)
 cad = Currency("CAD")
+usd = Currency("USD")
 
 
 def test_user(client, _db, test_user):
@@ -37,20 +42,10 @@ def test_portfolio(client, _db, test_user, mock_symbol):
     assert port.benchmark == "^GSPC"
 
     assert port.current_value == SingleValue(-14600, cad)
-    assert port.historical_value(start_date) == IndexValue(
-        Series(
-            [27030.0, 28080.0, 29150.0, 30240.0, 31350.0, -5712.0],
-            index=[
-                date(2020, 2, 1),
-                date(2020, 3, 1),
-                date(2020, 4, 1),
-                date(2020, 5, 1),
-                date(2020, 6, 1),
-                date(2020, 7, 1),
-            ],
-        ),
-        cad,
-    )
+    assert isinstance(port.historical_value(start_date, end_date), IndexValue)
+    # assert port.historical_value(start_date, end_date) == approx(
+    #     IndexValue(Series(portfolio_index), cad)
+    # )
 
     # Test get positions
     assert port.get_position_by_symbol(Symbol("AAPL"))
@@ -69,34 +64,25 @@ def test_position(client, _db, test_user, mock_symbol):
         pos.quantity,
         Series(
             [10, -2, -14],
-            index=[date(2020, 2, 1), date(2020, 7, 1), date(2021, 1, 13)],
+            index=[date(2020, 2, 3), date(2020, 7, 1), date(2021, 1, 13)],
         ),
     )
     assert Series.equals(
         pos.cost,
         Series(
             [130.0, 122.0, 126.0],
-            index=[date(2020, 2, 1), date(2020, 7, 1), date(2021, 1, 13)],
+            index=[date(2020, 2, 3), date(2020, 7, 1), date(2021, 1, 13)],
         ),
     )
+    assert pos.current_value() == SingleValue(-300, usd)
     assert pos.current_value(cad) == SingleValue(-15000, cad)
-    # assert pos.historical_value(cad, start_date) == IndexValue(
-    #     Series(
-    #         [26010.0, 27040.0, 28090.0, 29160.0, 30250.0, -6272.0],
-    #         index=[
-    #             date(2020, 2, 1),
-    #             date(2020, 3, 1),
-    #             date(2020, 4, 1),
-    #             date(2020, 5, 1),
-    #             date(2020, 6, 1),
-    #             date(2020, 7, 1),
-    #         ],
-    #     ),
-    #     cad,
+    # assert pos.historical_value(cad, start_date, end_date) == IndexValue(
+    #     Series(position_index), cad
     # )
+    assert isinstance(pos.historical_value(cad, start_date, end_date), IndexValue)
 
 
-def test_order(client, _db, test_user, mock_symbol):
+def test_order(client, _db, test_user):
     """Unit test for order methods."""
 
     order = Order.find_by_id(2)

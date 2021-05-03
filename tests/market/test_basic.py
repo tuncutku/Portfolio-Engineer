@@ -9,9 +9,12 @@ from pytest_mock import MockerFixture
 
 from src.market import Currency, SingleValue, IndexValue, Symbol, FX
 from tests.sample_data import index_1, index_2, index_3, value_1, value_2, value_3
+from tests.raw_data.fx import fx_index
 
 start_date = date(2020, 1, 2)
 end_date = date(2021, 1, 4)
+usd = Currency("USD")
+cad = Currency("CAD")
 
 
 class TestSingleValue:
@@ -65,28 +68,30 @@ class TestValueIndex:
         result_usd = Series(
             [10, 14, 20, 26],
             index=[
-                date(2020, 1, 1),
-                date(2020, 3, 1),
-                date(2020, 5, 1),
-                date(2020, 7, 1),
+                date(2020, 1, 6),
+                date(2020, 3, 2),
+                date(2020, 5, 12),
+                date(2020, 7, 2),
             ],
         )
         result_cad = Series(
-            [500, 728, 1080, 1456],
+            [
+                12.986600399017334,
+                18.769940614700317,
+                28.161799907684326,
+                35.28121876716614,
+            ],
             index=[
-                date(2020, 1, 1),
-                date(2020, 3, 1),
-                date(2020, 5, 1),
-                date(2020, 7, 1),
+                date(2020, 1, 6),
+                date(2020, 3, 2),
+                date(2020, 5, 12),
+                date(2020, 7, 2),
             ],
         )
 
-        assert Series.equals(self.index.index, result_usd)
-        assert index_1.currency == Currency("USD")
-
-        new_index = self.index.to(Currency("CAD"))
-        assert new_index.currency == Currency("CAD")
-        assert Series.equals(new_index.index, result_cad)
+        assert self.index == IndexValue(result_usd, usd)
+        new_index = self.index.to(cad)
+        assert new_index == IndexValue(result_cad, cad)
 
     def test_index_sum(self):
         """Test index summation."""
@@ -97,7 +102,7 @@ class TestValueIndex:
         new_index_2 = index_2 + index_1
 
         assert isinstance(new_index_1, IndexValue)
-        assert str(index_1) == "Index USD between 2020-01-01 - 2020-07-01"
+        assert str(index_1) == "Index USD between 2020-01-06 - 2020-07-02"
         assert new_index_1.currency == Currency("USD")
 
         assert Series.equals(
@@ -105,11 +110,11 @@ class TestValueIndex:
             Series(
                 [30, 14, 110, 60, 26, 78],
                 index=[
-                    date(2020, 1, 1),
-                    date(2020, 3, 1),
+                    date(2020, 1, 6),
+                    date(2020, 3, 2),
                     date(2020, 3, 30),
-                    date(2020, 5, 1),
-                    date(2020, 7, 1),
+                    date(2020, 5, 12),
+                    date(2020, 7, 2),
                     date(2020, 7, 30),
                 ],
             ),
@@ -147,10 +152,10 @@ class TestValueIndex:
             Series(
                 [2, 5, 0, 7],
                 index=[
-                    date(2019, 1, 1),
-                    date(2020, 3, 1),
-                    date(2020, 6, 7),
-                    date(2025, 12, 29),
+                    date(2019, 1, 6),
+                    date(2020, 3, 2),
+                    date(2020, 6, 12),
+                    date(2025, 12, 2),
                 ],
             )
         )
@@ -160,10 +165,10 @@ class TestValueIndex:
             Series(
                 [10, 5, 20, 26],
                 index=[
-                    date(2020, 1, 1),
-                    date(2020, 3, 1),
-                    date(2020, 5, 1),
-                    date(2020, 7, 1),
+                    date(2020, 1, 6),
+                    date(2020, 3, 2),
+                    date(2020, 5, 12),
+                    date(2020, 7, 2),
                 ],
             ),
         )
@@ -192,24 +197,8 @@ def test_fx(mock_symbol):
     assert usdcad.asset_currency == Currency("CAD")
     assert usdcad.numeraire_currency == Currency("USD")
 
-    fx_value = usdcad.rate == 50
     assert usdcad.rate == 50
-
-    fx_index = usdcad.index(start_date, end_date)
-    assert fx_index.equals(
-        Series(
-            [50, 51, 52, 53, 54, 55, 56],
-            index=[
-                date(2020, 1, 1),
-                date(2020, 2, 1),
-                date(2020, 3, 1),
-                date(2020, 4, 1),
-                date(2020, 5, 1),
-                date(2020, 6, 1),
-                date(2020, 7, 1),
-            ],
-        )
-    )
+    assert Series.equals(usdcad.index(start_date, end_date), Series(fx_index))
 
 
 def test_symbol():

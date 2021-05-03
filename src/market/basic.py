@@ -184,7 +184,7 @@ class SingleValue:
         """Convert single value currency."""
         if self.currency == currency:
             return SingleValue(self.value, self.currency)
-        return SingleValue(self.value * FX(self.currency, currency).rate, currency)
+        return SingleValue(self.value * FX(currency, self.currency).rate, currency)
 
 
 @dataclass
@@ -228,7 +228,7 @@ class IndexValue:
         """Convert single value currency."""
         if self.currency == currency:
             return IndexValue(self.index, self.currency)
-        fx = FX(self.currency, currency)
+        fx = FX(currency, self.currency)
         new_index = self.multiply(
             fx.index(self.index.index.min(), self.index.index.max())
         )

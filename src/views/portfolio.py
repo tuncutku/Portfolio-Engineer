@@ -23,14 +23,13 @@ def list_portfolios():
 
     port_list = current_user.portfolios
     port_list.sort(key=lambda x: x.primary, reverse=True)
-    port_list = []
 
     if not port_list:
         flash("Add a custom portfolio!")
 
     return render_template(
         "portfolio/list_portfolios.html",
-        port_list=port_list,
+        portfolios=port_list,
     )
 
 
@@ -61,6 +60,7 @@ def add_portfolio():
 @login_required
 def edit_portfolio(portfolio_id):
     """Edit an existing portfolio."""
+
     port = Portfolio.find_by_id(portfolio_id)
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
@@ -80,6 +80,7 @@ def edit_portfolio(portfolio_id):
 @login_required
 def delete_portfolio(portfolio_id):
     """Delete an existing portfolio along with its positions as well as orders."""
+
     port = Portfolio.find_by_id(portfolio_id)
     port.delete_from_db()
     return redirect(url_for("portfolio.list_portfolios"))

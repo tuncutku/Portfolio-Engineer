@@ -13,6 +13,10 @@ class Security(BaseModel, ABC):
     asset_currency: Currency
     symbol: Symbol
 
+    @property
+    def security_type(self) -> str:
+        return self.__class__.__name__
+
     @abstractmethod
     def __repr__(self):
         """Short description of underlying."""

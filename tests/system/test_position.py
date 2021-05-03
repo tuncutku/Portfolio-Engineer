@@ -9,6 +9,22 @@ def test_position_details(client, _db, test_user, login, captured_templates):
 
     response = client.get("position/1/details")
     assert response.status_code == 200
+
+    for content in [
+        "AAPL",
+        "Equity",
+        "USD",
+        "Buy",
+        "Sell",
+        "10",
+        "2",
+        "14",
+        "130",
+        "122",
+        "126",
+    ]:
+        assert content in response.get_data(as_text=True)
+
     template_list = ["position/position_details.html"]
     templete_used(template_list, captured_templates)
 

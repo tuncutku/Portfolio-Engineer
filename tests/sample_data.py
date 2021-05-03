@@ -21,7 +21,7 @@ order_1 = {
     "quantity": 10,
     "direction": OrderSideType.Buy,
     "cost": 130,
-    "time": datetime(2020, 2, 1, tzinfo=pytz.utc),
+    "time": datetime(2020, 2, 3, tzinfo=pytz.utc),
 }
 order_2 = {
     "quantity": 2,
@@ -39,7 +39,7 @@ order_4 = {
     "quantity": 20,
     "direction": OrderSideType.Buy,
     "cost": 100,
-    "time": datetime(2020, 2, 1, tzinfo=pytz.utc),
+    "time": datetime(2019, 11, 13, tzinfo=pytz.utc),
 }
 order_5 = {
     "quantity": 10,
@@ -51,7 +51,7 @@ order_6 = {
     "quantity": 22,
     "direction": OrderSideType.Sell,
     "cost": 115,
-    "time": datetime(2021, 1, 13, tzinfo=pytz.utc),
+    "time": datetime(2020, 9, 10, tzinfo=pytz.utc),
 }
 position_1 = {
     "security": Equity(asset_currency="USD", symbol="AAPL"),
@@ -86,10 +86,10 @@ index_1 = IndexValue(
     Series(
         [10, 14, 20, 26],
         index=[
-            date(2020, 1, 1),
-            date(2020, 3, 1),
-            date(2020, 5, 1),
-            date(2020, 7, 1),
+            date(2020, 1, 6),
+            date(2020, 3, 2),
+            date(2020, 5, 12),
+            date(2020, 7, 2),
         ],
     ),
     Currency("USD"),
@@ -98,9 +98,9 @@ index_2 = IndexValue(
     Series(
         [20, 110, 40, 78],
         index=[
-            date(2020, 1, 1),
+            date(2020, 1, 6),
             date(2020, 3, 30),
-            date(2020, 5, 1),
+            date(2020, 5, 12),
             date(2020, 7, 30),
         ],
     ),

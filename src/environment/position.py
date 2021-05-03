@@ -40,9 +40,11 @@ class Position(BaseModel):
         """Cost of the position including purchase price and fee."""
         return concat([order.cost_df for order in self.orders]).sort_index()
 
-    def current_value(self, currency: Currency) -> SingleValue:
+    def current_value(self, currency: Currency = None) -> SingleValue:
         """Current value of the security."""
-        new_value = self.security.value.to(currency)
+        new_value = (
+            self.security.value.to(currency) if currency else self.security.value
+        )
         return new_value * self.quantity.sum()
 
     def historical_value(

@@ -55,7 +55,7 @@ def add_order(portfolio_id):
 
         if pos is None:
             security = get_security(symbol)
-            port.add_position(security)
+            pos = port.add_position(security)
 
         pos.add_order(
             form.quantity.data,
