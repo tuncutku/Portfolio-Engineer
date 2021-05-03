@@ -1,30 +1,36 @@
-from datetime import datetime, date
-import pandas as pd
+# pylint: disable=no-member, not-an-iterable
 
-from src.reports.report import Report
+from datetime import datetime, date
+from typing import List
+from pandas import concat
+
+from src.extensions import db
+
 
 from src.environment.utils.base import BaseModel
 from src.environment.alerts.daily_report import DailyReport
-from src.extensions import db
-from src.market_data.provider import YFinance
+from src.environment.position import Position
 from src.environment.utils.types import *
+
+from src.market import Security, Currency, Symbol
 
 
 class Portfolio(BaseModel):
+    """Form a portfolio class."""
+
     __tablename__ = "portfolios"
 
-    user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    date: date = db.Column(db.Date(), default=datetime.now)
     name: str = db.Column(db.String(255), nullable=False)
     portfolio_type: str = db.Column(db.String(255), nullable=False)
-    reporting_currency: str = db.Column(db.String(3), nullable=False)
-    benchmark: str = db.Column(db.String(3), nullable=False)
+    reporting_currency: Currency = db.Column(db.PickleType(), nullable=False)
+    benchmark: Security = db.Column(db.PickleType(), nullable=False)
+
+    date: date = db.Column(db.Date(), default=datetime.now())
     primary: bool = db.Column(db.Boolean(), default=False)
 
-    positions = db.relationship(
-        "Position",
-        backref="portfolio",
-        cascade="all, delete-orphan",
+    user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    positions: List[Position] = db.relationship(
+        Position, backref="portfolio", cascade="all, delete-orphan"
     )
     daily_report: DailyReport = db.relationship(
         "DailyReport",
@@ -36,66 +42,62 @@ class Portfolio(BaseModel):
     def __repr__(self) -> str:
         return f"<Portfolio {self.name}.>"
 
-    @property
-    def symbols(self):
-        return [pos.symbol for pos in self.positions]
-
-    @property
-    def total_mkt_value(self) -> float:
-
-        fx_symbol = "USDCAD=X"
-        fx_md = YFinance([fx_symbol])
-        quote = fx_md.get_current_quotes(decimal=2)
-
-        value = 0
-        for pos in self.positions:
-            pos_mkt_cap = (
-                pos.market_cap
-                if pos.currency == self.reporting_currency
-                else pos.market_cap * float(quote[fx_symbol])
-            )
-            value += pos_mkt_cap
-        return value
-
     @classmethod
     def get_primary(cls, user):
+        """Get the primary portfolio."""
         return cls.query.filter_by(user=user, primary=True).first()
 
+    @property
+    def current_value(self):
+        """Current market value of the portfolio."""
+        return sum(
+            [
+                position.current_value(self.reporting_currency)
+                for position in self.positions
+            ]
+        )
+
+    def historical_value(self, start: date, end: date = None):
+        """Historical market value of the portfolio."""
+        return sum(
+            [
+                position.historical_value(self.reporting_currency, start, end)
+                for position in self.positions
+            ]
+        )
+
     def set_as_primary(self) -> None:
+        """Check if a portfoli is set as primary."""
         self.primary = True
         db.session.commit()
 
-    def edit(self, name, currency, port_type, benchmark) -> None:
+    def edit(
+        self, name: str, currency: Currency, port_type: str, benchmark: Security
+    ) -> None:
+        """Edit portfolio."""
         self.name = name
         self.reporting_currency = currency
         self.portfolio_type = port_type
         self.benchmark = benchmark
         db.session.commit()
 
-    def to_dict(self) -> dict:
+    def get_positions_by_security(self, Security_type) -> List[Position]:
+        """Get position by security type."""
+        return [
+            position
+            for position in self.positions
+            if isinstance(position.security, Security_type)
+        ]
 
-        position_list = [position.to_dict() for position in self.positions]
-        position_list.sort(key=lambda x: x.get("Market Cap"))
+    def get_position_by_symbol(self, symbol: Symbol) -> Position:
+        """Get position by symbol."""
+        for position in self.positions:
+            if position.security.symbol == symbol:
+                return position
+        return
 
-        return {
-            "id": self.id,
-            "Name": self.name,
-            "Portfolio type": self.portfolio_type,
-            "Reporting currency": self.reporting_currency,
-            "Primary": self.primary,
-            "Creation date": self.date,
-            "Total market value": "{:,.2f}".format(self.total_mkt_value),
-            "Benchmark": self.benchmark,
-            "Positions": position_list,
-        }
-
-    def positions_df(self) -> pd.DataFrame:
-
-        # Raise error if list is empty.
-        position_df_list = [position.orders_df() for position in self.positions]
-        position_symbol_list = [position.symbol for position in self.positions]
-
-        return pd.concat(position_df_list, axis=1, keys=position_symbol_list)
-
-    def generate_report(self) -> Report:
-        return Report(self)
+    def add_position(self, security: Security) -> Position:
+        """Add new position."""
+        position = Position(security=security, portfolio=self)
+        position.save_to_db()
+        return position

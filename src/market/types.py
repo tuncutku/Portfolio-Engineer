@@ -1,6 +1,19 @@
+from dataclasses import dataclass
+
+
+@dataclass
+class Direction:
+    """Form direction object."""
+
+    direction: str
+    n: int
+
+
 class Exchange:
     XNYS = "XNYS"
     XTSE = "XTSE"
+    XIST = "XIST"
+    EUREX = "EUREX"
 
 
 class OrderSideType:
@@ -50,6 +63,11 @@ class OptionStrategyType:
     Custom = "Custom"
 
 
+class AlertPeriod:
+    TradingDaysEvery5Min = "5m"
+    TradingDaysDaily = "1d"
+
+
 class SecurityType:
     Cash = "Cash"
     Equity = "Common and preferred equities"
@@ -63,35 +81,6 @@ class SecurityType:
     CryptoCurrency = "Crypto currency"
 
 
-class Currency:
-    CAD = "CAD"
-    USD = "USD"
-
-
-class PortfolioType:
-    tfsa = "TFSA"
-    rrsp = "RRSP"
-    margin = "Margin"
-    cash = "Cash"
-    custom = "Custom"
-
-
-class PortfolioStatus:
-    active = "Active"
-    inactive = "Inactive"
-
-
-class PortfolioSource:
-    questrade = "Questrade"
-    custom = "Custom"
-
-
-class AlertPeriod:
-    TradingDaysEvery5Min = "5m"
-    TradingDaysDaily = "1d"
-
-
-CurrencyExchangeMap = {"USD": "XNYS", "CAD": "XTSE"}
 YFinanceSecurityTypeMapping = {
     "EQUITY": SecurityType.Equity,
     "ETF": SecurityType.ETF,

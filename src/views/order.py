@@ -1,13 +1,14 @@
-from flask import Blueprint, request, session, url_for, render_template, redirect
-from flask_login import login_required, current_user
-import datetime
+"""Order endpoints."""
+
+from flask import Blueprint, url_for, render_template, redirect
+from flask_login import login_required
 
 from src.extensions import db
-from src.environment.portfolio import Portfolio
-from src.environment.position import Position
-from src.environment.order import Order
-from src.forms.order_forms import AddOrderForm, generate_edit_order_form
-from src.market_data.provider import YFinance
+from src.environment import Portfolio, Position, Order
+from src.forms.order import AddOrderForm, generate_edit_order_form
+from src.market import Symbol
+from src.views.utils.yfinance import security_map
+from src.views.utils.common import get_security
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
@@ -31,12 +32,10 @@ def edit_order(order_id: int):
 
     if form.validate_on_submit():
         order.edit(
-            symbol=form.symbol.data,
-            quantity=form.quantity.data,
-            side=form.side.data,
-            exec_price=form.price.data,
-            exec_time=form.exec_datetime.data,
-            fee=form.fee.data,
+            form.quantity.data,
+            form.direction.data,
+            form.cost.data,
+            form.exec_datetime.data,
         )
         return redirect(url_for("portfolio.list_portfolios"))
 
@@ -49,39 +48,22 @@ def add_order(portfolio_id):
 
     form = AddOrderForm()
     if form.validate_on_submit():
-        symbol = form.symbol.data
+        symbol = Symbol(form.symbol.data)
 
         port = Portfolio.find_by_id(portfolio_id)
-        pos = Position.find_by_symbol(form.symbol.data, port)
+        pos = port.get_position_by_symbol(symbol)
+
         if pos is None:
-            add_new_position(symbol, port)
+            security = get_security(symbol)
+            pos = port.add_position(security)
 
-        new_order = Order(
-            symbol=form.symbol.data,
-            quantity=form.quantity.data,
-            side=form.side.data,
-            exec_price=form.price.data,
-            exec_time=form.exec_datetime.data,
-            fee=form.fee.data,
-            position=pos,
+        pos.add_order(
+            form.quantity.data,
+            form.direction.data,
+            form.cost.data,
+            form.exec_datetime.data,
         )
-
-        new_order.save_to_db()
 
         return redirect(url_for("portfolio.list_portfolios"))
 
     return render_template("order/add_order.html", form=form, portfolio_id=portfolio_id)
-
-
-def add_new_position(symbol: str, portfolio: Portfolio) -> None:
-    md_provider = YFinance([symbol])
-    symbol_info = md_provider.info()[symbol]
-
-    pos = Position(
-        symbol=symbol,
-        name=symbol_info.get("shortName", None),
-        security_type=symbol_info.get("quoteType", None),
-        currency=symbol_info.get("currency", None),
-        portfolio=portfolio,
-    )
-    pos.save_to_db()

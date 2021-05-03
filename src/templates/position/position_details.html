@@ -21,11 +21,10 @@
             <div class="col-12">
                 <div class="card-body">
 
-                    <p class="card-text">Symbol: {{ position["Symbol"] }}</p>
-                    <p class="card-text">Security type: {{ position["Security Type"] }}</p>
-                    <p class="card-text">Currency: {{ position["Currency"] }}</p>
-                    <p class="card-text">Total quantity: {{ position["Total Quantity"] }}</p>
-                    <p class="card-text">Total position value: {{ position["Market Cap"] }}</p>
+                    <p class="card-text">Symbol: {{ position.security.symbol }}</p>
+                    <p class="card-text">Security type: {{ position.security.security_type }}</p>
+                    <p class="card-text">Currency: {{ position.security.asset_currency }}</p>
+                    <p class="card-text">Total position value: {{ position.current_value() }}</p>
 
                     <div class="card">
 
@@ -35,7 +34,6 @@
 
                         <div class="card-body">
 
-
                             <table class="table">
                                 <thead>
                                     <tr class="text-center">
@@ -43,29 +41,25 @@
                                         <th scope="col">Execution Time</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Cost</th>
-                                        <th scope="col">Side</th>
-                                        <th scope="col">Fee</th>
+                                        <th scope="col">Direction</th>
                                         <th scope="col">Actions</th>
                                         {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for order in position["Orders"] %}
+                                    {% for order in position.orders %}
                                     <tr class="text-center">
 
-                                        {% if position["Security Type"] == "EQUITY" %}
-                                        <td class="align-middle">{{ order["exec_time"] }}</td>
-                                        <td class="align-middle">{{ order["quantity"] }}</td>
-                                        <td class="align-middle">{{ order["exec_price"] }}</td>
-                                        <td class="align-middle">{{ order["side"] }}</td>
-                                        <td class="align-middle">{{ order["fee"] }}</td>
-                                        {% endif %}
+                                        <td class="align-middle">{{ order.time }}</td>
+                                        <td class="align-middle">{{ order.quantity }}</td>
+                                        <td class="align-middle">{{ order.cost }}</td>
+                                        <td class="align-middle">{{ order.direction}}</td>
 
                                         <td class="align-middle">
 
-                                            <a href="{{ url_for('order.edit_order', order_id=order['ID']) }}"
+                                            <a href="{{ url_for('order.edit_order', order_id=order.id) }}"
                                                 class="btn btn-outline-success">Edit Order</a>
-                                            <a href="{{ url_for('order.delete_order', order_id=order['ID']) }}"
+                                            <a href="{{ url_for('order.delete_order', order_id=order.id) }}"
                                                 class="btn btn-outline-danger">Delete Order</a>
 
                                         </td>

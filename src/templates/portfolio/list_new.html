@@ -19,7 +19,7 @@
 </div>
 
 
-{% for port in portfolios %}
+{% for port in port_list %}
 <div class="container mt-4 mb-3">
     <div class="card">
         <h5 class="card-header">
@@ -29,7 +29,7 @@
                     Portfolio: {{ port.name }}
                 </div>
                 <div class="col-4 text-end">
-                    Portfolio creation date: {{port.date.strftime('%Y-%m-%d') }}
+                    <!-- Portfolio creation date: {{port["Creation date"].strftime('%Y-%m-%d') }} -->
                 </div>
             </div>
         </h5>
@@ -37,9 +37,9 @@
             <div class="col-9">
                 <div class="card-body">
 
-                    <p class="card-text">Reporting currency: {{ port.reporting_currency }}</p>
-                    <p class="card-text">Total market value: {{ port.current_value }}</p>
-                    <p class="card-text">Benchmark: {{ port.benchmark.symbol }}</p>
+                    <!-- <p class="card-text">Reporting currency: {{ port["Reporting currency"] }}</p>
+                    <p class="card-text">Total market value: {{ port["Total market value"] }}</p>
+                    <p class="card-text">Benchmark: {{ port["Benchmark"] }}</p> -->
 
                     <div class="card">
 
@@ -60,18 +60,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for position in port.positions if position.is_open %}
+                                    {% for position in port["Positions"] if position["Open"] %}
                                     <tr class="text-center">
 
-                                        <td class="align-middle">{{ position.security.symbol }}</td>
-                                        <td class="align-middle">{{ position.security.security_type }}</td>
-                                        <td class="align-middle">{{ position.security.asset_currency }}</td>
-                                        <td class="align-middle">{{ position.current_value() }}</td>
+                                        <td class="align-middle">{{ position["Name"] }}</td>
+                                        <td class="align-middle">{{ position["Security Type"] }}</td>
+                                        <td class="align-middle">{{ position["Currency"] }}</td>
+                                        <td class="align-middle">{{ position["Market Cap"] }}</td>
                                         <td class="align-middle">
 
-                                            <a href="{{ url_for('position.position_details', position_id=position.id) }}"
+                                            <a href="{{ url_for('position.position_details', position_id=position['ID']) }}"
                                                 class="btn btn-outline-success">View details</a>
-                                            <a href="{{ url_for('position.close_position', position_id=position.id) }}"
+                                            <a href="{{ url_for('position.close_position', position_id=position['ID']) }}"
                                                 class="btn btn-outline-danger">Close Position</a>
 
                                         </td>

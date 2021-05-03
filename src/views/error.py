@@ -1,3 +1,6 @@
+"""Error endpoints."""
+
+
 from flask import Blueprint, request, session, url_for, render_template, redirect
 from flask_login import login_required, current_user
 from werkzeug.exceptions import HTTPException

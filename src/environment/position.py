@@ -1,81 +1,71 @@
-import datetime
-import pandas as pd
-from functools import cached_property
+# pylint: disable=no-member, not-an-iterable, too-many-arguments
+
+from datetime import datetime, date
 from typing import List
+from pandas import concat, DataFrame, Series
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel
 from src.environment.order import Order
-from src.market_data.provider import YFinance
+from src.market import Security, Currency, SingleValue, IndexValue
 
 
 class Position(BaseModel):
+    """Form a position class."""
+
     __tablename__ = "positions"
 
-    portfolio_id = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    symbol = db.Column(db.String(255), nullable=False)
-    security_type = db.Column(db.String(255), nullable=False)
-    name = db.Column(db.String(255), nullable=False)
-    currency = db.Column(db.String(3), nullable=False)
+    security: Security = db.Column(db.PickleType(), nullable=False)
 
+    portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     orders: List[Order] = db.relationship(
         "Order", backref="position", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
-        return "<Position {}.>".format(self.symbol)
-
-    @cached_property
-    def underlying_instrument(self):
-        pass
-
-    @cached_property
-    def current_market_cap(self, reporting_currency: str):
-        pass
-
-    @cached_property
-    def historical_market_cap(self, reporting_currency: str):
-        pass
-
-    @classmethod
-    def find_by_symbol(cls, symbol, portfolio):
-        return cls.query.filter_by(symbol=symbol, portfolio=portfolio).first()
+        return f"<Position {self.security}.>"
 
     @property
-    def open_quantity(self):
-        return sum([order.adjusted_quantity for order in self.orders])
+    def is_open(self) -> bool:
+        """True if current open quantity is different than 0."""
+        return bool(self.quantity.sum())
 
     @property
-    def market_cap(self, quote: float = None) -> float:
-        if quote is None:
-            md_provider = YFinance([self.symbol])
-            raw_quotes = md_provider.get_current_quotes()
-        return round(float(raw_quotes[self.symbol] * self.open_quantity), 2)
+    def quantity(self) -> Series:
+        """Quantity of the position."""
+        return concat([order.quantity_df for order in self.orders]).sort_index()
 
     @property
-    def open(self) -> bool:
-        return True if self.open_quantity != 0 else False
+    def cost(self) -> Series:
+        """Cost of the position including purchase price and fee."""
+        return concat([order.cost_df for order in self.orders]).sort_index()
 
-    def to_dict(self):
+    def current_value(self, currency: Currency = None) -> SingleValue:
+        """Current value of the security."""
+        new_value = (
+            self.security.value.to(currency) if currency else self.security.value
+        )
+        return new_value * self.quantity.sum()
 
-        order_list = [order.to_dict() for order in self.orders]
-        order_list.sort(key=lambda x: x.get("exec_time"), reverse=True)
+    def historical_value(
+        self, currency: Currency, start: date, end: date = date.today()
+    ) -> IndexValue:
+        """Get value index of the underlying position."""
+        security_index = self.security.index(start, end)
+        security_index.replace(self.cost)
+        new_index = security_index.to(currency)
+        return new_index.multiply(self.quantity)
 
-        return {
-            "ID": self.id,
-            "Symbol": self.symbol,
-            "Name": self.name,
-            "Security Type": self.security_type,
-            "Currency": self.currency,
-            "Market Cap": "{:,.2f}".format(self.market_cap),
-            "Total Quantity": self.open_quantity,
-            "Open": self.open,
-            "Orders": order_list,
-        }
-
-    def orders_df(self):
-        order_df_list = [order.to_df() for order in self.orders]
-        order_df = pd.concat(order_df_list)
-        order_df_sorted = order_df.sort_index()
-        order_df_sorted["Quantity"] = order_df_sorted["Quantity"].cumsum()
-        return order_df_sorted
+    def add_order(
+        self, quantity: float, direction: str, cost: float, time: datetime
+    ) -> Order:
+        """Add new order."""
+        order = Order(
+            quantity=quantity,
+            direction=direction,
+            cost=cost,
+            time=time,
+            position=self,
+        )
+        order.save_to_db()
+        return order

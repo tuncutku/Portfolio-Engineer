@@ -50,17 +50,17 @@ class DailyReport(AlertBase):
         }
 
 
-class PriceAlert(AlertBase):
-    pass
+# class PriceAlert(AlertBase):
+#     pass
 
 
-class ReturnAlert(AlertBase):
-    pass
+# class ReturnAlert(AlertBase):
+#     pass
 
 
-class NewsAlert(AlertBase):
-    pass
+# class NewsAlert(AlertBase):
+#     pass
 
 
-class EconomicAlert(AlertBase):
-    pass
+# class EconomicAlert(AlertBase):
+#     pass

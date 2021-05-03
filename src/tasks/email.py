@@ -1,8 +1,8 @@
 from flask import current_app
-from src.extensions import mail, celery_logger
-
-from src.extensions import celery
 from flask_mail import Message
+
+from src.extensions import mail, celery_logger
+from src.extensions import celery
 
 
 @celery.task(bind=True, ignore_result=True, default_retry_delay=300, max_retries=5)

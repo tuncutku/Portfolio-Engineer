@@ -1,12 +1,18 @@
+# pylint: disable=redefined-outer-name, unused-argument
+
+from collections import namedtuple
 import pytest
-import pytest_flask
+import pytest_mock
+from pandas import Series
+from datetime import date
 
 from flask import template_rendered
 
 from src import create_app
-from src.extensions import db as _db
-from tests.sample_data import *
-from tests.utils import *
+from src.environment.user import User
+from src.extensions import db
+
+from tests.sample_data import user_1, mock_series
 
 
 @pytest.fixture
@@ -18,30 +24,54 @@ def app():
 
 
 @pytest.fixture
-def db(client):
+def _db(client):
     """Create database for the tests."""
 
-    _db.create_all()
-    yield _db
-    _db.session.remove()
-    _db.drop_all()
+    db.create_all()
+    yield db
+    db.session.remove()
+    db.drop_all()
 
 
 @pytest.fixture
-def user(client):
+def test_user(client):
+    """Provides sample user, portfolio, position and order."""
+
+    _user = User(email=user_1["email"])
+    _user.save_to_db()
+    _user.set_password(user_1["password"])
+    _user.confirm_user()
+
+    for port in user_1["portfolios"]:
+        _port = _user.add_portfolio(
+            port["name"],
+            port["portfolio_type"],
+            port["reporting_currency"],
+            port["benchmark"],
+        )
+        for position in port["positions"]:
+            _position = _port.add_position(position["security"])
+            for order in position["orders"]:
+                _position.add_order(
+                    order["quantity"], order["direction"], order["cost"], order["time"]
+                )
+
+    yield _user
+
+
+@pytest.fixture
+def login(client):
     """Log in test user for URL tests."""
-    user_test = create_user(**user_1)
-    portfolio_test = create_portfolio(**portfolio_1, user=user_test)
-    position_test = create_position(**position_1, portfolio=portfolio_test)
-    order_test = create_order(**order_1, position=position_test)
 
-    client.post("/users/login", data=dict(**user_1))
-
-    yield user_test
+    client.post(
+        "/users/login", data=dict(email=user_1["email"], password=user_1["password"])
+    )
 
 
 @pytest.fixture
 def captured_templates(app):
+    """Capture templates used as during system tests."""
+
     recorded = []
 
     def record(sender, template, context, **extra):
@@ -52,3 +82,18 @@ def captured_templates(app):
         yield recorded
     finally:
         template_rendered.disconnect(record, app)
+
+
+@pytest.fixture
+def mock_symbol(mocker):
+
+    mocker.patch(
+        "src.market.basic.Symbol.info",
+        new_callable=mocker.PropertyMock,
+        return_value={"regularMarketPrice": 50},
+    )
+
+    # def mock_load(self, start, end):
+    #     return mock_series
+
+    # mocker.patch("src.market.basic.Symbol.index", mock_load)
