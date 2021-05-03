@@ -71,7 +71,9 @@ class Portfolio(BaseModel):
         self.primary = True
         db.session.commit()
 
-    def edit(self, name, currency, port_type, benchmark) -> None:
+    def edit(
+        self, name: str, currency: Currency, port_type: str, benchmark: Security
+    ) -> None:
         """Edit portfolio."""
         self.name = name
         self.reporting_currency = currency

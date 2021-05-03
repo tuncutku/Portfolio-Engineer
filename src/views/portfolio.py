@@ -6,7 +6,7 @@ import pandas as pd
 import collections
 
 from src.environment import Portfolio
-from src.market import Symbol
+from src.market import Symbol, Currency
 from src.forms.portfolio import AddPortfolioForm, generate_edit_portfolio_form
 from src.views.utils.common import get_security
 
@@ -43,11 +43,12 @@ def add_portfolio():
 
         symbol = Symbol(form.benchmark.data)
         security = get_security(symbol)
+        currency = Currency(form.port_reporting_currency.data)
 
         portfolio = current_user.add_portfolio(
             form.port_name.data,
             form.port_type.data,
-            form.port_reporting_currency.data,
+            currency,
             security,
         )
         if len(current_user.portfolios) == 1:
@@ -64,11 +65,16 @@ def edit_portfolio(portfolio_id):
     port = Portfolio.find_by_id(portfolio_id)
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
+
+        symbol = Symbol(form.benchmark.data)
+        security = get_security(symbol)
+        currency = Currency(form.port_reporting_currency.data)
+
         port.edit(
             form.port_name.data,
-            form.port_reporting_currency.data,
+            currency,
             form.port_type.data,
-            form.benchmark.data,
+            security,
         )
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template(

@@ -35,7 +35,7 @@ def test_add_portfolio(client, _db, test_user, login, captured_templates):
 
     assert new_portfolio.name == "New"
     assert new_portfolio.portfolio_type == PortfolioType.margin
-    assert new_portfolio.reporting_currency == "USD"
+    assert new_portfolio.reporting_currency == Currency("USD")
     assert new_portfolio.primary == False
 
     template_list = ["portfolio/add_portfolio.html", "portfolio/list_portfolios.html"]
@@ -66,7 +66,7 @@ def test_edit_portfolio(client, _db, test_user, login, captured_templates):
     portfolio_test = Portfolio.find_by_id(1)
     assert portfolio_test.name == "edited_portfolio"
     assert portfolio_test.portfolio_type == PortfolioType.custom
-    assert portfolio_test.reporting_currency == "CAD"
+    assert portfolio_test.reporting_currency == Currency("CAD")
 
     template_list = ["portfolio/edit_portfolio.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

@@ -6,7 +6,7 @@ from flask_login import UserMixin
 from src.environment.utils.base import BaseModel
 from src.environment.portfolio import Portfolio
 from src.extensions import db, bcrypt
-from src.market import Symbol, Currency
+from src.market import Security, Currency
 
 
 class User(BaseModel, UserMixin):
@@ -44,7 +44,7 @@ class User(BaseModel, UserMixin):
         name: str,
         portfolio_type: str,
         reporting_currency: Currency,
-        benchmark: Symbol,
+        benchmark: Security,
     ) -> Portfolio:
         """Add new portfolio."""
 
