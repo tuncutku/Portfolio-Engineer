@@ -29,7 +29,7 @@ def test_add_portfolio(client, _db, test_user, login, captured_templates):
         ),
         follow_redirects=True,
     )
-    assert response.status_code == 200
+    assert response.status_code != 200
 
     new_portfolio = Portfolio.find_by_id(2)
 
