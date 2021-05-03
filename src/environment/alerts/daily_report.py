@@ -5,14 +5,14 @@ import pandas as pd
 from typing import TYPE_CHECKING
 
 from datetime import datetime
-from src.environment.utils.base import AlertBase
+from src.environment.alerts.base import Alert
 from src.extensions import db
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
 
 
-class DailyReport(AlertBase):
+class DailyReport(Alert):
 
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     portfolio: Portfolio = db.relationship("Portfolio", back_populates="daily_report")
