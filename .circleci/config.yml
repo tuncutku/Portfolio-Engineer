@@ -28,21 +28,22 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dependents
-        command: |
-          set -e
-          python3 -m venv env/
-          . env/bin/activate
-          pip install -r requirements/docker.txt
-          pytest
-          pylint src
+          name: Install dependents
+          command: |
+            set -e
+            python3 -m venv env/
+            . env/bin/activate
+            pip install -r requirements/docker.txt
+            pytest
+            pylint src
   test:
     steps:
+      - checkout
       - run:
-        name: Run unit and system tests
-        command: |
-          pytest
-          pylint src
+          name: Run unit and system tests
+          command: |
+            pytest
+            pylint src
 
 
             
