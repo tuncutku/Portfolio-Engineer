@@ -8,7 +8,6 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - test
       # - deploy:
       #     requires:
       #       - build
@@ -25,10 +24,11 @@ jobs:
       - image: circleci/python:3.9.4
         environment:
           FLASK_CONFIG: testing
+          TEST_DATABASE_URL: postgresql://ubuntu@localhost/circle_test?sslmode=disable
     steps:
       - checkout
       - run:
-          name: Install dependents
+          name: Install dependencies and test
           command: |
             set -e
             python3 -m venv env/
@@ -36,14 +36,8 @@ jobs:
             pip install -r requirements/docker.txt
             pytest
             pylint src
-  test:
-    steps:
-      - checkout
-      - run:
-          name: Run unit and system tests
-          command: |
-            pytest
-            pylint src
+      - store_test_results:
+          path: test-reports/
 
 
             
