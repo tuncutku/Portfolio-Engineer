@@ -3,13 +3,13 @@
 from datetime import date, datetime
 from pandas import Series
 
-from src.environment.portfolio import Portfolio
-from src.environment.utils.types import OrderSideType, PortfolioType
+from src.market.types import OrderSideType, PortfolioType
 from src.market import Currency, SingleValue, IndexValue, Symbol, Equity, ETF
 from src.environment import User, Portfolio, Position, Order
 from tests.sample_data import user_1
-from tests.raw_data.portfolio import portfolio_index
-from tests.raw_data.position import position_index
+
+# from tests.raw_data.portfolio import portfolio_index
+# from tests.raw_data.position import position_index
 
 start_date = date(2020, 1, 1)
 end_date = date(2021, 1, 1)

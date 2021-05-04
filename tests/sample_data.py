@@ -4,9 +4,6 @@ from datetime import datetime, date
 from pandas import Series
 import pytz
 
-from src.environment.utils.types import PortfolioType
-from src.environment.order import OrderSideType
-
 from src.market import (
     Currency,
     Equity,
@@ -14,6 +11,8 @@ from src.market import (
     IndexValue,
     SingleValue,
 )
+from src.market.types import PortfolioType, OrderSideType
+
 
 ######## Environment data ########
 
