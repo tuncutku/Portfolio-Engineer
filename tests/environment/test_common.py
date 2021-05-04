@@ -1,6 +1,7 @@
+"""Test environment object relations"""
+# pylint: disable=unused-argument
+
 from datetime import date, datetime
-import pandas as pd
-import pytest
 
 from src.environment import User, Portfolio, Position, Order
 from tests.sample_data import user_1, portfolio_1, position_1, order_1

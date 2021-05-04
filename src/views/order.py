@@ -1,13 +1,11 @@
-"""Order endpoints."""
+"""Order endpoints"""
 
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 
-from src.extensions import db
-from src.environment import Portfolio, Position, Order
+from src.environment import Portfolio, Order
 from src.forms.order import AddOrderForm, generate_edit_order_form
 from src.market import Symbol
-from src.views.utils.yfinance import security_map
 from src.views.utils.common import get_security
 
 
@@ -17,6 +15,7 @@ order_blueprint = Blueprint("order", __name__, url_prefix="/order")
 @order_blueprint.route("/delete_order/<int:order_id>", methods=["GET"])
 @login_required
 def delete_order(order_id: int):
+    """Delete an order."""
 
     order = Order.find_by_id(order_id)
     order.delete_from_db()
@@ -27,6 +26,7 @@ def delete_order(order_id: int):
 @order_blueprint.route("/edit/<int:order_id>", methods=["GET", "POST"])
 @login_required
 def edit_order(order_id: int):
+    """Edit an order."""
     order = Order.find_by_id(order_id)
     form = generate_edit_order_form(order)
 
@@ -45,6 +45,7 @@ def edit_order(order_id: int):
 @order_blueprint.route("/<int:portfolio_id>/add_order", methods=["GET", "POST"])
 @login_required
 def add_order(portfolio_id):
+    """Add order."""
 
     form = AddOrderForm()
     if form.validate_on_submit():

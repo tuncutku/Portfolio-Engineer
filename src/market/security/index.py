@@ -1,5 +1,5 @@
-"""Exchange traded fund."""
-
+"""Exchange traded fund"""
+# pylint: disable=duplicate-code
 
 from src.market.security.base import Security
 
@@ -10,12 +10,12 @@ class Index(Security):
     def __repr__(self):
         return "<Index {}.>".format(self.symbol.symbol)
 
-    @property
-    def industry(self):
-        """Industry of the Index."""
-        return
+    # @property
+    # def industry(self):
+    #     """Industry of the Index."""
+    #     return
 
-    @property
-    def holding_companies(self):
-        """Major holding companies of the Index."""
-        return
+    # @property
+    # def holding_companies(self):
+    #     """Major holding companies of the Index."""
+    #     return

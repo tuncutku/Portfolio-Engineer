@@ -1,12 +1,12 @@
-"""Objects used to report values."""
+"""Objects used to report values"""
 # pylint: disable=invalid-name
 
 from datetime import date, timedelta
 from typing import Union, TypeVar
-from functools import partial, cached_property, cache
+from functools import partial, cached_property
 from dataclasses import dataclass
 
-from pandas import Series, DataFrame, DatetimeIndex, concat
+from pandas import Series, DatetimeIndex, concat
 from pandas_datareader.data import DataReader
 from yfinance import Ticker
 from pandas_market_calendars import get_calendar
@@ -16,20 +16,6 @@ from src.market.types import Exchange
 
 T = TypeVar("T")
 provider = partial(DataReader, data_source="yahoo")
-
-
-@dataclass
-class Info:
-    """Class to hold information from YFinance."""
-
-    sector: str
-    fullTimeEmployees: int
-    longBusinessSummary: str
-    city: str
-    country: str
-    website: str
-    industry: str
-    regularMarketPrice: str
 
 
 @dataclass
@@ -139,10 +125,12 @@ class FX:
 
     @cached_property
     def rate(self) -> float:
+        """Current fx rate."""
         request = "regularMarketPrice"
         return self.symbol.info[request]
 
     def index(self, start: date, end: date = date.today()) -> Series:
+        """FX index."""
         index = self.symbol.index(start, end)
         return index.rename(self.symbol.symbol)
 

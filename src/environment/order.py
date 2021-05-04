@@ -1,14 +1,15 @@
-# pylint: disable=no-member, too-many-arguments
+"""Order"""
+# pylint: disable=no-member, too-many-arguments, cyclic-import
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from datetime import datetime
-from pandas import DataFrame, Series
+from pandas import Series
 
 from src.extensions import db
-from src.environment.utils.base import BaseModel
-from src.environment.utils.types import OrderSideType
+from src.environment.base import BaseModel
+from src.market.types import OrderSideType
 
 if TYPE_CHECKING:
     from src.environment.position import Position

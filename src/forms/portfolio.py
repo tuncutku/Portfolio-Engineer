@@ -1,3 +1,5 @@
+"""Portfolio forms"""
+
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField
 from wtforms.validators import (
@@ -6,9 +8,8 @@ from wtforms.validators import (
 )
 
 from src.environment import Portfolio
-from src.environment.utils.types import PortfolioType
 from src.market import Currency
-
+from src.market.types import PortfolioType
 from src.forms.validators import PortfolioName, Ticker
 
 port_type_choices = [
@@ -23,6 +24,8 @@ currency_choices = [("CAD", Currency("CAD")), ("USD", Currency("USD"))]
 
 
 class AddPortfolioForm(Form):
+    """Add portfolio form."""
+
     port_name = StringField(
         u"Portfolio Name", [DataRequired(), Length(max=20), PortfolioName()]
     )
@@ -37,6 +40,8 @@ def generate_edit_portfolio_form(portfolio: Portfolio):
     """Function that generates an instance of EditPortfolioForm and sets default arguments."""
 
     class EditPortfolioForm(Form):
+        """Edit portfolio form."""
+
         port_name = StringField(
             u"Portfolio Name",
             [DataRequired(), Length(max=20), PortfolioName(exclude=portfolio.name)],

@@ -1,17 +1,14 @@
-# pylint: disable=no-member, not-an-iterable
+"""Portfolio"""
+# pylint: disable=no-member, not-an-iterable, cyclic-import
 
 from datetime import datetime, date
 from typing import List
-from pandas import concat
 
 from src.extensions import db
 
-
-from src.environment.utils.base import BaseModel
-from src.environment.alerts.daily_report import DailyReport
+from src.environment.base import BaseModel
+from src.environment.alerts import DailyReport
 from src.environment.position import Position
-from src.environment.utils.types import *
-
 from src.market import Security, Currency, Symbol
 
 
@@ -81,12 +78,12 @@ class Portfolio(BaseModel):
         self.benchmark = benchmark
         db.session.commit()
 
-    def get_positions_by_security(self, Security_type) -> List[Position]:
+    def get_positions_by_security(self, security_type) -> List[Position]:
         """Get position by security type."""
         return [
             position
             for position in self.positions
-            if isinstance(position.security, Security_type)
+            if isinstance(position.security, security_type)
         ]
 
     def get_position_by_symbol(self, symbol: Symbol) -> Position:
@@ -94,7 +91,7 @@ class Portfolio(BaseModel):
         for position in self.positions:
             if position.security.symbol == symbol:
                 return position
-        return
+        return None
 
     def add_position(self, security: Security) -> Position:
         """Add new position."""

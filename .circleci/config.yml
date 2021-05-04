@@ -28,13 +28,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependents and test
+          name: Install dependencies and test
           command: |
             set -e
             python3 -m venv env/
             . env/bin/activate
             pip install -r requirements/docker.txt
             pytest
+            pylint src
 
 
             

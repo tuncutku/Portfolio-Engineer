@@ -1,16 +1,12 @@
-"""Portfolio endpoints."""
+"""Portfolio endpoints"""
 
 from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
-import pandas as pd
-import collections
 
 from src.environment import Portfolio
 from src.market import Symbol, Currency
 from src.forms.portfolio import AddPortfolioForm, generate_edit_portfolio_form
 from src.views.utils.common import get_security
-
-from src.extensions import db
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")

@@ -1,13 +1,11 @@
-"""Position endpoints."""
+"""Position endpoints"""
 
-from flask import Blueprint, url_for, render_template, redirect
-from flask_login import login_required, current_user
 from datetime import datetime
+from flask import Blueprint, url_for, render_template, redirect
+from flask_login import login_required
 
-from src.environment.portfolio import Portfolio
 from src.environment.position import Position
-from src.environment.order import Order, OrderSideType
-from src.extensions import db
+from src.environment.order import OrderSideType
 
 
 position_blueprint = Blueprint("position", __name__, url_prefix="/position")

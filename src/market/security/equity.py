@@ -1,4 +1,4 @@
-"""Equity security."""
+"""Equity security"""
 
 from src.market.security.base import Security
 

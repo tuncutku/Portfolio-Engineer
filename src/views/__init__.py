@@ -1,3 +1,5 @@
+"""Blueprints"""
+
 from src.views.user import user_blueprint
 from src.views.portfolio import portfolio_blueprint
 from src.views.order import order_blueprint

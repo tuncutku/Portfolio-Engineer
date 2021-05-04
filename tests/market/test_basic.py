@@ -1,11 +1,11 @@
-"""Test basic objects."""
-# pylint: disable=pointless-statement
+"""Test basic objects"""
+# pylint: disable=pointless-statement, unused-argument, no-self-use
+
 
 from datetime import date
-from pandas import DataFrame, Series, DatetimeIndex
+from pandas import Series, DatetimeIndex
 
 import pytest
-from pytest_mock import MockerFixture
 
 from src.market import Currency, SingleValue, IndexValue, Symbol, FX
 from tests.sample_data import index_1, index_2, index_3, value_1, value_2, value_3
@@ -180,7 +180,6 @@ def test_currency():
     with pytest.raises(ValueError):
         Currency.validate("ZAR")
 
-    usd = Currency("USD")
     date_index = usd.calender(start_date, end_date)
 
     assert str(usd) == "USD"

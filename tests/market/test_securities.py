@@ -1,10 +1,11 @@
-"""Test securities."""
+"""Test securities"""
+# pylint: disable=unused-argument, no-self-use
+
 
 from datetime import date
 import pytest
 
 from src.market import Equity, ETF, Currency, Symbol, Security, SingleValue, IndexValue
-from tests.sample_data import mock_series
 
 start_date = date(2020, 1, 4)
 
@@ -31,7 +32,6 @@ def test_common(security: Security, symbol: Symbol, security_type: str, mock_sym
 
 def test_etf():
     """Test ETF."""
-    etf
 
 
 def test_equity():
