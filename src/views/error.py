@@ -1,8 +1,10 @@
 """Error endpoints."""
 
+# pylint: disable=invalid-name
 
-from flask import Blueprint, request, session, url_for, render_template, redirect
-from flask_login import login_required, current_user
+
+import json
+from flask import Blueprint
 from werkzeug.exceptions import HTTPException
 
 
@@ -13,6 +15,8 @@ error_handler_blueprint = Blueprint(
 
 @error_handler_blueprint.errorhandler(HTTPException)
 def handle_exception(e):
+    """Exception handling."""
+
     response = e.get_response()
     # replace the body with JSON
     response.data = json.dumps(

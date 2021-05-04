@@ -1,4 +1,6 @@
+"""User"""
 # pylint: disable=no-member
+
 from typing import List
 
 from flask_login import UserMixin

@@ -1,8 +1,9 @@
+"""Position"""
 # pylint: disable=no-member, not-an-iterable, too-many-arguments
 
 from datetime import datetime, date
 from typing import List
-from pandas import concat, DataFrame, Series
+from pandas import concat, Series
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel

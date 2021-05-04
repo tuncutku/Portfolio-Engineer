@@ -1,4 +1,5 @@
-import pytest
+"""Test user endpoints."""
+# pylint: disable=unused-argument
 
 from flask_mail import Mail
 from src.environment.user import User
@@ -6,10 +7,6 @@ from src.views.user import generate_confirmation_token
 
 from tests.system.common import templete_used
 from tests.sample_data import user_1
-
-
-email = "tuncutku@gmail.com"
-password = "1234"
 
 
 def test_home(client, _db, captured_templates):
@@ -88,7 +85,7 @@ def test_login_user(client, _db, captured_templates, test_user):
     for email, password in zip(emails, passwords):
         response = client.post(
             "/users/login",
-            data=dict(email="test_3@gmail.com", password="1234"),
+            data=dict(email=email, password=password),
             follow_redirects=True,
         )
 
@@ -127,6 +124,7 @@ def test_email_confirmation(client, _db, captured_templates):
 
     token = generate_confirmation_token(user.email)
     response = client.get(f"/users/confirm/{token}", follow_redirects=True)
+    assert response.status_code == 200
 
     assert user.confirmed
 

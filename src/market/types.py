@@ -1,3 +1,8 @@
+"""Market data types."""
+
+# pylint: disable=too-few-public-methods, invalid-name
+
+
 from dataclasses import dataclass
 
 
@@ -10,6 +15,8 @@ class Direction:
 
 
 class Exchange:
+    """List of exchanges."""
+
     XNYS = "XNYS"
     XTSE = "XTSE"
     XIST = "XIST"
@@ -17,6 +24,8 @@ class Exchange:
 
 
 class OrderSideType:
+    """List of order types."""
+
     Buy = "Buy"
     Sell = "Sell"
     Short = "Sell Short"
@@ -28,23 +37,15 @@ class OrderSideType:
 
 
 class OptionType:
+    """List of option payoff types."""
+
     Call = "Call"
     Put = "Put"
 
 
-class OptionDurationType:
-    Weekly = "Weekly expiry cycle"
-    Monthly = "Monthly expiry cycle"
-    Quarterly = "Quarterly expiry cycle"
-    LEAP = "Long-term Equity Appreciation contracts"
-
-
-class OptionExerciseType:
-    American = "American option"
-    European = "European option"
-
-
 class OptionStrategyType:
+    """List of option strategy types."""
+
     CoveredCall = "Covered Call"
     MarriedPuts = "Married Put"
     VerticalCallSpread = "Vertical Call"
@@ -64,11 +65,15 @@ class OptionStrategyType:
 
 
 class AlertPeriod:
+    """List of alert period durations."""
+
     TradingDaysEvery5Min = "5m"
     TradingDaysDaily = "1d"
 
 
 class SecurityType:
+    """List of security types."""
+
     Cash = "Cash"
     Equity = "Common and preferred equities"
     ETF = "Exchange traded fund"

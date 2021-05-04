@@ -10,6 +10,8 @@ load_dotenv()
 
 
 class ConfigBase(object):
+    """Base class for configuration."""
+
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SECURITY_PASSWORD_SALT = os.environ.get("SECRET_KEY")
     # POSTS_PER_PAGE = 10
@@ -40,6 +42,8 @@ class ConfigBase(object):
 
 
 class ProdConfig(ConfigBase):
+    """Configuration for production."""
+
     CELERY_BROKER_URL = "redis://redis:6379/0"
     RESULT_BACKEND = "redis://redis:6379/0"
 
@@ -47,6 +51,8 @@ class ProdConfig(ConfigBase):
 
 
 class DevConfig(ConfigBase):
+    """Configuration for development."""
+
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     CACHE_TYPE = "simple"
@@ -55,6 +61,7 @@ class DevConfig(ConfigBase):
 
 
 class TestConfig(ConfigBase):
+    """Configuration for testing."""
 
     TESTING = True
 

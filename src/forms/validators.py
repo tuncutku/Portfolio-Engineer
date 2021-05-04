@@ -1,25 +1,15 @@
-from flask_login import current_user
-from flask_wtf import FlaskForm as Form
-from wtforms import (
-    StringField,
-    SelectField,
-    IntegerField,
-    TimeField,
-    DateField,
-    DateTimeField,
-    FloatField,
-)
+"""Form validation."""
+# pylint: disable=too-few-public-methods
+
 from datetime import datetime
+
+from flask_login import current_user
 from wtforms.validators import ValidationError
-from src.environment.utils.types import *
-
-
 from src.environment import Portfolio
-from src.environment.utils.types import PortfolioType
-from src.market import Currency, Symbol
+from src.market import Symbol
 
 
-class Ticker(object):
+class Ticker:
     """Validate ticker symbol."""
 
     def __init__(self, message=None):
@@ -33,7 +23,7 @@ class Ticker(object):
             raise ValidationError(self.message)
 
 
-class Location(object):
+class Location:
     """Validate order market by currency."""
 
     def __init__(self, message=None):
@@ -47,7 +37,7 @@ class Location(object):
             raise ValidationError(self.message)
 
 
-class FutureDate(object):
+class FutureDate:
     """Validate execution date."""
 
     def __init__(self, message=None):
@@ -61,7 +51,9 @@ class FutureDate(object):
             raise ValidationError(self.message)
 
 
-class PositiveFloat(object):
+class PositiveFloat:
+    """Validate if input is a positive float."""
+
     def __init__(self, message=None):
         self.message = message
 
@@ -72,7 +64,9 @@ class PositiveFloat(object):
             raise ValidationError(self.message)
 
 
-class PortfolioName(object):
+class PortfolioName:
+    """Validation for portfolio name duplication."""
+
     def __init__(self, exclude=None, message=None):
         self.message = message
         self.exclude = exclude

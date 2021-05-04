@@ -1,11 +1,16 @@
+"""User forms."""
+# pylint: disable=arguments-differ, invalid-name, super-with-arguments
+
 from flask_wtf import FlaskForm as Form
-from wtforms import PasswordField, BooleanField
+from wtforms import PasswordField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 from src.environment.user import User
 
 
 class RegisterForm(Form):
+    """Register form."""
+
     email = EmailField("Email address", [DataRequired(), Email()])
     password = PasswordField("Password", [DataRequired(), Length(min=4)])
     confirm = PasswordField("Confirm Password", [DataRequired(), EqualTo("password")])
@@ -27,6 +32,8 @@ class RegisterForm(Form):
 
 
 class LoginForm(Form):
+    """Login form."""
+
     email = EmailField(u"Email address", [DataRequired(), Email()])
     password = PasswordField(u"Password", [DataRequired()])
 

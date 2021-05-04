@@ -1,4 +1,9 @@
-from pandas_market_calendars import get_calendar
+"""Order forms."""
+# pylint: disable=arguments-differ, invalid-name, super-with-arguments
+
+
+from datetime import datetime
+
 from flask_wtf import FlaskForm as Form
 from wtforms import (
     StringField,
@@ -7,12 +12,10 @@ from wtforms import (
     DateTimeField,
     FloatField,
 )
-from datetime import datetime
 from wtforms.validators import DataRequired, Optional
-from src.environment import Order, Position
-from src.environment.utils.types import *
+from src.environment import Order
+from src.environment.utils.types import OrderSideType
 from src.market import Symbol
-
 from src.forms.validators import Ticker, Location, FutureDate, PositiveFloat
 
 

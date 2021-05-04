@@ -1,10 +1,15 @@
+"""Test portfolio endpoints."""
+# pylint: disable=unused-argument
+
 from src.environment.portfolio import Portfolio
+from src.market import Currency
+from tests.sample_data import PortfolioType
 
 from tests.system.common import templete_used
-from tests.sample_data import *
 
 
 def test_portfolio_list(client, _db, test_user, login, captured_templates):
+    """Test endpoint that lists portfolios."""
 
     response = client.get("/portfolio/list")
     assert response.status_code == 200
@@ -14,6 +19,7 @@ def test_portfolio_list(client, _db, test_user, login, captured_templates):
 
 
 def test_add_portfolio(client, _db, test_user, login, captured_templates):
+    """Test endpoint that adds portfolio."""
 
     response = client.get("portfolio/add_portfolio")
     assert response.status_code == 200
@@ -36,13 +42,14 @@ def test_add_portfolio(client, _db, test_user, login, captured_templates):
     assert new_portfolio.name == "New"
     assert new_portfolio.portfolio_type == PortfolioType.margin
     assert new_portfolio.reporting_currency == Currency("USD")
-    assert new_portfolio.primary == False
+    assert new_portfolio.primary is False
 
     template_list = ["portfolio/add_portfolio.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)
 
 
 def test_edit_portfolio(client, _db, test_user, login, captured_templates):
+    """Test endpoint that edits an existing portfolio."""
 
     response = client.get("portfolio/edit/1")
     assert response.status_code == 200
@@ -73,6 +80,7 @@ def test_edit_portfolio(client, _db, test_user, login, captured_templates):
 
 
 def test_delete_portfolio(client, _db, test_user, login, captured_templates):
+    """Test endpoint that deletes portfolio."""
 
     response = client.get("portfolio/delete/1", follow_redirects=True)
     assert response.status_code == 200
@@ -83,6 +91,7 @@ def test_delete_portfolio(client, _db, test_user, login, captured_templates):
 
 
 def test_set_portfolio_primary(client, _db, test_user, login, captured_templates):
+    """Test endpoint that sets portfolio primary."""
 
     portfolio = Portfolio.find_by_id(1)
     assert portfolio.primary is False

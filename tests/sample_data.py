@@ -1,17 +1,17 @@
+"""Sample data for tests."""
+
 from datetime import datetime, date
 from pandas import Series
 import pytz
 
-from src.environment.portfolio import PortfolioType
+from src.environment.utils.types import PortfolioType
 from src.environment.order import OrderSideType
 
 from src.market import (
     Currency,
-    Symbol,
     Equity,
     Index,
     IndexValue,
-    Currency,
     SingleValue,
 )
 

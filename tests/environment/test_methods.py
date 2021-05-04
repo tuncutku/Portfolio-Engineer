@@ -1,9 +1,11 @@
+"""Test environment object methods."""
+
 from datetime import date, datetime
 from pandas import Series
 from pytest import approx
 
-from src.environment.portfolio import Portfolio, PortfolioType
-from src.environment.utils.types import OrderSideType
+from src.environment.portfolio import Portfolio
+from src.environment.utils.types import OrderSideType, PortfolioType
 from src.market import Currency, SingleValue, IndexValue, Symbol, Equity, ETF
 from src.environment import User, Portfolio, Position, Order
 from tests.sample_data import user_1

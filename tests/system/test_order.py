@@ -1,3 +1,6 @@
+"""Test order endpoints."""
+# pylint: disable=unused-argument
+
 from datetime import datetime
 
 from src.environment.position import Position

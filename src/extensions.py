@@ -1,8 +1,9 @@
+"""Flask extensions."""
+# pylint: disable=protected-access, import-outside-toplevel
+
 import ssl
+import logging
 from flask import redirect, url_for
-
-ssl._create_default_https_context = ssl._create_unverified_context
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
@@ -13,9 +14,9 @@ from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from celery import Celery
-
-import logging
 from celery.utils.log import get_task_logger
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 celery_logger = get_task_logger(__name__)
 
@@ -45,6 +46,7 @@ csrf._exempt_views.add("dash.dash.dispatch")
 
 @login_manager.user_loader
 def load_user(userid):
+    """Load user."""
     from src.environment.user import User
 
     return User.find_by_id(userid)

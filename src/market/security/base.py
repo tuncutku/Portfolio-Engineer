@@ -1,5 +1,6 @@
 """Base for securities."""
 # pylint: disable=no-name-in-module
+
 from abc import abstractmethod, ABC
 from datetime import date
 from pydantic import BaseModel
@@ -15,11 +16,12 @@ class Security(BaseModel, ABC):
 
     @property
     def security_type(self) -> str:
+        """Security type."""
         return self.__class__.__name__
 
     @abstractmethod
     def __repr__(self):
-        """Short description of underlying."""
+        """Security description."""
 
     @property
     def value(self) -> SingleValue:

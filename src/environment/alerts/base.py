@@ -1,8 +1,7 @@
 # pylint: disable=no-member, invalid-name
 
 
-from datetime import datetime
-from typing import TypeVar, List
+from typing import List
 
 from flask import render_template
 

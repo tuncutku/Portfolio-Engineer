@@ -1,9 +1,7 @@
-import click
-import time
-import os
-import pytest
-import pytest_cov
+"""CLI"""
+
 import subprocess
+import click
 from pylint import epylint
 
 from src.environment.user import User
@@ -11,6 +9,8 @@ from src.extensions import db
 
 
 def register_cli(app):
+    """Register command line interface."""
+
     @app.cli.command()
     @click.option(
         "--coverage/--no-coverage", default=False, help="Run tests under code coverage."

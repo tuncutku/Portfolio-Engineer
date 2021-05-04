@@ -1,10 +1,11 @@
+"""Order"""
 # pylint: disable=no-member, too-many-arguments
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from datetime import datetime
-from pandas import DataFrame, Series
+from pandas import Series
 
 from src.extensions import db
 from src.environment.utils.base import BaseModel

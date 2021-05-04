@@ -1,3 +1,6 @@
+"""Create app and celery."""
+# pylint: disable=too-few-public-methods
+
 from flask import Flask, render_template
 from celery import Celery
 from celery.schedules import crontab
@@ -13,7 +16,6 @@ from src.extensions import (
     # cache,
     mail,
     jwt,
-    celery,
 )
 from src.views import (
     user_blueprint,
@@ -25,7 +27,8 @@ from src.views import (
     alert_blueprint,
     home_blueprint,
 )
-from src.dashapp import register_dash_app
+
+# from src.dashapp import register_dash_app
 
 
 def create_app(object_name=None):
@@ -57,13 +60,14 @@ def create_app(object_name=None):
     app.register_blueprint(alert_blueprint)
     app.register_blueprint(home_blueprint)
 
-    register_dash_app(app)
+    # register_dash_app(app)
     make_celery(app)
 
     return app
 
 
 def make_celery(app):
+    """Make celery app."""
     celery = Celery(
         app.import_name,
         broker=app.config["CELERY_BROKER_URL"],
@@ -79,6 +83,8 @@ def make_celery(app):
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):
+        """Form context task object."""
+
         abstract = True
 
         def __call__(self, *args, **kwargs):

@@ -1,5 +1,5 @@
 """Exchange traded fund."""
-
+# pylint: disable=duplicate-code
 
 from src.market.security.base import Security
 

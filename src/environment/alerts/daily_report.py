@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flask import render_template, Markup
+from flask import Markup
 import pandas as pd
 from typing import TYPE_CHECKING
 
