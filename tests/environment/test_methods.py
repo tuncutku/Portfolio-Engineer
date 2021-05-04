@@ -1,8 +1,7 @@
-"""Test environment object methods."""
+"""Test environment object methods"""
 
 from datetime import date, datetime
 from pandas import Series
-from pytest import approx
 
 from src.environment.portfolio import Portfolio
 from src.environment.utils.types import OrderSideType, PortfolioType

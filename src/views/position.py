@@ -1,4 +1,4 @@
-"""Position endpoints."""
+"""Position endpoints"""
 
 from datetime import datetime
 from flask import Blueprint, url_for, render_template, redirect

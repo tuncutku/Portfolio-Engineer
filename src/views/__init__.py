@@ -1,4 +1,4 @@
-"""Blueprints."""
+"""Blueprints"""
 
 from src.views.user import user_blueprint
 from src.views.portfolio import portfolio_blueprint

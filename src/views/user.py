@@ -1,4 +1,4 @@
-"""User endpoints."""
+"""User endpoints"""
 
 # pylint: disable=no-value-for-parameter, bare-except
 import os

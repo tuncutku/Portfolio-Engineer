@@ -1,4 +1,4 @@
-"""Error endpoints."""
+"""Error endpoints"""
 
 # pylint: disable=invalid-name
 

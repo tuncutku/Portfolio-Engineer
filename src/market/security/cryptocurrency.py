@@ -1,1 +1,1 @@
-"""Cryptocurrency security."""
+"""Cryptocurrency security"""

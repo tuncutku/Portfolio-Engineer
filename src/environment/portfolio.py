@@ -1,13 +1,13 @@
 """Portfolio"""
-# pylint: disable=no-member, not-an-iterable
+# pylint: disable=no-member, not-an-iterable, cyclic-import
 
 from datetime import datetime, date
 from typing import List
 
 from src.extensions import db
 
-from src.environment.utils.base import BaseModel
-from src.environment.alerts.daily_report import DailyReport
+from src.environment.base import BaseModel
+from src.environment.alerts import DailyReport
 from src.environment.position import Position
 from src.market import Security, Currency, Symbol
 

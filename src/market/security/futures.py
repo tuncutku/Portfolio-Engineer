@@ -1,1 +1,1 @@
-"""Futures security."""
+"""Futures security"""

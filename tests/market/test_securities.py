@@ -1,4 +1,4 @@
-"""Test securities."""
+"""Test securities"""
 # pylint: disable=unused-argument, no-self-use
 
 

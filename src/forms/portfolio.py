@@ -1,4 +1,4 @@
-"""Portfolio forms."""
+"""Portfolio forms"""
 
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField
@@ -8,9 +8,8 @@ from wtforms.validators import (
 )
 
 from src.environment import Portfolio
-from src.environment.utils.types import PortfolioType
 from src.market import Currency
-
+from src.market.types import PortfolioType
 from src.forms.validators import PortfolioName, Ticker
 
 port_type_choices = [

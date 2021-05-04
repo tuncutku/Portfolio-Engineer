@@ -1,4 +1,4 @@
-"""Test user endpoints."""
+"""Test user endpoints"""
 # pylint: disable=unused-argument
 
 from flask_mail import Mail

@@ -1,11 +1,16 @@
+"""Alert"""
+
+# pylint: disable=no-member, invalid-name
 from __future__ import annotations
+
+from datetime import datetime
+from typing import TYPE_CHECKING
 
 from flask import Markup
 import pandas as pd
-from typing import TYPE_CHECKING
 
-from datetime import datetime
-from src.environment.alerts.base import Alert
+
+from src.environment.base import Alert
 from src.extensions import db
 
 if TYPE_CHECKING:
@@ -13,9 +18,10 @@ if TYPE_CHECKING:
 
 
 class DailyReport(Alert):
+    """Daily Alert."""
 
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
-    portfolio: Portfolio = db.relationship("Portfolio", back_populates="daily_report")
+    portfolio = db.relationship("Portfolio", back_populates="daily_report")
 
     @property
     def subject(self) -> str:
@@ -24,6 +30,10 @@ class DailyReport(Alert):
     @property
     def email_template(self):
         return "email/daily_report.html"
+
+    @property
+    def recipients(self):
+        return
 
     def condition(self) -> bool:
         return True

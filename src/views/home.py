@@ -1,4 +1,4 @@
-"""Home endpoints."""
+"""Home endpoints"""
 
 
 from flask import Blueprint, render_template

@@ -1,12 +1,12 @@
 """Position"""
-# pylint: disable=no-member, not-an-iterable, too-many-arguments
+# pylint: disable=no-member, not-an-iterable, too-many-arguments, cyclic-import
 
 from datetime import datetime, date
 from typing import List
 from pandas import concat, Series
 
 from src.extensions import db
-from src.environment.utils.base import BaseModel
+from src.environment.base import BaseModel
 from src.environment.order import Order
 from src.market import Security, Currency, SingleValue, IndexValue
 

@@ -1,4 +1,4 @@
-"""Create app and celery."""
+"""Create app and celery"""
 # pylint: disable=too-few-public-methods
 
 from flask import Flask, render_template

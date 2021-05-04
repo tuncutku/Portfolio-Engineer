@@ -1,4 +1,4 @@
-"""Test order endpoints."""
+"""Test order endpoints"""
 # pylint: disable=unused-argument
 
 from datetime import datetime

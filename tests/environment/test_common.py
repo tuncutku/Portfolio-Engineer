@@ -1,4 +1,4 @@
-"""Test environment object relations."""
+"""Test environment object relations"""
 # pylint: disable=unused-argument
 
 from datetime import date, datetime

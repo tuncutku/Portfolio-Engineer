@@ -1,4 +1,4 @@
-"""Sample data for tests."""
+"""Sample data for tests"""
 
 from datetime import datetime, date
 from pandas import Series

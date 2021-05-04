@@ -1,4 +1,4 @@
-"""Order forms."""
+"""Order forms"""
 # pylint: disable=arguments-differ, invalid-name, super-with-arguments
 
 
@@ -14,8 +14,8 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Optional
 from src.environment import Order
-from src.environment.utils.types import OrderSideType
 from src.market import Symbol
+from src.market.types import OrderSideType
 from src.forms.validators import Ticker, Location, FutureDate, PositiveFloat
 
 

@@ -1,4 +1,4 @@
-"""Market data types."""
+"""Market data types"""
 
 # pylint: disable=too-few-public-methods, invalid-name
 
@@ -84,6 +84,16 @@ class SecurityType:
     MutualFund = "Canadian or US mutual funds."
     Index = "Stock indices (e.g., Dow Jones)."
     CryptoCurrency = "Crypto currency"
+
+
+class PortfolioType:
+    """List of portfolio types."""
+
+    tfsa = "TFSA"
+    rrsp = "RRSP"
+    margin = "Margin"
+    cash = "Cash"
+    custom = "Custom"
 
 
 YFinanceSecurityTypeMapping = {

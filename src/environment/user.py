@@ -1,11 +1,11 @@
 """User"""
-# pylint: disable=no-member
+# pylint: disable=no-member, cyclic-import
 
 from typing import List
 
 from flask_login import UserMixin
 
-from src.environment.utils.base import BaseModel
+from src.environment.base import BaseModel
 from src.environment.portfolio import Portfolio
 from src.extensions import db, bcrypt
 from src.market import Security, Currency

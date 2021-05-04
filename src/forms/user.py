@@ -1,4 +1,4 @@
-"""User forms."""
+"""User forms"""
 # pylint: disable=arguments-differ, invalid-name, super-with-arguments
 
 from flask_wtf import FlaskForm as Form

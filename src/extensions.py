@@ -1,4 +1,4 @@
-"""Flask extensions."""
+"""Flask extensions"""
 # pylint: disable=protected-access, import-outside-toplevel
 
 import ssl

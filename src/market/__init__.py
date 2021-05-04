@@ -1,4 +1,4 @@
-"""Import market objects."""
+"""Import market objects"""
 
 from src.market.basic import (
     SingleValue,

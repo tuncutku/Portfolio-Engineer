@@ -1,1 +1,1 @@
-"""Option security."""
+"""Option security"""

@@ -1,4 +1,4 @@
-"""Test position endpoints."""
+"""Test position endpoints"""
 # pylint: disable=unused-argument
 
 from src.environment.position import Position

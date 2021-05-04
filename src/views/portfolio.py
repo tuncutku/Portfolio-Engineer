@@ -1,4 +1,4 @@
-"""Portfolio endpoints."""
+"""Portfolio endpoints"""
 
 from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user

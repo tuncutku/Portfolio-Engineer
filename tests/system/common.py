@@ -1,4 +1,4 @@
-"""Functions used in system tests."""
+"""Functions used in system tests"""
 
 
 def templete_used(expected_templates, captured_templates):

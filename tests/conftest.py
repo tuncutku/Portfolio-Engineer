@@ -1,4 +1,4 @@
-"""Test fixtures."""
+"""Test fixtures"""
 # pylint: disable=redefined-outer-name, unused-argument
 
 from collections import namedtuple

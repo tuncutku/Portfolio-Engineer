@@ -1,4 +1,4 @@
-"""Tradable securities."""
+"""Tradable securities"""
 # pylint: disable=duplicate-code
 
 from src.market.security.etf import ETF

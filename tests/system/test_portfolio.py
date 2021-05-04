@@ -1,4 +1,4 @@
-"""Test portfolio endpoints."""
+"""Test portfolio endpoints"""
 # pylint: disable=unused-argument
 
 from src.environment.portfolio import Portfolio

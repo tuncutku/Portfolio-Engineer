@@ -1,4 +1,4 @@
-"""Alert endpoints."""
+"""Alert endpoints"""
 
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required

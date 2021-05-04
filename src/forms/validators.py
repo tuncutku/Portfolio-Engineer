@@ -1,4 +1,4 @@
-"""Form validation."""
+"""Form validation"""
 # pylint: disable=too-few-public-methods
 
 from datetime import datetime

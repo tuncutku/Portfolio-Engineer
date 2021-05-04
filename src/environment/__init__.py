@@ -1,4 +1,4 @@
-"""Environment objects."""
+"""Environment objects"""
 
 from src.environment.user import User
 from src.environment.portfolio import Portfolio

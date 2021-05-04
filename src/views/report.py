@@ -1,4 +1,4 @@
-"""Dashboard endpoints."""
+"""Dashboard endpoints"""
 
 from flask import Blueprint, url_for, redirect
 from flask_login import current_user, login_required

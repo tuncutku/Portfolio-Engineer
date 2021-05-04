@@ -1,4 +1,4 @@
-"""Base for securities."""
+"""Base for securities"""
 # pylint: disable=no-name-in-module
 
 from abc import abstractmethod, ABC

@@ -1,4 +1,4 @@
-"""Objects used to report values."""
+"""Objects used to report values"""
 # pylint: disable=invalid-name
 
 from datetime import date, timedelta

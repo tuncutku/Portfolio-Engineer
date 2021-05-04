@@ -1,4 +1,4 @@
-"""Test basic objects."""
+"""Test basic objects"""
 # pylint: disable=pointless-statement, unused-argument, no-self-use
 
 
