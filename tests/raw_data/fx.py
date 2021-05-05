@@ -1,3 +1,5 @@
+"""Sample FX Index"""
+
 from pandas import Timestamp
 
 fx_index = {
