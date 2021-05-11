@@ -92,6 +92,7 @@ class TestValueIndex:
         assert self.index == IndexValue(result_usd, usd)
         new_index = self.index.to(cad)
         assert new_index == IndexValue(result_cad, cad)
+        assert str(new_index) == "Index CAD: 2020-01-06 / 2020-07-02"
 
     def test_index_sum(self):
         """Test index summation."""
@@ -102,7 +103,6 @@ class TestValueIndex:
         new_index_2 = index_2 + index_1
 
         assert isinstance(new_index_1, IndexValue)
-        assert str(index_1) == "Index USD between 2020-01-06 - 2020-07-02"
         assert new_index_1.currency == Currency("USD")
 
         assert Series.equals(
@@ -129,21 +129,6 @@ class TestValueIndex:
         assert new_index_1.currency == Currency("USD")
         assert new_index_1 == new_index_2
         assert sum(new_index_1.index) == 140
-
-    def test_index_multiply(self):
-        """Test index multiply method."""
-
-        self.index.multiply(
-            Series(
-                [2, 5, 0, 7],
-                index=[
-                    date(2019, 1, 1),
-                    date(2020, 3, 1),
-                    date(2020, 6, 7),
-                    date(2025, 12, 29),
-                ],
-            )
-        )
 
     def test_index_replace(self):
         """Test index replace method."""
@@ -197,7 +182,10 @@ def test_fx(mock_symbol):
     assert usdcad.numeraire_currency == Currency("USD")
 
     assert usdcad.rate == 50
-    assert Series.equals(usdcad.index(start_date, end_date), Series(fx_index))
+    fx_index = usdcad.index(start_date, end_date)
+    assert isinstance(fx_index, Series)
+    assert fx_index.sum() == pytest.approx(353.6957, 5)
+    assert len(fx_index) == 264
 
 
 def test_symbol():

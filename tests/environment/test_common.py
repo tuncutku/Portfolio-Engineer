@@ -3,7 +3,7 @@
 
 from datetime import date, datetime
 
-from src.environment import User, Portfolio, Position, Order
+from src.environment import User, Portfolio, Position, Order, DailyReport
 from tests.sample_data import user_1, portfolio_1, position_1, order_1
 
 
@@ -42,6 +42,11 @@ def test_sample_objects(client, _db, test_user):
     assert not portfolio.primary
     assert isinstance(portfolio.date, date)
     assert repr(portfolio) == "<Portfolio portfolio_1.>"
+
+    # Test alerts.
+    alert = portfolio.daily_report
+    assert alert == DailyReport.find_by_id(1)
+    assert alert.id == 1
 
     # Test positions.
     position = portfolio.positions[0]
