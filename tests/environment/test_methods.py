@@ -2,7 +2,7 @@
 # pylint: disable=unused-argument
 
 from datetime import date, datetime
-from pandas import Series
+from pandas import Series, bdate_range
 from pytest import approx
 
 from src.market.types import OrderSideType, PortfolioType
@@ -65,8 +65,8 @@ def test_position(client, _db, test_user, mock_symbol):
     # Test cumulative quantity
     cum_quantity = pos.cumulative_quantity
     assert isinstance(cum_quantity, Series)
-    assert len(cum_quantity) == 331
-    assert cum_quantity.sum() == 1686.0
+    assert isinstance(cum_quantity.sum(), float)
+    assert all(cum_quantity.index == bdate_range(date(2020, 2, 3), date.today()))
 
     assert Series.equals(
         pos.quantity,
