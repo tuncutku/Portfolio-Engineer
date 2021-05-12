@@ -30,5 +30,4 @@ class Security(BaseModel, ABC):
 
     def index(self, start: date, end: date = date.today()) -> IndexValue:
         """Get index of the underlying."""
-        raw_index = self.symbol.index(start, end)
-        return IndexValue(raw_index.rename(str(self.symbol)), self.asset_currency)
+        return IndexValue(self.symbol.index(start, end), self.asset_currency)

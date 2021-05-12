@@ -37,6 +37,12 @@ class Position(BaseModel):
         return concat([order.quantity_df for order in self.orders]).sort_index()
 
     @property
+    def cumulative_quantity(self) -> Series:
+        """Cumulative quantity of the position."""
+        date_index = self.security.index(self.quantity.index.min().date()).index.index
+        return self.quantity.cumsum().reindex(date_index).fillna(method="ffill")
+
+    @property
     def cost(self) -> Series:
         """Cost of the position including purchase price and fee."""
         return concat([order.cost_df for order in self.orders]).sort_index()
@@ -55,7 +61,7 @@ class Position(BaseModel):
         security_index = self.security.index(start, end)
         security_index.replace(self.cost)
         new_index = security_index.to(currency)
-        return new_index.multiply(self.quantity)
+        return new_index * self.cumulative_quantity
 
     def add_order(
         self, quantity: float, direction: str, cost: float, time: datetime

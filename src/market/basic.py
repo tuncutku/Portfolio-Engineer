@@ -6,7 +6,7 @@ from typing import Union, TypeVar
 from functools import partial, cached_property
 from dataclasses import dataclass
 
-from pandas import Series, DatetimeIndex, concat
+from pandas import Series, DatetimeIndex, concat, bdate_range
 from pandas_datareader.data import DataReader
 from yfinance import Ticker
 from pandas_market_calendars import get_calendar
@@ -61,13 +61,18 @@ class Symbol:
         """Validate if the date is a trading date."""
         start = trade_date - timedelta(3)
         end = trade_date + timedelta(3)
-        index = self.index(start, end)
+        index = self.index(start, end, bday=False)
         return trade_date.strftime("%Y-%m-%d") in index
 
-    def index(self, start: date, end: date) -> Series:
+    def index(
+        self, start: date, end: date, request: str = "Adj Close", bday: bool = True
+    ) -> Series:
         """Underlying index of the symbol."""
         raw_index = provider(name=self.symbol, start=start, end=end)
-        return raw_index["Adj Close"]
+        if bday:
+            date_range = bdate_range(raw_index.index.min(), raw_index.index.max())
+            raw_index = raw_index.reindex(date_range).fillna(method="ffill")
+        return raw_index[request].rename(self.symbol)
 
 
 CurrencyExchangeMap = {
@@ -131,8 +136,7 @@ class FX:
 
     def index(self, start: date, end: date = date.today()) -> Series:
         """FX index."""
-        index = self.symbol.index(start, end)
-        return index.rename(self.symbol.symbol)
+        return self.symbol.index(start, end)
 
 
 @dataclass
@@ -183,7 +187,9 @@ class IndexValue:
     currency: Currency
 
     def __repr__(self):
-        return f"Index {self.currency} between {self.index.index.min()} - {self.index.index.max()}"
+        start = self.index.index.min().date()
+        end = self.index.index.max().date()
+        return f"Index {self.currency}: {start} / {end}"
 
     def __eq__(self: T, other: T):
         if isinstance(other, IndexValue):
@@ -192,7 +198,10 @@ class IndexValue:
             return ccy and idx
         raise ValueError(f"Cannot compare {other}.")
 
-    def __mul__(self, other: Union[float, int]):
+    def __mul__(self, other: Union[float, int, Series]):
+        if isinstance(other, Series):
+            new_index = (self.index * other).dropna()
+            return IndexValue(new_index.rename(self.index.name), self.currency)
         return IndexValue(self.index * other, self.currency)
 
     def __rmul__(self, other):
@@ -217,18 +226,11 @@ class IndexValue:
         if self.currency == currency:
             return IndexValue(self.index, self.currency)
         fx = FX(currency, self.currency)
-        new_index = self.multiply(
-            fx.index(self.index.index.min(), self.index.index.max())
-        )
-        return IndexValue(new_index.index, currency)
+        new_index = self * fx.index(self.index.index.min(), self.index.index.max())
+        return IndexValue(new_index.index.rename(self.index.name), currency)
 
     def replace(self, data: Series) -> None:
         """Replace a value in the index."""
         for idx, value in data.items():
             if idx in self.index:
                 self.index[idx] = value
-
-    def multiply(self: T, series: Series) -> T:
-        """Multiply the index with a Series object."""
-        other = series.reindex(self.index.index).fillna(method="ffill")
-        return IndexValue((self.index * other).dropna(), self.currency)

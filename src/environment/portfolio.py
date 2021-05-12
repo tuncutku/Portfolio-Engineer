@@ -1,15 +1,16 @@
 """Portfolio"""
 # pylint: disable=no-member, not-an-iterable, cyclic-import
 
-from datetime import datetime, date
 from typing import List
+from datetime import datetime, date
+from pandas import concat, DataFrame
 
 from src.extensions import db
 
 from src.environment.base import BaseModel
 from src.environment.alerts import DailyReport
 from src.environment.position import Position
-from src.market import Security, Currency, Symbol
+from src.market import Security, Currency, Symbol, IndexValue
 
 
 class Portfolio(BaseModel):
@@ -44,6 +45,17 @@ class Portfolio(BaseModel):
         """Get the primary portfolio."""
         return cls.query.filter_by(user=user, primary=True).first()
 
+    def position_values(self, start: date, end: date) -> DataFrame:
+        """Get position historical values."""
+
+        return concat(
+            [
+                position.historical_value(self.reporting_currency, start, end).index
+                for position in self.positions
+            ],
+            axis=1,
+        )
+
     @property
     def current_value(self):
         """Current market value of the portfolio."""
@@ -54,17 +66,14 @@ class Portfolio(BaseModel):
             ]
         )
 
-    def historical_value(self, start: date, end: date = None):
+    def historical_value(self, start: date, end: date = None) -> IndexValue:
         """Historical market value of the portfolio."""
-        return sum(
-            [
-                position.historical_value(self.reporting_currency, start, end)
-                for position in self.positions
-            ]
+        return IndexValue(
+            self.position_values(start, end).sum(axis=1), self.reporting_currency
         )
 
     def set_as_primary(self) -> None:
-        """Check if a portfoli is set as primary."""
+        """Check if a portfolio is set as primary."""
         self.primary = True
         db.session.commit()
 
