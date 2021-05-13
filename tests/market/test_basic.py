@@ -8,8 +8,14 @@ from pandas import Series, DatetimeIndex
 import pytest
 
 from src.market import Currency, SingleValue, IndexValue, Symbol, FX
-from tests.sample_data import index_1, index_2, index_3, value_1, value_2, value_3
-from tests.raw_data.fx import fx_index
+from tests.test_data.sample_data import (
+    index_1,
+    index_2,
+    index_3,
+    value_1,
+    value_2,
+    value_3,
+)
 
 start_date = date(2020, 1, 2)
 end_date = date(2021, 1, 4)

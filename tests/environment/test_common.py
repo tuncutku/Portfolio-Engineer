@@ -4,7 +4,7 @@
 from datetime import date, datetime
 
 from src.environment import User, Portfolio, Position, Order, DailyReport
-from tests.sample_data import user_1, portfolio_1, position_1, order_1
+from tests.test_data.sample_data import user_1, portfolio_1, position_1, order_1
 
 
 classes = [User, Portfolio, Position, Order]

@@ -3,7 +3,7 @@
 from pandas import Series, concat
 
 from src.analytics._return import single_periodic_return, weighted_periodic_return
-from tests.raw_data.security import pbw, pbw_daily_cum_return
+from tests.test_data.security import pbw, pbw_daily_cum_return
 
 
 def test_single_return():

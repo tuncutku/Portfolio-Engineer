@@ -1,19 +1,13 @@
 """Test fixtures"""
 # pylint: disable=redefined-outer-name, unused-argument
 
-from collections import namedtuple
 import pytest
-import pytest_mock
-from pandas import Series
-from datetime import date
-
 from flask import template_rendered
 
 from src import create_app
 from src.environment.user import User
 from src.extensions import db
-
-from tests.sample_data import user_1, mock_series
+from tests.test_data.sample_data import user_1
 
 
 @pytest.fixture
@@ -87,6 +81,7 @@ def captured_templates(app):
 
 @pytest.fixture
 def mock_symbol(mocker):
+    """Mock symbol methods."""
 
     mocker.patch(
         "src.market.basic.Symbol.info",

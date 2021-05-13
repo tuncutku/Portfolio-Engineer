@@ -8,7 +8,7 @@ from pytest import approx
 from src.market.types import OrderSideType, PortfolioType
 from src.market import Currency, SingleValue, IndexValue, Symbol, Equity, ETF
 from src.environment import User, Portfolio, Position, Order, DailyReport
-from tests.sample_data import user_1
+from tests.test_data.sample_data import user_1
 
 start_date = date(2020, 1, 1)
 end_date = date(2021, 1, 1)
