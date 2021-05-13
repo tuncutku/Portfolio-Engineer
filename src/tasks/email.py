@@ -1,3 +1,6 @@
+"""Email tasks."""
+# pylint: disable=unused-argument, protected-access
+
 from flask import current_app
 from flask_mail import Message
 

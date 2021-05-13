@@ -1,8 +1,10 @@
 """Equity security"""
 
-from src.market.security.base import Security
+from dataclasses import dataclass
+from src.market.security.utils.base import Security
 
 
+@dataclass
 class Equity(Security):
     """Form equity object."""
 

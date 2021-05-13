@@ -7,11 +7,11 @@ from datetime import datetime, date, timedelta
 from typing import TYPE_CHECKING
 
 from flask import Markup
-import pandas as pd
+from pandas import concat
 
 from src.environment.base import Alert
 from src.extensions import db
-from src.analytics._return import single_periodic_return
+from src.analytics._return import single_periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
@@ -41,17 +41,28 @@ class DailyReport(Alert):
     def generate_email_content(self) -> dict:
 
         end = date.today()
-        start = end - timedelta(32)
+        start = end - timedelta(40)
 
-        historical_index = self.portfolio.historical_value(start, end)
+        security_values = self.portfolio.security_values(start, end)
+        position_values = self.portfolio.position_values(start, end)
+        benchmark_value = self.portfolio.benchmark.index(start, end).index
+
+        # Workaround in case end date data is not valid.
+        for value in [security_values, position_values, benchmark_value]:
+            value.ffill(inplace=True)
 
         periods = [1, 5, 22]
-        columns = ["Daily return", "Weekly return", "Monthly return"]
-        returns = [
-            single_periodic_return(historical_index.index, period).tail(1).T
-            for period in periods
-        ]
-        df = pd.concat(returns, axis=1)
+        columns = ["Daily Return", "Weekly Return", "Monthly Return"]
+
+        sec_ret = list()
+        port_ret = list()
+        bench_ret = list()
+        for period in periods:
+            sec_ret.append(single_periodic_return(security_values, period).tail(1))
+            bench_ret.append(single_periodic_return(benchmark_value, period).tail(1))
+            port_ret.append(weighted_periodic_return(position_values, period).tail(1))
+
+        df = concat([concat(port_ret), concat(bench_ret), concat(sec_ret)], axis=1).T
         df.columns = columns
 
         return {

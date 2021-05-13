@@ -1,11 +1,8 @@
-from flask import current_app, render_template
-from src.extensions import mail, celery_logger, log
+"""Daily tasks."""
+# pylint: disable=unused-argument
 
-from src.extensions import celery
+from src.extensions import celery_logger, celery
 from src.environment.user import User
-
-# from src.environment.alerts import DailyReport
-from flask_mail import Message
 
 
 @celery.task(bind=True, name="daily_report")

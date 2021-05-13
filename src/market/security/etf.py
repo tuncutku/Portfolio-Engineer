@@ -1,9 +1,11 @@
 """Exchange traded fund"""
 # pylint: disable=duplicate-code
 
-from src.market.security.base import Security
+from dataclasses import dataclass
+from src.market.security.utils.base import Security
 
 
+@dataclass
 class ETF(Security):
     """Form exchange traded fund object."""
 

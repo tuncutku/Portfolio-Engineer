@@ -56,6 +56,19 @@ class Portfolio(BaseModel):
             axis=1,
         )
 
+    def security_values(
+        self, start: date, end: date, convert_currency=False
+    ) -> DataFrame:
+        """Get security historical values."""
+
+        security_values = list()
+        for position in self.positions:
+            index = position.security.index(start, end)
+            if convert_currency:
+                index = index.to(self.reporting_currency)
+            security_values.append(index.index)
+        return concat(security_values, axis=1)
+
     @property
     def current_value(self):
         """Current market value of the portfolio."""
@@ -68,9 +81,9 @@ class Portfolio(BaseModel):
 
     def historical_value(self, start: date, end: date = None) -> IndexValue:
         """Historical market value of the portfolio."""
-        return IndexValue(
-            self.position_values(start, end).sum(axis=1), self.reporting_currency
-        )
+        portfolio_value = self.position_values(start, end).sum(axis=1)
+        portfolio_value.rename(self.name, inplace=True)
+        return IndexValue(portfolio_value, self.reporting_currency)
 
     def set_as_primary(self) -> None:
         """Check if a portfolio is set as primary."""

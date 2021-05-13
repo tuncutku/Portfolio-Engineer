@@ -40,7 +40,7 @@ def test_portfolio(client, _db, test_user, mock_symbol):
     assert port.reporting_currency == Currency("CAD")
     assert port.portfolio_type == PortfolioType.rrsp
     assert port.benchmark == Symbol("^GSPC")
-    assert port.current_value == SingleValue(-14600, cad)
+    assert port.current_value == SingleValue(55400, cad)
 
     # Test portfolio historical value
     port_values = port.historical_value(start_date, end_date)
@@ -71,7 +71,7 @@ def test_position(client, _db, test_user, mock_symbol):
     assert Series.equals(
         pos.quantity,
         Series(
-            [10, -2, -14],
+            [10, -2, 14],
             index=[date(2020, 2, 3), date(2020, 7, 1), date(2021, 1, 13)],
         ),
     )
@@ -84,8 +84,8 @@ def test_position(client, _db, test_user, mock_symbol):
     )
 
     # Test current value
-    assert pos.current_value() == SingleValue(-300, usd)
-    assert pos.current_value(cad) == SingleValue(-15000, cad)
+    assert pos.current_value() == SingleValue(1100, usd)
+    assert pos.current_value(cad) == SingleValue(55000, cad)
 
     # Test position historical value
     position_hist_value = pos.historical_value(cad, start_date, end_date)

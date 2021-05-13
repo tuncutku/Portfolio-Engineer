@@ -162,9 +162,6 @@ class TestValueIndex:
 def test_currency():
     """Test currency."""
 
-    with pytest.raises(ValueError):
-        Currency.validate("ZAR")
-
     date_index = usd.calender(start_date, end_date)
 
     assert str(usd) == "USD"
@@ -193,9 +190,6 @@ def test_symbol():
 
     symbol = Symbol("AAPL")
     wrong_symbol = Symbol("1111111111111")
-
-    with pytest.raises(ValueError):
-        Symbol.validate(["AAPL"])
 
     assert str(symbol) == "AAPL"
     assert symbol == "AAPL"
