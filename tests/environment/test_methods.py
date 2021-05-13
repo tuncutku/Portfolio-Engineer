@@ -118,6 +118,6 @@ def test_daily_alert(client, _db, test_user):
     daily_alert = DailyReport.find_by_id(1)
     assert daily_alert.condition
     assert daily_alert.email_template == "email/daily_report.html"
-    assert daily_alert.recipients == user_1["email"]
+    assert daily_alert.recipients[0] == user_1["email"]
 
     content = daily_alert.generate_email_content()

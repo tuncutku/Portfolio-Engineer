@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from datetime import datetime, date, timedelta
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
 from flask import Markup
 from pandas import concat
@@ -28,12 +28,12 @@ class DailyReport(Alert):
         return f"Daily portfolio report {datetime.today().date().strftime('%d %B, %Y')}"
 
     @property
-    def email_template(self):
+    def email_template(self) -> str:
         return "email/daily_report.html"
 
     @property
-    def recipients(self):
-        return self.portfolio.user.email
+    def recipients(self) -> List[str]:
+        return [self.portfolio.user.email]
 
     def condition(self) -> bool:
         return True

@@ -13,9 +13,7 @@ from tests.test_data.sample_data import user_1
 @pytest.fixture
 def app():
     """Create application for the tests."""
-
-    app = create_app("testing")
-    return app
+    return create_app("testing")
 
 
 @pytest.fixture
@@ -44,6 +42,7 @@ def test_user(client):
             port["reporting_currency"],
             port["benchmark"],
         )
+        _port.daily_report.activate()
         for position in port["positions"]:
             _position = _port.add_position(position["security"])
             for order in position["orders"]:

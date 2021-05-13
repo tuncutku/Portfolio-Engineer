@@ -3,14 +3,14 @@
 # pylint: disable=no-member, invalid-name
 
 from datetime import datetime
+from collections import namedtuple
 from typing import TypeVar, List
-
 from flask import render_template
 
 from src.extensions import db
-from src.tasks.email import send_email
 
 T = TypeVar("T", bound="BaseModel")
+Email = namedtuple("Email", ["subject", "recipients", "html"])
 
 
 class BaseModel(db.Model):
@@ -47,6 +47,8 @@ class Alert(BaseModel):
 
     __abstract__ = True
 
+    active = db.Column(db.Boolean(), default=False)
+
     @property
     def recipients(self) -> List[str]:
         """Email recipients."""
@@ -70,11 +72,21 @@ class Alert(BaseModel):
         """Generate contents of the email."""
         raise NotImplementedError
 
-    def send_async_email(self) -> None:
-        """Send asynchronous email."""
+    def activate(self) -> None:
+        """Activate alert."""
+        self.active = True
+        db.session.commit()
+
+    def deactivate(self) -> None:
+        """Deactivate alert."""
+        self.active = False
+        db.session.commit()
+
+    def generate_email(self) -> Email:
+        """Generate email object."""
         contents = self.generate_email_content()
-        send_email.apply_async(
-            subject=self.subject,
-            recipients=self.recipients,
-            html=render_template(self.email_template, **contents),
+        return Email(
+            self.subject,
+            self.recipients,
+            render_template(self.email_template, **contents),
         )

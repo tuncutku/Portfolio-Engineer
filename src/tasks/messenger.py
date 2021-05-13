@@ -13,8 +13,9 @@ def daily_report_task(self):
         for portfolio in user.portfolios:
             alert = portfolio.daily_report
             open_positions = [
-                position for position in portfolio.positions if position.open
+                position for position in portfolio.positions if position.is_open
             ]
-            if alert and alert.is_active and alert.is_triggered and open_positions:
+            if alert.active and alert.condition and open_positions:
                 celery_logger.info("Condition satisfied, preparing email.")
-                send_email.apply_async(args=[alert.generate_email()])
+                email = alert.generate_email()
+                send_email(email.subject, email.recipients, email.html)

@@ -72,6 +72,8 @@ class TestConfig(ConfigBase):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, db_file.name)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    CELERY_ALWAYS_EAGER = True
+
     MAIL_SERVER = "localhost"
     MAIL_PORT = 25
     MAIL_USERNAME = "username"
