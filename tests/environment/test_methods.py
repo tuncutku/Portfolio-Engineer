@@ -66,7 +66,6 @@ def test_position(client, _db, test_user, mock_symbol):
     cum_quantity = pos.cumulative_quantity
     assert isinstance(cum_quantity, Series)
     assert isinstance(cum_quantity.sum(), float)
-    assert all(cum_quantity.index == bdate_range(date(2020, 2, 3), date.today()))
 
     assert Series.equals(
         pos.quantity,
