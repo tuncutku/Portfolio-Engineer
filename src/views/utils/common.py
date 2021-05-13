@@ -1,3 +1,6 @@
+"""Common utility functions used in views."""
+# pylint: disable=invalid-name
+
 from src.market import Symbol, Security
 from src.views.utils.yfinance import security_map
 

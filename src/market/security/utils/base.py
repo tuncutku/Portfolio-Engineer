@@ -3,12 +3,15 @@
 
 from abc import abstractmethod, ABC
 from datetime import date
-from pydantic import BaseModel
+from dataclasses import dataclass
 
-from src.market.basic import IndexValue, SingleValue, Currency, Symbol
+from src.market.basic import Currency
+from src.market.symbol import Symbol
+from src.market.security.utils.context import SingleValue, IndexValue
 
 
-class Security(BaseModel, ABC):
+@dataclass
+class Security(ABC):
     """Base class for securities."""
 
     asset_currency: Currency

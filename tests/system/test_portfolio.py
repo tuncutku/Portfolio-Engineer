@@ -3,7 +3,7 @@
 
 from src.environment.portfolio import Portfolio
 from src.market import Currency
-from tests.sample_data import PortfolioType
+from tests.test_data.sample_data import PortfolioType
 
 from tests.system.common import templete_used
 

@@ -8,7 +8,7 @@ from pytest import approx
 from src.market.types import OrderSideType, PortfolioType
 from src.market import Currency, SingleValue, IndexValue, Symbol, Equity, ETF
 from src.environment import User, Portfolio, Position, Order, DailyReport
-from tests.sample_data import user_1
+from tests.test_data.sample_data import user_1
 
 start_date = date(2020, 1, 1)
 end_date = date(2021, 1, 1)
@@ -40,7 +40,7 @@ def test_portfolio(client, _db, test_user, mock_symbol):
     assert port.reporting_currency == Currency("CAD")
     assert port.portfolio_type == PortfolioType.rrsp
     assert port.benchmark == Symbol("^GSPC")
-    assert port.current_value == SingleValue(-14600, cad)
+    assert port.current_value == SingleValue(55400, cad)
 
     # Test portfolio historical value
     port_values = port.historical_value(start_date, end_date)
@@ -66,12 +66,11 @@ def test_position(client, _db, test_user, mock_symbol):
     cum_quantity = pos.cumulative_quantity
     assert isinstance(cum_quantity, Series)
     assert isinstance(cum_quantity.sum(), float)
-    assert all(cum_quantity.index == bdate_range(date(2020, 2, 3), date.today()))
 
     assert Series.equals(
         pos.quantity,
         Series(
-            [10, -2, -14],
+            [10, -2, 14],
             index=[date(2020, 2, 3), date(2020, 7, 1), date(2021, 1, 13)],
         ),
     )
@@ -84,8 +83,8 @@ def test_position(client, _db, test_user, mock_symbol):
     )
 
     # Test current value
-    assert pos.current_value() == SingleValue(-300, usd)
-    assert pos.current_value(cad) == SingleValue(-15000, cad)
+    assert pos.current_value() == SingleValue(1100, usd)
+    assert pos.current_value(cad) == SingleValue(55000, cad)
 
     # Test position historical value
     position_hist_value = pos.historical_value(cad, start_date, end_date)
@@ -118,6 +117,6 @@ def test_daily_alert(client, _db, test_user):
     daily_alert = DailyReport.find_by_id(1)
     assert daily_alert.condition
     assert daily_alert.email_template == "email/daily_report.html"
-    assert daily_alert.recipients == user_1["email"]
+    assert daily_alert.recipients[0] == user_1["email"]
 
     content = daily_alert.generate_email_content()

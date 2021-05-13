@@ -10,8 +10,8 @@ from src.market import Equity, ETF, Currency, Symbol, Security, SingleValue, Ind
 start_date = date(2020, 1, 4)
 
 currency = Currency("USD")
-etf = ETF(asset_currency=currency, symbol=Symbol("PBW"))
-equity = Equity(asset_currency=currency, symbol=Symbol("AAPL"))
+etf = ETF(currency, Symbol("PBW"))
+equity = Equity(currency, Symbol("AAPL"))
 
 
 @pytest.mark.parametrize(

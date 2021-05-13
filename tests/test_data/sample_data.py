@@ -1,6 +1,7 @@
 """Sample data for tests"""
 
 from datetime import datetime, date
+from src.market.symbol import Symbol
 from pandas import Series
 import pytz
 
@@ -16,6 +17,9 @@ from src.market.types import PortfolioType, OrderSideType
 
 ######## Environment data ########
 
+cad = Currency("CAD")
+usd = Currency("USD")
+
 order_1 = {
     "quantity": 10,
     "direction": OrderSideType.Buy,
@@ -30,7 +34,7 @@ order_2 = {
 }
 order_3 = {
     "quantity": 14,
-    "direction": OrderSideType.Sell,
+    "direction": OrderSideType.Buy,
     "cost": 126,
     "time": datetime(2021, 1, 13, tzinfo=pytz.utc),
 }
@@ -53,18 +57,18 @@ order_6 = {
     "time": datetime(2020, 9, 10, tzinfo=pytz.utc),
 }
 position_1 = {
-    "security": Equity(asset_currency="USD", symbol="AAPL"),
+    "security": Equity(usd, Symbol("AAPL")),
     "orders": [order_1, order_2, order_3],
 }
 position_2 = {
-    "security": Equity(asset_currency="CAD", symbol="RY.TO"),
+    "security": Equity(cad, Symbol("RY.TO")),
     "orders": [order_4, order_5, order_6],
 }
 portfolio_1 = {
     "name": "portfolio_1",
     "portfolio_type": PortfolioType.margin,
-    "reporting_currency": Currency("USD"),
-    "benchmark": Index(asset_currency="USD", symbol="^GSPC"),
+    "reporting_currency": usd,
+    "benchmark": Index(usd, Symbol("^GSPC")),
     "positions": [position_1, position_2],
 }
 

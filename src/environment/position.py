@@ -24,7 +24,7 @@ class Position(BaseModel):
     )
 
     def __repr__(self):
-        return f"<Position {self.security}.>"
+        return f"<Position {self.security.symbol.symbol}.>"
 
     @property
     def is_open(self) -> bool:

@@ -6,7 +6,7 @@ from src.environment.user import User
 from src.views.user import generate_confirmation_token
 
 from tests.system.common import templete_used
-from tests.sample_data import user_1
+from tests.test_data.sample_data import user_1
 
 
 def test_home(client, _db, captured_templates):

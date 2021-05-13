@@ -4,7 +4,7 @@
 from datetime import date, datetime
 
 from src.environment import User, Portfolio, Position, Order, DailyReport
-from tests.sample_data import user_1, portfolio_1, position_1, order_1
+from tests.test_data.sample_data import user_1, portfolio_1, position_1, order_1
 
 
 classes = [User, Portfolio, Position, Order]
@@ -53,7 +53,7 @@ def test_sample_objects(client, _db, test_user):
     assert position == Position.find_by_id(1)
     assert position.id == 1
     assert position.security == position_1["security"]
-    assert repr(position) == "<Position asset_currency=USD symbol=AAPL.>"
+    assert repr(position) == "<Position AAPL.>"
 
     # Test orders.
     order = position.orders[0]
