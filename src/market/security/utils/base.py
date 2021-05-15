@@ -17,6 +17,11 @@ class Security(ABC):
     asset_currency: Currency
     symbol: Symbol
 
+    # @classmethod
+    # @abstractmethod
+    # def generate_by_info(cls, info):
+    #     """Get security by symbol info."""
+
     @property
     def security_type(self) -> str:
         """Security type."""

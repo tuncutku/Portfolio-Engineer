@@ -2,12 +2,12 @@
 # pylint: disable=unused-argument
 
 from datetime import date, datetime
-from pandas import Series, bdate_range
+from pandas import Series
 from pytest import approx
 
 from src.market.types import OrderSideType, PortfolioType
-from src.market import Currency, SingleValue, IndexValue, Symbol, Equity, ETF
-from src.environment import User, Portfolio, Position, Order, DailyReport
+from src.market import Currency, Symbol, Equity, ETF, SingleValue, IndexValue
+from src.environment import User, Portfolio, Position, Order, DailyReport, PriceAlert
 from tests.test_data.sample_data import user_1
 
 start_date = date(2020, 1, 1)
@@ -16,14 +16,14 @@ cad = Currency("CAD")
 usd = Currency("USD")
 
 
-def test_user(client, _db, test_user):
+def test_user_(client, _db, test_user: User):
     """Unit test for user methods."""
 
     assert test_user == User.find_by_email(user_1["email"])
     assert test_user.check_password(user_1["password"]) is True
 
 
-def test_portfolio(client, _db, test_user, mock_symbol):
+def test_portfolio(client, _db, test_user: User, mock_symbol):
     """Unit test for portfolio methods."""
 
     port = test_user.portfolios[0]
@@ -111,12 +111,28 @@ def test_order(client, _db, test_user):
     assert order.time == datetime(2020, 1, 1)
 
 
-def test_daily_alert(client, _db, test_user):
+def test_daily_report_alert(client, _db, test_user):
     """Unit test for daily alert methods."""
 
     daily_alert = DailyReport.find_by_id(1)
-    assert daily_alert.condition
+    assert daily_alert.condition()
     assert daily_alert.email_template == "email/daily_report.html"
     assert daily_alert.recipients[0] == user_1["email"]
 
     content = daily_alert.generate_email_content()
+
+
+def test_price_alert(client, _db, test_user):
+    """Unit test for daily alert methods."""
+
+    price_alert = PriceAlert.find_by_id(1)
+    assert price_alert.condition()
+    assert price_alert.email_template == "email/price_alert.html"
+    assert price_alert.recipients[0] == user_1["email"]
+    assert price_alert.count == 0
+
+    content = price_alert.generate_email_content()
+    assert str(content["Symbol"]) == "AAPL"
+    assert str(content["Signal"]) == "Upper than: 10"
+    assert isinstance(content["Triggered time"], str)
+    assert isinstance(content["Current price"], SingleValue)

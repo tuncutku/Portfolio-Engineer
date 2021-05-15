@@ -7,8 +7,10 @@ from flask_login import UserMixin
 
 from src.environment.base import BaseModel
 from src.environment.portfolio import Portfolio
+from src.environment.alerts import PriceAlert
 from src.extensions import db, bcrypt
 from src.market import Security, Currency
+from src.market.signal import MarketSignal
 
 
 class User(BaseModel, UserMixin):
@@ -24,8 +26,17 @@ class User(BaseModel, UserMixin):
         "Portfolio", backref="user", cascade="all, delete-orphan"
     )
 
+    price_alerts: List[PriceAlert] = db.relationship(
+        "PriceAlert", back_populates="user", cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<User {self.email}.>"
+
+    @classmethod
+    def find_by_email(cls, email: str):
+        """Find user by email."""
+        return cls.query.filter_by(email=email).first()
 
     def set_password(self, password):
         """Set password for new user."""
@@ -60,7 +71,10 @@ class User(BaseModel, UserMixin):
         portfolio.save_to_db()
         return portfolio
 
-    @classmethod
-    def find_by_email(cls, email: str):
-        """Find user by email."""
-        return cls.query.filter_by(email=email).first()
+    def add_price_alert(
+        self, security: Security, signal: MarketSignal, count: int = 1
+    ) -> PriceAlert:
+        """Add new price alert."""
+        alert = PriceAlert(security=security, signal=signal, count=count, user=self)
+        alert.save_to_db()
+        return alert

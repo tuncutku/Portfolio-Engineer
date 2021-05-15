@@ -1,24 +1,23 @@
 """Sample data for tests"""
 
 from datetime import datetime, date
-from src.market.symbol import Symbol
-from pandas import Series
 import pytz
+from pandas import Series
 
-from src.market import (
-    Currency,
-    Equity,
-    Index,
-    IndexValue,
-    SingleValue,
-)
+from src.market import Currency, Equity, Index, IndexValue, SingleValue, Symbol
 from src.market.types import PortfolioType, OrderSideType
+from src.market.signal import Up
 
-
-######## Environment data ########
+up = Up(10)
 
 cad = Currency("CAD")
 usd = Currency("USD")
+
+aapl = Equity(usd, Symbol("AAPL"))
+ry_to = Equity(cad, Symbol("RY.TO"))
+gspc = Index(usd, Symbol("^GSPC"))
+
+######## Environment data ########
 
 order_1 = {
     "quantity": 10,
@@ -57,18 +56,18 @@ order_6 = {
     "time": datetime(2020, 9, 10, tzinfo=pytz.utc),
 }
 position_1 = {
-    "security": Equity(usd, Symbol("AAPL")),
+    "security": aapl,
     "orders": [order_1, order_2, order_3],
 }
 position_2 = {
-    "security": Equity(cad, Symbol("RY.TO")),
+    "security": ry_to,
     "orders": [order_4, order_5, order_6],
 }
 portfolio_1 = {
     "name": "portfolio_1",
     "portfolio_type": PortfolioType.margin,
     "reporting_currency": usd,
-    "benchmark": Index(usd, Symbol("^GSPC")),
+    "benchmark": gspc,
     "positions": [position_1, position_2],
 }
 
@@ -81,9 +80,9 @@ user_1 = {
 
 ######## Market data ########
 
-value_1 = SingleValue(55, Currency("USD"))
-value_2 = SingleValue(10, Currency("USD"))
-value_3 = SingleValue(-10, Currency("CAD"))
+value_1 = SingleValue(55, usd)
+value_2 = SingleValue(10, usd)
+value_3 = SingleValue(-10, cad)
 
 index_1 = IndexValue(
     Series(
@@ -95,7 +94,7 @@ index_1 = IndexValue(
             date(2020, 7, 2),
         ],
     ),
-    Currency("USD"),
+    usd,
 )
 index_2 = IndexValue(
     Series(
@@ -107,9 +106,9 @@ index_2 = IndexValue(
             date(2020, 7, 30),
         ],
     ),
-    Currency("USD"),
+    usd,
 )
-index_3 = IndexValue(Series([-15, 14, -56, 16]), Currency("CAD"))
+index_3 = IndexValue(Series([-15, 14, -56, 16]), cad)
 
 mock_series = Series(
     [50, 51, 52, 53, 54, 55, 56],

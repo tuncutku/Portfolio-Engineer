@@ -1,4 +1,4 @@
-"""Alert"""
+"""Periodic Alerts"""
 
 # pylint: disable=no-member, invalid-name
 from __future__ import annotations
@@ -11,10 +11,13 @@ from pandas import concat
 
 from src.environment.base import Alert
 from src.extensions import db
+from src.market import Security
+from src.market.signal import MarketSignal
 from src.analytics._return import single_periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
+    from src.environment.user import User
 
 
 class DailyReport(Alert):
@@ -78,11 +81,49 @@ class DailyReport(Alert):
         }
 
 
-# class PriceAlert(AlertBase):
-#     pass
+class PriceAlert(Alert):
+    """Price Alert."""
+
+    security: Security = db.Column(db.PickleType(), nullable=False)
+    signal: MarketSignal = db.Column(db.PickleType(), nullable=False)
+    count: int = db.Column(db.Integer(), default=1)
+    user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user: User = db.relationship("User", back_populates="price_alerts")
+
+    @property
+    def subject(self) -> str:
+        return f"Price alert for {self.security.symbol}"
+
+    @property
+    def email_template(self) -> str:
+        return "email/price_alert.html"
+
+    @property
+    def recipients(self) -> List[str]:
+        return [self.user.email]
+
+    def condition(self) -> bool:
+        current_value = self.security.value
+        check = self.signal.check(current_value.value)
+        if check:
+            self.count = self.count - 1
+            db.session.commit()
+        return check
+
+    def generate_email_content(self) -> dict:
+        date_time = datetime.now()
+        return {
+            "Symbol": self.security.symbol,
+            "Signal": self.signal,
+            "Triggered time": date_time.strftime("%d %B, %Y, %H:%M"),
+            "Current price": self.security.value,
+        }
 
 
 # class ReturnAlert(AlertBase):
+#     pass
+
+# class MovingAverage(AlertBase):
 #     pass
 
 

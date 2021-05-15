@@ -30,12 +30,12 @@ class TestSingleValue:
 
     def test_value(self, mock_symbol):
         """Test basic value."""
-        assert self.value.value == 55
-        assert self.value.currency == Currency("USD")
 
-        new_value = self.value.to(Currency("CAD"))
-        assert new_value.currency == Currency("CAD")
-        assert new_value.value == 2750
+        assert self.value == SingleValue(55, usd)
+        new_value = self.value.to(cad)
+        assert new_value == SingleValue(2750, cad)
+        self.value.round(5)
+        assert self.value == SingleValue(55, usd)
 
     def test_value_sum(self):
         """Test value summation."""
@@ -45,9 +45,7 @@ class TestSingleValue:
 
         new_value = value_1 + value_2
 
-        assert isinstance(new_value, SingleValue)
-        assert new_value.value == 65
-        assert new_value.currency == Currency("USD")
+        assert new_value == SingleValue(65, usd)
         assert value_1 + value_2 == value_2 + value_1
         assert str(new_value) == "65 USD"
 
@@ -57,10 +55,7 @@ class TestSingleValue:
         new_value_1 = self.value * 2
         new_value_2 = 2 * self.value
         assert new_value_1 == new_value_2
-
-        assert isinstance(new_value_1, SingleValue)
-        assert new_value_1.value == 110
-        assert new_value_1.currency == Currency("USD")
+        assert new_value_1 == SingleValue(110, usd)
 
 
 class TestValueIndex:
@@ -100,6 +95,9 @@ class TestValueIndex:
         assert new_index == IndexValue(result_cad, cad)
         assert str(new_index) == "Index CAD: 2020-01-06 / 2020-07-02"
 
+        self.index.round(5)
+        assert self.index == IndexValue(result_usd, usd)
+
     def test_index_sum(self):
         """Test index summation."""
         with pytest.raises(ValueError):
@@ -132,7 +130,7 @@ class TestValueIndex:
 
         new_index_1 = index_1 * 2
         new_index_2 = 2 * index_1
-        assert new_index_1.currency == Currency("USD")
+        assert new_index_1.currency == usd
         assert new_index_1 == new_index_2
         assert sum(new_index_1.index) == 140
 
@@ -179,10 +177,10 @@ def test_currency():
 def test_fx(mock_symbol):
     """Test fx index."""
 
-    usdcad = FX(Currency("CAD"), Currency("USD"))
+    usdcad = FX(cad, usd)
     assert usdcad.symbol == Symbol("USDCAD=X")
-    assert usdcad.asset_currency == Currency("CAD")
-    assert usdcad.numeraire_currency == Currency("USD")
+    assert usdcad.asset_currency == cad
+    assert usdcad.numeraire_currency == usd
 
     assert usdcad.rate == 50
     fx_index = usdcad.index(start_date, end_date)
