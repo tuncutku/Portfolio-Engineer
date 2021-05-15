@@ -68,6 +68,8 @@ class DailyReport(Alert):
         df = concat([concat(port_ret), concat(bench_ret), concat(sec_ret)], axis=1).T
         df.columns = columns
 
+        portfolio_value = self.portfolio.current_value
+        portfolio_value.round(2)
         return {
             "Main": {
                 "Portfolio name": self.portfolio.name,
@@ -75,7 +77,7 @@ class DailyReport(Alert):
                 "Creation date": self.portfolio.date.strftime("%d %B, %Y"),
                 "Benchmark": self.portfolio.benchmark,
                 "Reporting currency": self.portfolio.reporting_currency,
-                "Current value": self.portfolio.current_value,
+                "Current market value": portfolio_value,
             },
             "Return_table": Markup(df.to_html()),
         }

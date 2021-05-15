@@ -8,7 +8,7 @@ from pytest import approx
 from src.market.types import OrderSideType, PortfolioType
 from src.market import Currency, Symbol, Equity, ETF, SingleValue, IndexValue
 from src.environment import User, Portfolio, Position, Order, DailyReport, PriceAlert
-from tests.test_data.sample_data import user_1
+from tests.test_data import sample_data
 
 start_date = date(2020, 1, 1)
 end_date = date(2021, 1, 1)
@@ -19,8 +19,8 @@ usd = Currency("USD")
 def test_user_(client, _db, test_user: User):
     """Unit test for user methods."""
 
-    assert test_user == User.find_by_email(user_1["email"])
-    assert test_user.check_password(user_1["password"]) is True
+    assert test_user == User.find_by_email(sample_data.user_1["email"])
+    assert test_user.check_password(sample_data.user_1["password"]) is True
 
 
 def test_portfolio(client, _db, test_user: User, mock_symbol):
@@ -117,9 +117,16 @@ def test_daily_report_alert(client, _db, test_user):
     daily_alert = DailyReport.find_by_id(1)
     assert daily_alert.condition()
     assert daily_alert.email_template == "email/daily_report.html"
-    assert daily_alert.recipients[0] == user_1["email"]
+    assert daily_alert.recipients[0] == sample_data.user_1["email"]
 
     content = daily_alert.generate_email_content()
+
+    assert content["Main"]["Portfolio name"] == "portfolio_1"
+    assert content["Main"]["Portfolio type"] == "Margin"
+    assert content["Main"]["Creation date"] == "15 May, 2021"
+    assert content["Main"]["Benchmark"] == sample_data.gspc
+    assert content["Main"]["Reporting currency"] == sample_data.usd
+    assert isinstance(content["Main"]["Current market value"], SingleValue)
 
 
 def test_price_alert(client, _db, test_user):
@@ -128,7 +135,7 @@ def test_price_alert(client, _db, test_user):
     price_alert = PriceAlert.find_by_id(1)
     assert price_alert.condition()
     assert price_alert.email_template == "email/price_alert.html"
-    assert price_alert.recipients[0] == user_1["email"]
+    assert price_alert.recipients[0] == sample_data.user_1["email"]
     assert price_alert.count == 0
 
     content = price_alert.generate_email_content()
