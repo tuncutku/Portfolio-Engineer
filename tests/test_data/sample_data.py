@@ -6,7 +6,7 @@ from pandas import Series
 
 from src.market import Currency, Equity, Index, IndexValue, SingleValue, Symbol
 from src.market.types import PortfolioType, OrderSideType
-from src.market.signal import Up
+from src.market.signal import Down, Up
 
 up = Up(10)
 

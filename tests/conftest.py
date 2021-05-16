@@ -36,7 +36,8 @@ def test_user(client) -> User:
     _user.confirm_user()
 
     # Add alerts
-    _user.add_price_alert(sample_data.aapl, sample_data.up)
+    price_alert = _user.add_price_alert(sample_data.aapl, sample_data.up)
+    price_alert.activate()
 
     for port in sample_data.user_1["portfolios"]:
         _port = _user.add_portfolio(

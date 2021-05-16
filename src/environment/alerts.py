@@ -88,7 +88,7 @@ class PriceAlert(Alert):
 
     security: Security = db.Column(db.PickleType(), nullable=False)
     signal: MarketSignal = db.Column(db.PickleType(), nullable=False)
-    count: int = db.Column(db.Integer(), default=1)
+
     user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user: User = db.relationship("User", back_populates="price_alerts")
 
@@ -106,19 +106,15 @@ class PriceAlert(Alert):
 
     def condition(self) -> bool:
         current_value = self.security.value
-        check = self.signal.check(current_value.value)
-        if check:
-            self.count = self.count - 1
-            db.session.commit()
-        return check
+        return self.signal.check(current_value.value)
 
     def generate_email_content(self) -> dict:
         date_time = datetime.now()
         return {
-            "Symbol": self.security.symbol,
-            "Signal": self.signal,
-            "Triggered time": date_time.strftime("%d %B, %Y, %H:%M"),
-            "Current price": self.security.value,
+            "symbol": self.security.symbol,
+            "signal": self.signal,
+            "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
+            "currrnt_price": self.security.value,
         }
 
 

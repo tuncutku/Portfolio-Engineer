@@ -71,10 +71,8 @@ class User(BaseModel, UserMixin):
         portfolio.save_to_db()
         return portfolio
 
-    def add_price_alert(
-        self, security: Security, signal: MarketSignal, count: int = 1
-    ) -> PriceAlert:
+    def add_price_alert(self, security: Security, signal: MarketSignal) -> PriceAlert:
         """Add new price alert."""
-        alert = PriceAlert(security=security, signal=signal, count=count, user=self)
+        alert = PriceAlert(security=security, signal=signal, user=self)
         alert.save_to_db()
         return alert

@@ -115,6 +115,10 @@ class Portfolio(BaseModel):
                 return position
         return None
 
+    def get_open_positions(self) -> List[Position]:
+        """Get open positions."""
+        return [position for position in self.positions if position.is_open]
+
     def add_position(self, security: Security) -> Position:
         """Add new position."""
         position = Position(security=security, portfolio=self)

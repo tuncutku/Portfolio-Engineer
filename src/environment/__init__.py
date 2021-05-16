@@ -8,7 +8,7 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.alerts import DailyReport, PriceAlert
+from src.environment.alerts import DailyReport, PriceAlert, Alert
 from src.extensions import db
 
 

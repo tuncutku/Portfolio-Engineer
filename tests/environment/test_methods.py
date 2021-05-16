@@ -136,7 +136,6 @@ def test_price_alert(client, _db, test_user):
     assert price_alert.condition()
     assert price_alert.email_template == "email/price_alert.html"
     assert price_alert.recipients[0] == sample_data.user_1["email"]
-    assert price_alert.count == 0
 
     content = price_alert.generate_email_content()
     assert str(content["Symbol"]) == "AAPL"
