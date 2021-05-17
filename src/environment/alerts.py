@@ -114,7 +114,7 @@ class PriceAlert(Alert):
             "symbol": self.security.symbol,
             "signal": self.signal,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
-            "currrnt_price": self.security.value,
+            "current_price": self.security.value,
         }
 
 

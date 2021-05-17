@@ -1,7 +1,9 @@
 """Create app and celery"""
 # pylint: disable=too-few-public-methods
 
-from flask import Flask, render_template
+from flask import Flask, render_template, has_app_context
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 from celery import Celery
 from celery.schedules import crontab
 
@@ -76,9 +78,13 @@ def make_celery(app):
     celery.conf.update(app.config)
     celery.conf.beat_schedule = {
         "periodic_task-every-minute": {
-            "task": "daily_report_task",
+            "task": "daily_report",
             "schedule": crontab(minute="*"),
-        }
+        },
+        "periodic_task_2-every-minute": {
+            "task": "price_alert",
+            "schedule": crontab(minute="*"),
+        },
     }
     TaskBase = celery.Task
 
@@ -88,8 +94,11 @@ def make_celery(app):
         abstract = True
 
         def __call__(self, *args, **kwargs):
-            with app.app_context():
+            if has_app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
+            else:
+                with app.app_context():
+                    return TaskBase.__call__(self, *args, **kwargs)
 
     celery.Task = ContextTask
 

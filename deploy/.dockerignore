@@ -1,8 +1,0 @@
-.vscode
-__pycache__/
-env
-.DS_store
-database.db
-
-.coverage
-cov.xml

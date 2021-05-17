@@ -72,12 +72,14 @@ class Portfolio(BaseModel):
     @property
     def current_value(self):
         """Current market value of the portfolio."""
-        return sum(
+        value = sum(
             [
                 position.current_value(self.reporting_currency)
                 for position in self.positions
             ]
         )
+        value.round(3)
+        return value
 
     def historical_value(self, start: date, end: date = None) -> IndexValue:
         """Historical market value of the portfolio."""

@@ -1,10 +1,14 @@
 """CLI"""
 
+from datetime import datetime
 import subprocess
 import click
 from pylint import epylint
 
-from src.environment.user import User
+from src.environment import User
+from src.market import Equity, Symbol, Currency
+from src.market.signal import Up
+from src.market.types import PortfolioType, OrderSideType
 from src.extensions import db
 
 
@@ -44,6 +48,17 @@ def register_cli(app):
         user.save_to_db()
         user.set_password("1234")
         user.confirm_user()
+
+        aapl = Equity(Currency("USD"), Symbol("AAPL"))
+
+        alert = user.add_price_alert(aapl, Up(20))
+
+        portfolio = user.add_portfolio("T", PortfolioType.custom, Currency("USD"), aapl)
+        position = portfolio.add_position(aapl)
+        position.add_order(10, OrderSideType.Buy, 120, datetime(2020, 4, 1))
+
+        portfolio.daily_report.activate()
+        alert.activate()
 
     @app.cli.command("clear_database")
     def clear_database():

@@ -2,6 +2,7 @@
 # pylint: disable=unused-argument
 
 from datetime import date, datetime
+from re import S
 from pandas import Series
 from pytest import approx
 
@@ -123,9 +124,9 @@ def test_daily_report_alert(client, _db, test_user):
 
     assert content["Main"]["Portfolio name"] == "portfolio_1"
     assert content["Main"]["Portfolio type"] == "Margin"
-    assert content["Main"]["Creation date"] == "15 May, 2021"
     assert content["Main"]["Benchmark"] == sample_data.gspc
     assert content["Main"]["Reporting currency"] == sample_data.usd
+    assert isinstance(content["Main"]["Creation date"], str)
     assert isinstance(content["Main"]["Current market value"], SingleValue)
 
 
@@ -138,7 +139,10 @@ def test_price_alert(client, _db, test_user):
     assert price_alert.recipients[0] == sample_data.user_1["email"]
 
     content = price_alert.generate_email_content()
-    assert str(content["Symbol"]) == "AAPL"
-    assert str(content["Signal"]) == "Upper than: 10"
-    assert isinstance(content["Triggered time"], str)
-    assert isinstance(content["Current price"], SingleValue)
+    assert str(content["symbol"]) == "AAPL"
+    assert str(content["signal"]) == "Upper than: 10"
+    assert isinstance(content["triggered_time"], str)
+    assert isinstance(content["current_price"], SingleValue)
+
+    price_alert.deactivate()
+    assert not price_alert.active
