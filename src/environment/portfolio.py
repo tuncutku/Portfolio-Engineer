@@ -72,12 +72,14 @@ class Portfolio(BaseModel):
     @property
     def current_value(self):
         """Current market value of the portfolio."""
-        return sum(
+        value = sum(
             [
                 position.current_value(self.reporting_currency)
                 for position in self.positions
             ]
         )
+        value.round(3)
+        return value
 
     def historical_value(self, start: date, end: date = None) -> IndexValue:
         """Historical market value of the portfolio."""
@@ -114,6 +116,10 @@ class Portfolio(BaseModel):
             if position.security.symbol == symbol:
                 return position
         return None
+
+    def get_open_positions(self) -> List[Position]:
+        """Get open positions."""
+        return [position for position in self.positions if position.is_open]
 
     def add_position(self, security: Security) -> Position:
         """Add new position."""

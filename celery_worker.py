@@ -1,3 +1,11 @@
+"""
+Run using the command:
+
+celery -A celery_worker.celery worker --loglevel=info
+celery -A celery_worker.celery beat --loglevel=info
+
+"""
+
 import os
 from dotenv import load_dotenv
 

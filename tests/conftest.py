@@ -5,9 +5,9 @@ import pytest
 from flask import template_rendered
 
 from src import create_app
-from src.environment.user import User
+from src.environment import User
 from src.extensions import db
-from tests.test_data.sample_data import user_1
+from tests.test_data import sample_data
 
 
 @pytest.fixture
@@ -27,15 +27,19 @@ def _db(client):
 
 
 @pytest.fixture
-def test_user(client):
+def test_user(client) -> User:
     """Provides sample user, portfolio, position and order."""
 
-    _user = User(email=user_1["email"])
+    _user = User(email=sample_data.user_1["email"])
     _user.save_to_db()
-    _user.set_password(user_1["password"])
+    _user.set_password(sample_data.user_1["password"])
     _user.confirm_user()
 
-    for port in user_1["portfolios"]:
+    # Add alerts
+    price_alert = _user.add_price_alert(sample_data.aapl, sample_data.up)
+    price_alert.activate()
+
+    for port in sample_data.user_1["portfolios"]:
         _port = _user.add_portfolio(
             port["name"],
             port["portfolio_type"],
@@ -58,7 +62,10 @@ def login(client):
     """Log in test user for URL tests."""
 
     client.post(
-        "/users/login", data=dict(email=user_1["email"], password=user_1["password"])
+        "/users/login",
+        data=dict(
+            email=sample_data.user_1["email"], password=sample_data.user_1["password"]
+        ),
     )
 
 

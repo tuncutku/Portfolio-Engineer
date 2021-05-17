@@ -13,6 +13,12 @@ services:
 
   app:
     build: .
+    environment:
+      FLASK_CONFIG: development
+      SECRET_KEY: ${SECRET_KEY}
+      SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
+      MAIL_SERVER_EMAIL: ${MAIL_SERVER_EMAIL}
+      MAIL_SERVER_PASSWORD: ${MAIL_SERVER_PASSWORD}
     container_name: app
     hostname: app
     depends_on:
@@ -28,6 +34,12 @@ services:
 
   worker:
     image: app-image
+    environment:
+      FLASK_CONFIG: development
+      SECRET_KEY: ${SECRET_KEY}
+      SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
+      MAIL_SERVER_EMAIL: ${MAIL_SERVER_EMAIL}
+      MAIL_SERVER_PASSWORD: ${MAIL_SERVER_PASSWORD}
     command: celery -A celery_worker.celery worker --loglevel=info
     container_name: celery_worker
     depends_on:
@@ -40,7 +52,13 @@ services:
 
   celery_beat:
     image: app-image
-    command: celery -A celery_worker.celery beat
+    environment:
+      FLASK_CONFIG: development
+      SECRET_KEY: ${SECRET_KEY}
+      SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
+      MAIL_SERVER_EMAIL: ${MAIL_SERVER_EMAIL}
+      MAIL_SERVER_PASSWORD: ${MAIL_SERVER_PASSWORD}
+    command: celery -A celery_worker.celery beat --loglevel=info
     container_name: celery_beat
     depends_on:
       - redis

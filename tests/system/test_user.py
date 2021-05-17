@@ -21,8 +21,8 @@ def test_home(client, _db, captured_templates):
 def test_register_user(client, _db, captured_templates):
     """System test for user register endpoint."""
 
-    email = "test@gmail.com"
-    password = "1234"
+    email = user_1["email"]
+    password = user_1["password"]
 
     response = client.get("/users/register")
 

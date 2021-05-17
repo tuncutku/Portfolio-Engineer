@@ -50,6 +50,10 @@ class SingleValue:
             return self
         return SingleValue(self.value * FX(currency, self.currency).rate, currency)
 
+    def round(self, digits: int) -> None:
+        """Round value by given digits."""
+        self.value = round(self.value, digits)
+
 
 @dataclass
 class IndexValue:
@@ -100,6 +104,10 @@ class IndexValue:
         fx = FX(currency, self.currency)
         new_index = self * fx.index(self.index.index.min(), self.index.index.max())
         return IndexValue(new_index.index.rename(self.index.name), currency)
+
+    def round(self, digits: int) -> None:
+        """Round value by given digits."""
+        self.index = self.index.round(digits)
 
     def replace(self, data: Series) -> None:
         """Replace a value in the index."""
