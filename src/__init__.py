@@ -94,11 +94,8 @@ def make_celery(app):
         abstract = True
 
         def __call__(self, *args, **kwargs):
-            if has_app_context():
+            with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
-            else:
-                with app.app_context():
-                    return TaskBase.__call__(self, *args, **kwargs)
 
     celery.Task = ContextTask
 
