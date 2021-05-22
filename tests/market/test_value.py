@@ -17,8 +17,7 @@ def test_value(mock_symbol):
     assert market.aapl_single_value.to(cad_ccy) == SingleValue(
         95.12802429199219, cad_ccy
     )
-    market.aapl_single_value.round(5)
-    assert market.aapl_single_value == SingleValue(79.27335, usd_ccy)
+    assert round(market.aapl_single_value, 5) == SingleValue(79.27335, usd_ccy)
 
 
 def test_value_sum():
@@ -51,8 +50,7 @@ def test_index(mock_symbol):
 
     assert str(market.aapl_index) == "Index USD: 2020-05-04 / 2020-05-20"
     assert market.aapl_index.to(cad_ccy) == IndexValue(market.aapl_series_cad, cad_ccy)
-    market.aapl_index.round(5)
-    assert market.aapl_index == IndexValue(market.aapl_series_round, usd_ccy)
+    assert round(market.aapl_index, 5) == IndexValue(market.aapl_series_round, usd_ccy)
 
 
 def test_index_sum():

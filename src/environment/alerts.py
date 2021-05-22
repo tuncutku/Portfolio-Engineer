@@ -70,8 +70,6 @@ class DailyReport(Alert):
         df = concat([concat(port_ret), concat(bench_ret), concat(sec_ret)], axis=1).T
         df.columns = columns
 
-        portfolio_value = self.portfolio.current_value
-        portfolio_value.round(2)
         return {
             "Main": {
                 "Portfolio name": self.portfolio.name,
@@ -79,14 +77,10 @@ class DailyReport(Alert):
                 "Creation date": self.portfolio.date.strftime("%d %B, %Y"),
                 "Benchmark": self.portfolio.benchmark,
                 "Reporting currency": self.portfolio.reporting_currency,
-                "Current market value": portfolio_value,
+                "Current market value": round(self.portfolio.current_value(), 2),
             },
             "Return_table": Markup(df.to_html()),
         }
-
-
-# class DailyNews(AlertBase):
-#     pass
 
 
 class MarketAlert(Alert):
@@ -121,13 +115,16 @@ class MarketAlert(Alert):
         date_time = datetime.now()
         return {
             "symbol": self.security.symbol,
-            "alert_type": "TBD",
+            "alert_type": self.alert_type,
             "condition": "TBD",
             "target": self.signal,
             "current_value": self.security.value,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
         }
 
+
+# class DailyNews(AlertBase):
+#     pass
 
 # class EconomicAlert(AlertBase):
 #     pass

@@ -1,6 +1,6 @@
 """Position endpoints"""
 
-from datetime import datetime, date
+from datetime import date
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 

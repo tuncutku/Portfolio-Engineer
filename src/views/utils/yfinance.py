@@ -1,6 +1,7 @@
 """Yahoo market mapping."""
 
 from src.market import Symbol, Currency, Equity, ETF, Index
+from src.market import ref_data
 
 security_map = {
     "EQUITY": lambda info: Equity(Currency(info["currency"]), Symbol(info["symbol"])),
@@ -9,8 +10,8 @@ security_map = {
 }
 
 currency_map = {
-    "USD": Currency("USD"),
-    "EUR": Currency("EUR"),
-    "CAD": Currency("CAD"),
-    "TRY": Currency("TRY"),
+    "USD": ref_data.usd_ccy,
+    "EUR": ref_data.eur_ccy,
+    "CAD": ref_data.cad_ccy,
+    "TRY": ref_data.try_ccy,
 }

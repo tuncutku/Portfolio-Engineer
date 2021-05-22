@@ -24,7 +24,7 @@ class Up(Condition):
     value: float
 
     def __repr__(self) -> str:
-        return f"Upper than: {self.value}"
+        return f"upper than: {self.value}"
 
     def check(self, target):
         return target > self.value
@@ -37,7 +37,7 @@ class Down(Condition):
     value: float
 
     def __repr__(self) -> str:
-        return f"Lower than: {self.value}"
+        return f"lower than: {self.value}"
 
     def check(self, target):
         return target < self.value
@@ -51,7 +51,7 @@ class Between(Condition):
     high: float
 
     def __repr__(self) -> str:
-        return f"Between: {self.low} and {self.high}"
+        return f"between: {self.low} and {self.high}"
 
     def check(self, target):
         return self.low < target < self.high

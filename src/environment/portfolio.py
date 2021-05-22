@@ -94,8 +94,7 @@ class Portfolio(BaseModel):
         position_values = sum(
             [position.current_value(reporting_currency) for position in self.positions]
         )
-        position_values.round(3)
-        return position_values
+        return round(position_values, 3)
 
     def historical_value(
         self, start: date, end: date = None, currency: Currency = None

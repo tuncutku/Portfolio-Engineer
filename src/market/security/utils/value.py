@@ -44,15 +44,14 @@ class SingleValue:
     def __radd__(self, other) -> "SingleValue":
         return self + other
 
+    def __round__(self, n) -> "SingleValue":
+        return SingleValue(round(self.value, n), self.currency)
+
     def to(self, currency: Currency) -> "SingleValue":
         """Convert single value currency."""
         if self.currency == currency:
             return self
         return SingleValue(self.value * FX(currency, self.currency).rate, currency)
-
-    def round(self, digits: int) -> None:
-        """Round value by given digits."""
-        self.value = round(self.value, digits)
 
 
 @dataclass
@@ -95,6 +94,9 @@ class IndexValue:
     def __radd__(self, other) -> "IndexValue":
         return self + other
 
+    def __round__(self, n) -> "IndexValue":
+        return IndexValue(self.index.round(n), self.currency)
+
     def to(self, currency: Currency) -> "IndexValue":
         """Convert single value currency."""
         if self.currency == currency:
@@ -103,10 +105,6 @@ class IndexValue:
         index = self.multiply(fx.index(self.index.index.min(), self.index.index.max()))
         index.currency = currency
         return index
-
-    def round(self, digits: int) -> None:
-        """Round value by given digits."""
-        self.index = self.index.round(digits)
 
     def replace(self, data: Series) -> None:
         """Replace a value in the index."""
