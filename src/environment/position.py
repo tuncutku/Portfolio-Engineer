@@ -1,14 +1,19 @@
 """Position"""
 # pylint: disable=no-member, not-an-iterable, too-many-arguments, cyclic-import
 
-from datetime import datetime, date
-from typing import List
-from pandas import concat, Series
+from __future__ import annotations
+
+from datetime import date
+from typing import List, TYPE_CHECKING, Union
+from pandas import concat, Series, bdate_range
 
 from src.extensions import db
 from src.environment.base import BaseModel
 from src.environment.order import Order
 from src.market import Security, Currency, SingleValue, IndexValue
+
+if TYPE_CHECKING:
+    from src.environment.portfolio import Portfolio
 
 
 class Position(BaseModel):
@@ -19,17 +24,21 @@ class Position(BaseModel):
     security: Security = db.Column(db.PickleType(), nullable=False)
 
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
+    portfolio: Portfolio = db.relationship("Portfolio", back_populates="positions")
     orders: List[Order] = db.relationship(
-        "Order", backref="position", cascade="all, delete-orphan"
+        "Order", back_populates="position", cascade="all, delete-orphan"
     )
 
-    def __repr__(self):
+    def __init__(self, security: Security) -> None:
+        self.security = security
+
+    def __repr__(self) -> str:
         return f"<Position {self.security.symbol.symbol}.>"
 
     @property
     def is_open(self) -> bool:
         """True if current open quantity is different than 0."""
-        return bool(self.quantity.sum())
+        return bool(self.open_quantity)
 
     @property
     def quantity(self) -> Series:
@@ -37,10 +46,15 @@ class Position(BaseModel):
         return concat([order.quantity_df for order in self.orders]).sort_index()
 
     @property
-    def cumulative_quantity(self) -> Series:
+    def cumulative_quantity_index(self) -> Series:
         """Cumulative quantity of the position."""
-        date_index = self.security.index(self.quantity.index.min().date()).index.index
-        return self.quantity.cumsum().reindex(date_index).fillna(method="ffill")
+        date_index = bdate_range(self.quantity.index.min().date(), date.today())
+        return self.quantity.cumsum().reindex(date_index).ffill()
+
+    @property
+    def open_quantity(self) -> Union[float, int]:
+        """Open quantity of the position."""
+        return sum(self.quantity)
 
     @property
     def cost(self) -> Series:
@@ -49,30 +63,22 @@ class Position(BaseModel):
 
     def current_value(self, currency: Currency = None) -> SingleValue:
         """Current value of the security."""
-        new_value = (
-            self.security.value.to(currency) if currency else self.security.value
-        )
-        return new_value * self.quantity.sum()
+        value = self.security.value.to(currency) if currency else self.security.value
+        return value * self.open_quantity
 
     def historical_value(
-        self, currency: Currency, start: date, end: date = date.today()
+        self, start: date, end: date = date.today(), currency: Currency = None
     ) -> IndexValue:
         """Get value index of the underlying position."""
-        security_index = self.security.index(start, end)
-        security_index.replace(self.cost)
-        new_index = security_index.to(currency)
-        return new_index * self.cumulative_quantity
+        index = self.security.index(start, end)
+        index.replace(self.cost)
+        if currency:
+            index = index.to(currency)
+        return index.multiply(self.cumulative_quantity_index)
 
-    def add_order(
-        self, quantity: float, direction: str, cost: float, time: datetime
-    ) -> Order:
+    def add_order(self, order: Order, save: bool = True) -> Order:
         """Add new order."""
-        order = Order(
-            quantity=quantity,
-            direction=direction,
-            cost=cost,
-            time=time,
-            position=self,
-        )
-        order.save_to_db()
+        order.position = self
+        if save:
+            order.save_to_db()
         return order

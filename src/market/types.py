@@ -6,6 +6,18 @@
 from dataclasses import dataclass
 
 
+# class Format:
+#     """Base class for formats."""
+
+
+# class fmt_d(Format):
+#     "${:,.0f}".format("n")
+
+
+# class fmt_pct(Format):
+#     "{0:.2f}%".format("n * 100")
+
+
 @dataclass
 class Direction:
     """Form direction object."""

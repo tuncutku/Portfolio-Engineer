@@ -5,11 +5,12 @@ import subprocess
 import click
 from pylint import epylint
 
-from src.environment import User
-from src.market import Equity, Symbol, Currency
-from src.market.signal import Up
-from src.market.types import PortfolioType, OrderSideType
 from src.extensions import db
+
+from src.environment import User, Portfolio, Position, Order
+from src.market.alerts import Up
+from src.market.types import OrderSideType
+from src.market.ref_data import aapl
 
 
 def register_cli(app):
@@ -44,19 +45,18 @@ def register_cli(app):
 
         db.create_all()
 
-        user = User(email="tuncutku10@gmail.com")
+        user = User("tuncutku10@gmail.com", "1234")
+        portfolio = Portfolio("My portfolio 1")
+        position = Position(aapl)
+        order = Order(10, OrderSideType.Buy, 120, datetime(2020, 4, 1))
+
         user.save_to_db()
-        user.set_password("1234")
-        user.confirm_user()
-
-        aapl = Equity(Currency("USD"), Symbol("AAPL"))
-
         alert = user.add_price_alert(aapl, Up(20))
-
-        portfolio = user.add_portfolio("T", PortfolioType.custom, Currency("USD"), aapl)
+        portfolio = user.add_portfolio(portfolio)
         position = portfolio.add_position(aapl)
-        position.add_order(10, OrderSideType.Buy, 120, datetime(2020, 4, 1))
+        position.add_order(order)
 
+        user.confirm_user()
         portfolio.daily_report.activate()
         alert.activate()
 

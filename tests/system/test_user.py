@@ -6,7 +6,7 @@ from src.environment.user import User
 from src.views.user import generate_confirmation_token
 
 from tests.system.common import templete_used
-from tests.test_data.sample_data import user_1
+from tests.test_data import environment as env
 
 
 def test_home(client, _db, captured_templates):
@@ -21,8 +21,8 @@ def test_home(client, _db, captured_templates):
 def test_register_user(client, _db, captured_templates):
     """System test for user register endpoint."""
 
-    email = user_1["email"]
-    password = user_1["password"]
+    email = env.user_1_raw["email"]
+    password = env.user_1_raw["password"]
 
     response = client.get("/users/register")
 
@@ -72,7 +72,7 @@ def test_register_user(client, _db, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_login_user(client, _db, captured_templates, test_user):
+def test_login_user(client, _db, captured_templates, load_environment_data):
     """System test for user login endpoint."""
 
     response = client.get("/users/login")
@@ -98,7 +98,7 @@ def test_login_user(client, _db, captured_templates, test_user):
     # Test correct email and password
     response = client.post(
         "/users/login",
-        data=dict(email=user_1["email"], password=user_1["password"]),
+        data=dict(email=env.user_1_raw["email"], password=env.user_1_raw["password"]),
         follow_redirects=True,
     )
 
@@ -117,7 +117,7 @@ def test_login_user(client, _db, captured_templates, test_user):
 def test_email_confirmation(client, _db, captured_templates):
     """System test for user email confirmation endpoint."""
 
-    user = User(email="hello_world")
+    user = User("hello_world", "1234")
     user.save_to_db()
 
     assert not user.confirmed

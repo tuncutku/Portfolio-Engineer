@@ -1,5 +1,6 @@
 """Order endpoints"""
 
+from src.environment.position import Position
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 
@@ -50,21 +51,19 @@ def add_order(portfolio_id):
     form = AddOrderForm()
     if form.validate_on_submit():
         symbol = Symbol(form.symbol.data)
-
         port = Portfolio.find_by_id(portfolio_id)
         pos = port.get_position_by_symbol(symbol)
-
-        if pos is None:
-            security = get_security(symbol)
-            pos = port.add_position(security)
-
-        pos.add_order(
+        order = Order(
             form.quantity.data,
             form.direction.data,
             form.cost.data,
             form.exec_datetime.data,
         )
 
+        if pos is None:
+            pos: Position = port.add_position(Position(get_security(symbol)))
+
+        pos.add_order(order)
         return redirect(url_for("portfolio.list_portfolios"))
 
     return render_template("order/add_order.html", form=form, portfolio_id=portfolio_id)

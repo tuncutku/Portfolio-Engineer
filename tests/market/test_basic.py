@@ -7,186 +7,36 @@ from pandas import Series, DatetimeIndex
 
 import pytest
 
-from src.market import Currency, SingleValue, IndexValue, Symbol, FX
-from tests.test_data.sample_data import (
-    index_1,
-    index_2,
-    index_3,
-    value_1,
-    value_2,
-    value_3,
-)
+from src.market import Symbol
+from src.market.ref_data import usd_ccy, cad_ccy, usdcad
 
 start_date = date(2020, 1, 2)
 end_date = date(2021, 1, 4)
-usd = Currency("USD")
-cad = Currency("CAD")
-
-
-class TestSingleValue:
-    """Tests for ValueIndex."""
-
-    value = value_1
-
-    def test_value(self, mock_symbol):
-        """Test basic value."""
-
-        assert self.value == SingleValue(55, usd)
-        new_value = self.value.to(cad)
-        assert new_value == SingleValue(2750, cad)
-        self.value.round(5)
-        assert self.value == SingleValue(55, usd)
-
-    def test_value_sum(self):
-        """Test value summation."""
-
-        with pytest.raises(ValueError):
-            value_1 + value_3
-
-        new_value = value_1 + value_2
-
-        assert new_value == SingleValue(65, usd)
-        assert value_1 + value_2 == value_2 + value_1
-        assert str(new_value) == "65 USD"
-
-    def test_value_multiplication(self):
-        """Test index multiplication."""
-
-        new_value_1 = self.value * 2
-        new_value_2 = 2 * self.value
-        assert new_value_1 == new_value_2
-        assert new_value_1 == SingleValue(110, usd)
-
-
-class TestValueIndex:
-    """Tests for IndexValue."""
-
-    index = index_1
-
-    def test_index(self, mock_symbol):
-        """Test basic index."""
-
-        result_usd = Series(
-            [10, 14, 20, 26],
-            index=[
-                date(2020, 1, 6),
-                date(2020, 3, 2),
-                date(2020, 5, 12),
-                date(2020, 7, 2),
-            ],
-        )
-        result_cad = Series(
-            [
-                12.986600399017334,
-                18.769940614700317,
-                28.161799907684326,
-                35.28121876716614,
-            ],
-            index=[
-                date(2020, 1, 6),
-                date(2020, 3, 2),
-                date(2020, 5, 12),
-                date(2020, 7, 2),
-            ],
-        )
-
-        assert self.index == IndexValue(result_usd, usd)
-        new_index = self.index.to(cad)
-        assert new_index == IndexValue(result_cad, cad)
-        assert str(new_index) == "Index CAD: 2020-01-06 / 2020-07-02"
-
-        self.index.round(5)
-        assert self.index == IndexValue(result_usd, usd)
-
-    def test_index_sum(self):
-        """Test index summation."""
-        with pytest.raises(ValueError):
-            index_1 + index_3
-
-        new_index_1 = index_1 + index_2
-        new_index_2 = index_2 + index_1
-
-        assert isinstance(new_index_1, IndexValue)
-        assert new_index_1.currency == Currency("USD")
-
-        assert Series.equals(
-            new_index_1.index,
-            Series(
-                [30, 14, 110, 60, 26, 78],
-                index=[
-                    date(2020, 1, 6),
-                    date(2020, 3, 2),
-                    date(2020, 3, 30),
-                    date(2020, 5, 12),
-                    date(2020, 7, 2),
-                    date(2020, 7, 30),
-                ],
-            ),
-        )
-        assert new_index_1 == new_index_2
-
-    def test_index_multiplication(self):
-        """Test index multiplication."""
-
-        new_index_1 = index_1 * 2
-        new_index_2 = 2 * index_1
-        assert new_index_1.currency == usd
-        assert new_index_1 == new_index_2
-        assert sum(new_index_1.index) == 140
-
-    def test_index_replace(self):
-        """Test index replace method."""
-
-        self.index.replace(
-            Series(
-                [2, 5, 0, 7],
-                index=[
-                    date(2019, 1, 6),
-                    date(2020, 3, 2),
-                    date(2020, 6, 12),
-                    date(2025, 12, 2),
-                ],
-            )
-        )
-
-        assert Series.equals(
-            self.index.index,
-            Series(
-                [10, 5, 20, 26],
-                index=[
-                    date(2020, 1, 6),
-                    date(2020, 3, 2),
-                    date(2020, 5, 12),
-                    date(2020, 7, 2),
-                ],
-            ),
-        )
 
 
 def test_currency():
     """Test currency."""
 
-    date_index = usd.calender(start_date, end_date)
+    date_index = usd_ccy.calender(start_date, end_date)
 
-    assert str(usd) == "USD"
+    assert str(usd_ccy) == "USD"
     assert isinstance(date_index, DatetimeIndex)
     assert date_index.max().date() == date(2021, 1, 4)
     assert date_index.min().date() == date(2020, 1, 2)
 
 
-def test_fx(mock_symbol):
+def test_fx():
     """Test fx index."""
 
-    usdcad = FX(cad, usd)
     assert usdcad.symbol == Symbol("USDCAD=X")
-    assert usdcad.asset_currency == cad
-    assert usdcad.numeraire_currency == usd
+    assert usdcad.asset_currency == cad_ccy
+    assert usdcad.numeraire_currency == usd_ccy
 
-    assert usdcad.rate == 50
+    assert usdcad.rate == pytest.approx(1.2, 1)
     fx_index = usdcad.index(start_date, end_date)
     assert isinstance(fx_index, Series)
-    assert fx_index.sum() == pytest.approx(353.6957, 5)
-    assert len(fx_index) == 264
+    assert fx_index.sum() == pytest.approx(352.41761, 5)
+    assert len(fx_index) == 263
 
 
 def test_symbol():

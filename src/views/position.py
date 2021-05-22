@@ -1,11 +1,12 @@
 """Position endpoints"""
 
-from datetime import datetime
+from datetime import datetime, date
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 
-from src.environment.position import Position
-from src.environment.order import OrderSideType
+from src.views.utils.common import get_business_day
+from src.environment import Position, Order
+from src.market.types import OrderSideType
 
 
 position_blueprint = Blueprint("position", __name__, url_prefix="/position")
@@ -30,12 +31,12 @@ def close_position(position_id):
     position = Position.find_by_id(position_id)
 
     if position.is_open:
-        open_quantity = position.quantity.sum()
-        position.add_order(
-            abs(open_quantity.item()),
-            OrderSideType.Sell if open_quantity > 0 else OrderSideType.Buy,
+        order = Order(
+            position.open_quantity,
+            OrderSideType.Sell if position.open_quantity > 0 else OrderSideType.Buy,
             position.security.value.value,
-            datetime.now(),
+            get_business_day(date.today()),
         )
+        position.add_order(order)
 
     return redirect(url_for("portfolio.list_portfolios"))

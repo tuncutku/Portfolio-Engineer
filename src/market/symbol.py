@@ -2,17 +2,14 @@
 # pylint: disable=invalid-name
 
 from datetime import date, timedelta
-from typing import Union, TypeVar
-from functools import partial
+from typing import Union
 from dataclasses import dataclass
 
 from pandas import Series, bdate_range
 from pandas_datareader.data import DataReader
 from yfinance import Ticker
 
-
-T = TypeVar("T")
-provider = partial(DataReader, data_source="yahoo")
+data_source = "yahoo"
 
 requests = [
     "sector",
@@ -132,7 +129,7 @@ class Symbol:
     def __repr__(self):
         return self.symbol
 
-    def __eq__(self: T, other: Union[str, T]):
+    def __eq__(self, other: Union[str, "Symbol"]) -> bool:
         if isinstance(other, Symbol):
             return self.symbol == other.symbol
         if isinstance(other, str):
@@ -160,8 +157,11 @@ class Symbol:
         self, start: date, end: date, request: str = "Adj Close", bday: bool = True
     ) -> Series:
         """Underlying index of the symbol."""
-        raw_index = provider(name=self.symbol, start=start, end=end)
+        raw_data = DataReader(self.symbol, data_source, start=start, end=end)
+        raw_index: Series = raw_data[request]
+        raw_index.rename(self.symbol, inplace=True)
         if bday:
-            date_range = bdate_range(raw_index.index.min(), raw_index.index.max())
-            raw_index = raw_index.reindex(date_range).fillna(method="ffill")
-        return raw_index[request].rename(self.symbol)
+            raw_index = raw_index.reindex(
+                bdate_range(start, end), method="ffill"
+            ).bfill()
+        return raw_index

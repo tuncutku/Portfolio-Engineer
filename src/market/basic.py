@@ -6,7 +6,8 @@ from typing import TypeVar
 from functools import partial, cached_property
 from dataclasses import dataclass
 
-from pandas import Series, DatetimeIndex
+from pandas import DataFrame, Series, DatetimeIndex
+from pandas.core.indexes.datetimes import bdate_range
 from pandas_datareader.data import DataReader
 from pandas_market_calendars import get_calendar
 
@@ -41,13 +42,16 @@ class Currency:
         calender = get_calendar(exchange)
         return calender.valid_days(start, end)
 
+    def holidays(self):
+        """Holidays of the underlying currency."""
+
 
 @dataclass
 class FX:
     """Form fx index object."""
 
-    asset_currency: Currency
     numeraire_currency: Currency
+    asset_currency: Currency
 
     def __repr__(self):
         return f"{self.numeraire_currency}{self.asset_currency} FX Index"

@@ -5,7 +5,9 @@ from src.environment.position import Position
 from tests.system.common import templete_used
 
 
-def test_position_details(client, _db, test_user, login, captured_templates):
+def test_position_details(
+    client, _db, load_environment_data, login, captured_templates
+):
     """Test endpoint that displays position details."""
 
     response = client.get("position/1/details")
@@ -30,7 +32,7 @@ def test_position_details(client, _db, test_user, login, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_close_position(client, _db, test_user, login, captured_templates):
+def test_close_position(client, _db, load_environment_data, login, captured_templates):
     """Test endpoint that closes positions."""
 
     pos = Position.find_by_id(1)

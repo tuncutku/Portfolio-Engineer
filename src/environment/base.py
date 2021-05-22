@@ -1,5 +1,4 @@
 """Base classes for environment objects"""
-
 # pylint: disable=no-member, invalid-name
 
 from datetime import datetime
@@ -31,12 +30,12 @@ class BaseModel(db.Model):
         """Find all objects."""
         return cls.query.all()
 
-    def save_to_db(self):
+    def save_to_db(self) -> None:
         """Save object to db."""
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self) -> None:
         """Delete object from db."""
         db.session.delete(self)
         db.session.commit()

@@ -28,7 +28,7 @@ def daily_report_task(self):
 def price_alert_task(self):
     """Background task to send an email with Flask-Mail."""
     for user in User.find_all():
-        for alert in user.price_alerts:
+        for alert in user.market_alerts:
             if alert.active and alert.condition():
                 celery_logger.info("Condition satisfied, preparing email.")
                 send_alert_email(alert)

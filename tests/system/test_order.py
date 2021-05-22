@@ -11,7 +11,7 @@ from src.market import Security
 from tests.system.common import templete_used
 
 
-def test_add_order(client, _db, test_user, login, captured_templates):
+def test_add_order(client, _db, load_environment_data, login, captured_templates):
     """System test for add order endpoint."""
 
     response = client.get("order/1/add_order", follow_redirects=True)
@@ -47,7 +47,7 @@ def test_add_order(client, _db, test_user, login, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_edit_order(client, _db, test_user, login, captured_templates):
+def test_edit_order(client, _db, load_environment_data, login, captured_templates):
     """System test for edit order endpoint."""
 
     response = client.get("order/edit/1", follow_redirects=True)
@@ -82,7 +82,7 @@ def test_edit_order(client, _db, test_user, login, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_delete_order(client, _db, captured_templates, test_user, login):
+def test_delete_order(client, _db, captured_templates, load_environment_data, login):
     """System test for delete order endpoint."""
 
     assert Order.find_by_id(1) is not None

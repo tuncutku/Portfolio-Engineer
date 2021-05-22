@@ -41,13 +41,15 @@ def add_portfolio():
         security = get_security(symbol)
         currency = Currency(form.port_reporting_currency.data)
 
-        portfolio = current_user.add_portfolio(
+        portfolio = Portfolio(
             form.port_name.data,
             form.port_type.data,
             currency,
             security,
         )
-        if len(current_user.portfolios) == 1:
+        current_user.add_portfolio(portfolio)
+
+        if current_user.get_primary_portfolio() is None:
             portfolio.set_as_primary()
         return redirect(url_for("portfolio.list_portfolios"))
     return render_template("portfolio/add_portfolio.html", form=form)
@@ -93,7 +95,7 @@ def delete_portfolio(portfolio_id):
 def set_portfolio_primary(portfolio_id):
     """Set a portfolio primary which will be viewed at the top when listing portfolios."""
 
-    primary_portfolio = Portfolio.get_primary(current_user)
+    primary_portfolio = current_user.get_primary_portfolio()
 
     if primary_portfolio:
         primary_portfolio.primary = False
