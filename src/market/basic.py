@@ -6,8 +6,7 @@ from typing import TypeVar
 from functools import partial, cached_property
 from dataclasses import dataclass
 
-from pandas import DataFrame, Series, DatetimeIndex
-from pandas.core.indexes.datetimes import bdate_range
+from pandas import Series, DatetimeIndex
 from pandas_datareader.data import DataReader
 from pandas_market_calendars import get_calendar
 

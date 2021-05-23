@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from typing import List, TYPE_CHECKING
-from datetime import datetime, date
+from datetime import datetime
 from pandas import concat, DataFrame
 
 from src.extensions import db

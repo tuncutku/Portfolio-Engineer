@@ -27,6 +27,7 @@ dash-html-components==1.1.2
 dash-renderer==1.9.0
 dash-table==4.11.2
 dnspython==2.1.0
+docopt==0.6.2
 email-validator==1.1.2
 execnet==1.8.0
 Flask==1.1.2
@@ -41,6 +42,7 @@ Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.14.3
 future==0.18.2
 greenlet==1.0.0
+gunicorn==19.7.1
 idna==2.10
 iniconfig==1.1.1
 isort==5.8.0
@@ -66,6 +68,7 @@ Pillow==8.1.2
 plotly==4.14.3
 pluggy==0.13.1
 prompt-toolkit==3.0.18
+psycopg2-binary==2.8.6
 py==1.10.0
 pycodestyle==2.7.0
 pycparser==2.20
@@ -95,4 +98,5 @@ wcwidth==0.2.5
 Werkzeug==1.0.1
 wrapt==1.12.1
 WTForms==2.3.3
+yarg==0.1.9
 yfinance==0.1.59

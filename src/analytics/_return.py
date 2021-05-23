@@ -45,10 +45,6 @@ def holding_period_return(
 
     if annualized:
         _filter_values(hpr, start_date, end_date)
-        greater = values.index.date >= start_date
-        smaller = values.index.date <= end_date
-
-        index_range = values.index
         #  (df['date'] > start_date) & (df['date'] <= end_date)
         # days =
 

@@ -1,10 +1,9 @@
 """Order endpoints"""
 
-from src.environment.position import Position
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 
-from src.environment import Portfolio, Order
+from src.environment import Portfolio, Position, Order
 from src.forms.order import AddOrderForm, generate_edit_order_form
 from src.market import Symbol
 from src.views.utils.common import get_security

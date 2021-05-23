@@ -5,7 +5,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from datetime import datetime
-from numpy import cos
 from pandas import Series
 
 from src.extensions import db

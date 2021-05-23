@@ -2,7 +2,6 @@
 # pylint: disable=no-member, cyclic-import
 
 from typing import List
-from _pytest.fixtures import PseudoFixtureDef
 
 from flask_login import UserMixin
 

@@ -38,7 +38,7 @@
                 <div class="card-body">
 
                     <p class="card-text">Reporting currency: {{ port.reporting_currency }}</p>
-                    <p class="card-text">Total market value: {{ port.current_value }}</p>
+                    <p class="card-text">Total market value: {{ port.current_value() }}</p>
                     <p class="card-text">Benchmark: {{ port.benchmark.symbol }}</p>
 
                     <div class="card">
