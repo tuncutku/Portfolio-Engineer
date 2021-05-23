@@ -52,10 +52,6 @@ class DailyReport(Alert):
         position_values = self.portfolio.position_values(start, end)
         benchmark_value = self.portfolio.benchmark.index(start, end).index
 
-        # Workaround in case end date data is not valid.
-        for value in [security_values, position_values, benchmark_value]:
-            value.ffill(inplace=True)
-
         periods = [1, 5, 22]
         columns = ["Daily Return", "Weekly Return", "Monthly Return"]
 

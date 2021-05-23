@@ -11,7 +11,7 @@ from src.market.ref_data import usd_ccy
 
 from src.extensions import db
 from tests.test_data import environment as env
-from tests.test_data.market import usdcad_series, aapl_index
+from tests.test_data.market import usdcad_series, aapl_index, gspc_index
 
 
 @pytest.fixture
@@ -49,6 +49,7 @@ def load_environment_data(client) -> User:
     user.confirm_user()
     # user.add_price_alert()
     user.add_portfolio(portfolio)
+    portfolio.daily_report.activate()
 
     for position in [position_1, position_2]:
         portfolio.add_position(position)
@@ -108,5 +109,9 @@ def mock_symbol(mocker):
     def mock_equity_index(self, *args):
         return aapl_index
 
+    def mock_index_index(self, *args):
+        return gspc_index
+
     mocker.patch("src.market.basic.FX.index", mock_fx_index)
     mocker.patch("src.market.security.equity.Equity.index", mock_equity_index)
+    mocker.patch("src.market.security.index.Index.index", mock_index_index)

@@ -1,11 +1,10 @@
 """Test alert objects"""
 # pylint: disable=unused-argument
 
-from pandas import Series
 
 from src.environment import Portfolio, DailyReport, MarketAlert, alerts
 from src.market import SingleValue
-from src.market.ref_data import gspc, usd_ccy
+from src.market.ref_data import gspc, cad_ccy
 from tests.test_data import environment as env
 
 
@@ -16,7 +15,7 @@ def test_daily_alert_object(client, _db, load_environment_data):
     alert = portfolio.daily_report
     assert alert == DailyReport.find_by_id(1)
     assert alert.id == 1
-    assert alert.active is False
+    assert alert.active
 
 
 def test_daily_report_alert(client, _db, load_environment_data):
@@ -30,11 +29,12 @@ def test_daily_report_alert(client, _db, load_environment_data):
     content = daily_alert.generate_email_content()
 
     assert content["Main"]["Portfolio name"] == "portfolio_1"
-    assert content["Main"]["Portfolio type"] == "Margin"
+    assert content["Main"]["Portfolio type"] == "TFSA"
     assert content["Main"]["Benchmark"] == gspc
-    assert content["Main"]["Reporting currency"] == usd_ccy
+    assert content["Main"]["Reporting currency"] == cad_ccy
     assert isinstance(content["Main"]["Creation date"], str)
     assert isinstance(content["Main"]["Current market value"], SingleValue)
+    assert content["Return_table"]
 
 
 def test_price_alert(client, _db, load_environment_data):
