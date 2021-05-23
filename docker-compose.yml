@@ -105,6 +105,19 @@ services:
     networks:
       - main
 
+  flower:  
+    image: mher/flower
+    command: flower --broker=redis://redis:6379/0 --port=8888
+    container_name: flower
+    depends_on:
+      - redis
+    hostname: flower
+    restart: on-failure 
+    ports:  
+      - 8888:8888
+    networks:
+      - main
+
 networks:
   main:
 
