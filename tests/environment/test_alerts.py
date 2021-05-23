@@ -3,7 +3,7 @@
 
 from pandas import Series
 
-from src.environment import Portfolio, DailyReport, MarketAlert
+from src.environment import Portfolio, DailyReport, MarketAlert, alerts
 from src.market import SingleValue
 from src.market.ref_data import gspc, usd_ccy
 from tests.test_data import environment as env
@@ -16,6 +16,7 @@ def test_daily_alert_object(client, _db, load_environment_data):
     alert = portfolio.daily_report
     assert alert == DailyReport.find_by_id(1)
     assert alert.id == 1
+    assert alert.active is False
 
 
 def test_daily_report_alert(client, _db, load_environment_data):

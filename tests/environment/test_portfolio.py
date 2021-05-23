@@ -2,9 +2,9 @@
 # pylint: disable=unused-argument
 
 from datetime import date
+from pandas import Series
 
 from src.environment import User, Portfolio
-
 from src.market import SingleValue, Symbol, Equity, ETF
 from src.market.ref_data import usd_ccy, cad_ccy, gspc, aapl
 from src.market.types import PortfolioType
@@ -71,9 +71,18 @@ def test_portfolio_values(client, _db, load_environment_data, mock_symbol):
     """Test portfolio values."""
 
     port = Portfolio.find_by_id(1)
+
+    # Current value
     assert port.current_value() == SingleValue(4320.0, cad_ccy)
     assert port.current_value(usd_ccy) == SingleValue(3600.0, usd_ccy)
+
+    # Historal value
     port_values = port.historical_value(start_date, end_date)
     assert port_values == env.portfolio_values_index
     port_values_usd = port.historical_value(start_date, end_date, usd_ccy)
     assert port_values_usd == env.portfolio_values_usd_index
+    # Security values
+    security_values = port.security_values(start_date, end_date).sum(1)
+    assert security_values.equals(env.portfolio_security_values_sum_series)
+    security_values_cad = port.security_values(start_date, end_date, cad_ccy).sum(1)
+    assert security_values_cad.equals(env.portfolio_security_values_sum_cad_series)

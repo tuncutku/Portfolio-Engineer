@@ -7,7 +7,6 @@ from pandas import Series
 from src.market import IndexValue
 from src.market.ref_data import aapl, ry_to, usd_ccy, cad_ccy
 from src.market.types import OrderSideType
-from src.environment import User, Portfolio, Position, Order
 
 from tests.test_data.raw_data.quantity import (
     sample_quantity_raw,
@@ -19,6 +18,8 @@ from tests.test_data.raw_data.position import position_1_values_raw
 from tests.test_data.raw_data.portfolio import (
     portfolio_values_raw,
     portfolio_values_usd_raw,
+    portfolio_security_values_sum_raw,
+    portfolio_security_values_sum_cad_raw,
 )
 
 sample_quantity = Series(sample_quantity_raw, name="Quantity")
@@ -33,6 +34,8 @@ position_1_values_index = IndexValue(position_1_values_series, usd_ccy)
 
 portfolio_values_series = Series(portfolio_values_raw, name="Portfolio_1")
 portfolio_values_usd_series = Series(portfolio_values_usd_raw, name="Portfolio_1")
+portfolio_security_values_sum_series = Series(portfolio_security_values_sum_raw)
+portfolio_security_values_sum_cad_series = Series(portfolio_security_values_sum_cad_raw)
 portfolio_values_index = IndexValue(portfolio_values_series, cad_ccy)
 portfolio_values_usd_index = IndexValue(portfolio_values_usd_series, usd_ccy)
 
