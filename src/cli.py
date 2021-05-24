@@ -52,13 +52,19 @@ def register_cli(app):
 
         user.save_to_db()
         alert = user.add_price_alert(aapl, Up(20))
-        portfolio = user.add_portfolio(portfolio)
-        position = portfolio.add_position(aapl)
+        user.add_portfolio(portfolio)
+        portfolio.add_position(aapl)
         position.add_order(order)
 
         user.confirm_user()
         portfolio.daily_report.activate()
         alert.activate()
+
+    @app.cli.command("init_db")
+    def init_db():
+        """Init database."""
+
+        db.create_all()
 
     @app.cli.command("clear_database")
     def clear_database():

@@ -1,3 +1,6 @@
+"""App ocnfiguration"""
+# pylint: disable=too-few-public-methods, consider-using-with
+
 import os
 import tempfile
 from dotenv import load_dotenv
