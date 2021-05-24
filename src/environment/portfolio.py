@@ -75,6 +75,13 @@ class Portfolio(BaseModel):
             axis=1,
         )
 
+    def position_quantities(self):
+        """Get position historical quantities."""
+
+        for position in self.positions:
+            position.cumulative_quantity_index
+            a = 1
+
     def security_values(
         self, start: date, end: date, convert_currency=False
     ) -> DataFrame:

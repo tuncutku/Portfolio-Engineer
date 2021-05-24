@@ -30,6 +30,26 @@ position_1_quantity_raw = {
 }
 
 position_1_cum_quantity_raw = {
+    Timestamp("2020-01-06 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-07 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-08 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-09 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-10 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-13 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-14 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-15 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-16 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-17 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-20 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-21 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-22 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-23 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-24 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-27 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-28 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-29 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-30 00:00:00", freq="B"): 0.0,
+    Timestamp("2020-01-31 00:00:00", freq="B"): 0.0,
     Timestamp("2020-02-03 00:00:00", freq="B"): 10.0,
     Timestamp("2020-02-04 00:00:00", freq="B"): 10.0,
     Timestamp("2020-02-05 00:00:00", freq="B"): 10.0,
@@ -369,4 +389,5 @@ position_1_cum_quantity_raw = {
     Timestamp("2021-05-18 00:00:00", freq="B"): 22.0,
     Timestamp("2021-05-19 00:00:00", freq="B"): 22.0,
     Timestamp("2021-05-20 00:00:00", freq="B"): 22.0,
+    Timestamp("2021-05-21 00:00:00", freq="B"): 22.0,
 }

@@ -45,11 +45,13 @@ class Position(BaseModel):
         """Quantity of the position."""
         return concat([order.quantity_df for order in self.orders]).sort_index()
 
-    @property
-    def cumulative_quantity_index(self) -> Series:
+    def cumulative_quantity_index(
+        self, start: date = None, end: date = date.today()
+    ) -> Series:
         """Cumulative quantity of the position."""
-        date_index = bdate_range(self.quantity.index.min().date(), date.today())
-        return self.quantity.cumsum().reindex(date_index).ffill()
+        start = start or self.quantity.index.min().date()
+        index = self.quantity.cumsum().reindex(bdate_range(start, end), method="ffill")
+        return index.fillna(0)
 
     @property
     def open_quantity(self) -> Union[float, int]:
@@ -74,7 +76,7 @@ class Position(BaseModel):
         index.replace(self.cost)
         if currency:
             index = index.to(currency)
-        return index.multiply(self.cumulative_quantity_index)
+        return index.multiply(self.cumulative_quantity_index(start, end))
 
     def add_order(self, order: Order, save: bool = True) -> Order:
         """Add new order."""

@@ -21,9 +21,9 @@ tsla_series = Series(security.tsla_raw, name="TSLA")
 pbw_series = Series(security.pbw_raw, name="PBW")
 ry_to_series = Series(security.ry_to_raw, name="RY.TO")
 gspc_series = Series(security.gspc_raw, name="^GSPC")
-
-portfolio_series = concat([aapl_series, tsla_series], axis=1)
 usdcad_series = Series(fx_index, name="USDCAD")
+
+portfolio_df = concat([aapl_series, tsla_series, ry_to_series], axis=1)
 
 # Sample single value
 aapl_single_value = SingleValue(aapl_series[-1], usd_ccy)

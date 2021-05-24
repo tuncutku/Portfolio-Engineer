@@ -33,8 +33,12 @@ def test_position_quantity(client, _db, load_environment_data):
     assert position.is_open
     quantity = position.quantity
     assert quantity.equals(env.position_1_quantity)
-    cum_quantity = position.cumulative_quantity_index
+    cum_quantity = position.cumulative_quantity_index()
     assert isinstance(cum_quantity, Series)
+    cum_quantity_with_dates = position.cumulative_quantity_index(
+        date(2020, 1, 4), date(2021, 5, 23)
+    )
+    assert cum_quantity_with_dates.equals(env.position_1_cum_quantity)
 
 
 def test_position_cost(client, _db, load_environment_data):
