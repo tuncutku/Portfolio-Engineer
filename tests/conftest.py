@@ -88,14 +88,8 @@ def captured_templates(app):
 
 
 @pytest.fixture
-def mock_symbol(mocker):
-    """Mock symbol methods."""
-
-    mocker.patch(
-        "src.market.basic.FX.rate",
-        new_callable=mocker.PropertyMock,
-        return_value=1.2,
-    )
+def mock_current_md(mocker):
+    """Mock current market data."""
 
     mocker.patch(
         "src.market.security.equity.Equity.value",
@@ -103,15 +97,8 @@ def mock_symbol(mocker):
         return_value=SingleValue(120.0, usd_ccy),
     )
 
-    def mock_fx_index(self, *args):
-        return usdcad_series
-
-    def mock_equity_index(self, *args):
-        return aapl_index
-
-    def mock_index_index(self, *args):
-        return gspc_index
-
-    mocker.patch("src.market.basic.FX.index", mock_fx_index)
-    mocker.patch("src.market.security.equity.Equity.index", mock_equity_index)
-    mocker.patch("src.market.security.index.Index.index", mock_index_index)
+    mocker.patch(
+        "src.market.basic.FX.rate",
+        new_callable=mocker.PropertyMock,
+        return_value=1.2,
+    )

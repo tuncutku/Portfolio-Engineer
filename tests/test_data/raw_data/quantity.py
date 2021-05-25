@@ -3,24 +3,19 @@
 from pandas import Timestamp
 
 sample_quantity_raw = {
-    Timestamp("2020-05-01 00:00:00", freq="B"): 10,
     Timestamp("2020-05-04 00:00:00", freq="B"): 1,
     Timestamp("2020-05-05 00:00:00", freq="B"): 1,
     Timestamp("2020-05-06 00:00:00", freq="B"): 1,
     Timestamp("2020-05-07 00:00:00", freq="B"): 1,
+    Timestamp("2020-05-08 00:00:00", freq="B"): 1,
     Timestamp("2020-05-11 00:00:00", freq="B"): 1,
     Timestamp("2020-05-12 00:00:00", freq="B"): 1,
     Timestamp("2020-05-13 00:00:00", freq="B"): 2,
     Timestamp("2020-05-14 00:00:00", freq="B"): 2,
     Timestamp("2020-05-15 00:00:00", freq="B"): 2,
+    Timestamp("2020-05-18 00:00:00", freq="B"): 2,
     Timestamp("2020-05-19 00:00:00", freq="B"): 2,
     Timestamp("2020-05-20 00:00:00", freq="B"): 2,
-    Timestamp("2020-05-21 00:00:00", freq="B"): 2,
-    Timestamp("2020-05-22 00:00:00", freq="B"): 2,
-    Timestamp("2020-05-25 00:00:00", freq="B"): 30,
-    Timestamp("2020-05-26 00:00:00", freq="B"): 30,
-    Timestamp("2020-05-27 00:00:00", freq="B"): 30,
-    Timestamp("2020-05-28 00:00:00", freq="B"): 30,
 }
 
 position_1_quantity_raw = {
@@ -390,4 +385,37 @@ position_1_cum_quantity_raw = {
     Timestamp("2021-05-19 00:00:00", freq="B"): 22.0,
     Timestamp("2021-05-20 00:00:00", freq="B"): 22.0,
     Timestamp("2021-05-21 00:00:00", freq="B"): 22.0,
+}
+
+portfolio_quantities = {
+    "AAPL": {
+        Timestamp("2020-05-04 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-05 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-06 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-07 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-08 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-11 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-12 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-13 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-14 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-15 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-18 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-19 00:00:00", freq="B"): 10,
+        Timestamp("2020-05-20 00:00:00", freq="B"): 10,
+    },
+    "RY.TO": {
+        Timestamp("2020-05-04 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-05 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-06 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-07 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-08 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-11 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-12 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-13 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-14 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-15 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-18 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-19 00:00:00", freq="B"): 20,
+        Timestamp("2020-05-20 00:00:00", freq="B"): 20,
+    },
 }

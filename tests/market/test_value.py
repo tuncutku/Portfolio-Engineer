@@ -10,7 +10,7 @@ from tests.test_data import market
 from tests.test_data import environment
 
 
-def test_value(mock_symbol):
+def test_value(mock_current_md):
     """Test basic value."""
 
     assert str(market.aapl_single_value) == "79.27335357666016 USD"
@@ -45,7 +45,7 @@ def test_value_multiplication():
     assert new_value == new_value_inverse
 
 
-def test_index(mock_symbol):
+def test_index():
     """Test basic index."""
 
     assert str(market.aapl_index) == "Index USD: 2020-05-04 / 2020-05-20"
@@ -70,7 +70,7 @@ def test_index_multiplication():
     """Test index multiplication."""
 
     assert market.aapl_index * 2 == 2 * market.aapl_index
-    mult_index = market.aapl_index.multiply(environment.sample_quantity)
+    mult_index = market.aapl_index * environment.sample_quantity
     assert mult_index == market.appl_mkt_value_index
 
 

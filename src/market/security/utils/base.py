@@ -4,7 +4,6 @@
 from abc import abstractmethod, ABC
 from datetime import date
 from dataclasses import dataclass
-from pandas import bdate_range
 
 from src.market.basic import Currency
 from src.market.symbol import Symbol
@@ -45,8 +44,6 @@ class Security(ABC):
         bday: bool = True,
     ) -> IndexValue:
         """Get index of the underlying."""
-        index = self.symbol.index(start, end, request)
-        if bday:
-            date_range = bdate_range(index.index.min(), index.index.max())
-            index = index.reindex(date_range).fillna(method="ffill")
-        return IndexValue(index, self.asset_currency)
+        return IndexValue(
+            self.symbol.index(start, end, request, bday), self.asset_currency
+        )

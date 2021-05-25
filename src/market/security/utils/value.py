@@ -74,7 +74,7 @@ class IndexValue:
             return ccy and _len and _sum
         raise ValueError(f"Cannot compare {other}.")
 
-    def __mul__(self, other: Union[float, int]) -> "IndexValue":
+    def __mul__(self, other: Union[float, int, Series]) -> "IndexValue":
         return IndexValue(self.index * other, self.currency)
 
     def __rmul__(self, other) -> "IndexValue":
@@ -101,8 +101,9 @@ class IndexValue:
         """Convert single value currency."""
         if self.currency == currency:
             return self
-        fx = FX(currency, self.currency)
-        index = self.multiply(fx.index(self.index.index.min(), self.index.index.max()))
+        fx = FX(self.currency, currency)
+        index = self * fx.index(self.index.index.min(), self.index.index.max())
+        index.index.name = self.index.name
         index.currency = currency
         return index
 
@@ -111,8 +112,3 @@ class IndexValue:
         for idx, value in data.items():
             if idx in self.index:
                 self.index[idx] = value
-
-    def multiply(self, other: Series) -> "IndexValue":
-        """Multiply the underlying index with Series object."""
-        new_index = (self.index * other).dropna().rename(self.index.name)
-        return IndexValue(new_index, self.currency)

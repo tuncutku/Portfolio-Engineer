@@ -46,12 +46,13 @@ class Position(BaseModel):
         return concat([order.quantity_df for order in self.orders]).sort_index()
 
     def cumulative_quantity_index(
-        self, start: date = None, end: date = date.today()
+        self, start: date, end: date = date.today()
     ) -> Series:
         """Cumulative quantity of the position."""
-        start = start or self.quantity.index.min().date()
-        index = self.quantity.cumsum().reindex(bdate_range(start, end), method="ffill")
-        return index.fillna(0)
+        raw_brange = bdate_range(self.quantity.index.min().date(), date.today())
+        raw_index = self.quantity.cumsum().reindex(raw_brange, method="ffill")
+        index = raw_index.reindex(bdate_range(start, end))
+        return index.rename(self.security.symbol.symbol).fillna(0)
 
     @property
     def open_quantity(self) -> Union[float, int]:
@@ -68,15 +69,23 @@ class Position(BaseModel):
         value = self.security.value.to(currency) if currency else self.security.value
         return value * self.open_quantity
 
-    def historical_value(
+    def security_historical_value(
         self, start: date, end: date = date.today(), currency: Currency = None
     ) -> IndexValue:
-        """Get value index of the underlying position."""
+        """Get security historical value, updated with transaction costs."""
         index = self.security.index(start, end)
         index.replace(self.cost)
         if currency:
             index = index.to(currency)
-        return index.multiply(self.cumulative_quantity_index(start, end))
+        return index
+
+    def historical_value(
+        self, start: date, end: date = date.today(), currency: Currency = None
+    ) -> IndexValue:
+        """Get value index of the underlying position."""
+        security_value = self.security_historical_value(start, end, currency)
+        quantity = self.cumulative_quantity_index(start, end)
+        return security_value * quantity
 
     def add_order(self, order: Order, save: bool = True) -> Order:
         """Add new order."""

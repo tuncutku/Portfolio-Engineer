@@ -2,7 +2,6 @@
 # pylint: disable=unused-argument
 
 from datetime import date
-from pandas import Series
 
 from src.environment import User, Portfolio
 from src.market import SingleValue, Symbol, Equity, ETF
@@ -11,8 +10,8 @@ from src.market.types import PortfolioType
 from tests.test_data import environment as env
 
 
-start_date = date(2020, 1, 1)
-end_date = date(2021, 1, 1)
+start_date = date(2020, 5, 4)
+end_date = date(2020, 5, 20)
 
 
 def test_portfolio_object(client, _db, load_environment_data):
@@ -67,7 +66,7 @@ def test_portfolio_get_methods(client, _db, load_environment_data):
     assert len(port.get_open_positions()) == 2
 
 
-def test_portfolio_values(client, _db, load_environment_data, mock_symbol):
+def test_portfolio_values(client, _db, load_environment_data, mock_current_md):
     """Test portfolio values."""
 
     port = Portfolio.find_by_id(1)
@@ -75,14 +74,22 @@ def test_portfolio_values(client, _db, load_environment_data, mock_symbol):
     # Current value
     assert port.current_value() == SingleValue(4320.0, cad_ccy)
     assert port.current_value(usd_ccy) == SingleValue(3600.0, usd_ccy)
-
     # Historal value
     port_values = port.historical_value(start_date, end_date)
     assert port_values == env.portfolio_values_index
     port_values_usd = port.historical_value(start_date, end_date, usd_ccy)
     assert port_values_usd == env.portfolio_values_usd_index
     # Security values
-    security_values = port.security_values(start_date, end_date).sum(1)
-    assert security_values.equals(env.portfolio_security_values_sum_series)
-    security_values_cad = port.security_values(start_date, end_date, cad_ccy).sum(1)
-    assert security_values_cad.equals(env.portfolio_security_values_sum_cad_series)
+    security_values = port.security_values(start_date, end_date)
+    assert security_values.equals(env.portfolio_position_values_df)
+    security_values_cad = port.security_values(start_date, end_date, cad_ccy)
+    assert security_values_cad.equals(env.portfolio_position_values_cad_df)
+
+
+def test_portfolio_quantities(client, _db, load_environment_data):
+    """Test portfolio quantities."""
+
+    port = Portfolio.find_by_id(1)
+
+    quantities = port.position_quantities(date(2020, 1, 4), date(2021, 5, 23))
+    assert quantities.equals(env.portfolio_quantities_df)

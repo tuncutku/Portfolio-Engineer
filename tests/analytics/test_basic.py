@@ -10,22 +10,22 @@ from src.analytics._return import (
 )
 
 from tests.test_data import analytics
-from tests.test_data.market import portfolio_df
+from tests.test_data.analytics import securities_df, quantities_df
 
 
 def test_single_return():
     """Unit test for single periodic return analytics."""
 
-    returns = periodic_return(portfolio_df)
+    returns = periodic_return(securities_df)
     assert returns.equals(analytics.periodic_return_df)
-    cum_returns = periodic_return(portfolio_df, cumulative=True)
+    cum_returns = periodic_return(securities_df, cumulative=True)
     assert cum_returns.equals(analytics.periodic_return_cum_df)
 
 
 def test_weighted_return():
     """Unit test for single weighted return analytics."""
 
-    returns = weighted_periodic_return(portfolio_df, cumulative=True)
+    returns = weighted_periodic_return(securities_df, quantities_df, cumulative=True)
 
 
 # def test_holding_period_return():

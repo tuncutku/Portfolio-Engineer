@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from typing import List, TYPE_CHECKING
-from datetime import datetime
+from datetime import date, datetime
 from pandas import concat, DataFrame
 
 from src.extensions import db
@@ -61,39 +61,36 @@ class Portfolio(BaseModel):
     def __repr__(self) -> str:
         return f"<Portfolio {self.name}.>"
 
-    def position_values(
-        self, start: date, end: date, currency: Currency = None
-    ) -> DataFrame:
-        """Get position historical values."""
-
-        reporting_currency = currency or self.reporting_currency
+    def position_quantities(self, start: date, end: date) -> DataFrame:
+        """Get position historical quantities."""
         return concat(
             [
-                position.historical_value(start, end, reporting_currency).index
+                position.cumulative_quantity_index(start, end)
                 for position in self.positions
             ],
             axis=1,
         )
 
-    def position_quantities(self):
-        """Get position historical quantities."""
-
-        for position in self.positions:
-            position.cumulative_quantity_index
-            a = 1
-
     def security_values(
-        self, start: date, end: date, convert_currency=False
+        self, start: date, end: date, currency: Currency = None
     ) -> DataFrame:
         """Get security historical values."""
+        return concat(
+            [
+                position.security_historical_value(start, end, currency).index
+                for position in self.positions
+            ],
+            axis=1,
+        )
 
-        security_values = list()
-        for position in self.positions:
-            index = position.security.index(start, end)
-            if convert_currency:
-                index = index.to(self.reporting_currency)
-            security_values.append(index.index)
-        return concat(security_values, axis=1)
+    def position_values(
+        self, start: date, end: date, currency: Currency = None
+    ) -> DataFrame:
+        """Get position historical values."""
+
+        values = self.security_values(start, end, currency)
+        quantities = self.position_quantities(start, end)
+        return values * quantities
 
     def current_value(self, currency: Currency = None) -> SingleValue:
         """Current market value of the portfolio."""

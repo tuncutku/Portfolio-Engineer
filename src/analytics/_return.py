@@ -50,23 +50,24 @@ def holding_period_return(
 
 
 def weighted_periodic_return(
-    values: DataFrame,
+    security_values: DataFrame,
+    security_quantities: DataFrame,
     period: int = 1,
     cumulative: bool = False,
     name: str = "Portfolio",
 ) -> Series:
     """Calculate weighted periodic return."""
 
-    periodic_returns = values.pct_change(period)
-    weights = values.div(values.sum(axis=1), axis=0)
-    returns = (periodic_returns * weights).sum(axis=1)
+    security_returns = security_values.pct_change(period)
+    security_weights = security_quantities.div(security_quantities.sum(axis=1), axis=0)
+    portfolio_returns = (security_returns * security_weights).sum(axis=1)
 
     if cumulative:
-        returns = (1 + returns).cumprod()
+        portfolio_returns = (1 + portfolio_returns).cumprod()
     else:
-        returns.drop(returns.index[0], axis=0, inplace=True)
+        portfolio_returns.drop(portfolio_returns.index[0], axis=0, inplace=True)
 
-    return returns.rename(name, inplace=True)
+    return portfolio_returns.rename(name, inplace=True)
 
 
 def _filter_values(values: PandasDataType, start: date, end: date) -> PandasDataType:

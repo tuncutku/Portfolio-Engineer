@@ -20,7 +20,7 @@ equity = Equity(currency, Symbol("AAPL"))
     [(etf, Symbol("PBW"), "ETF"), (equity, Symbol("AAPL"), "Equity")],
     ids=["ETF", "Equity"],
 )
-def test_common(security: Security, symbol: Symbol, security_type: str, mock_symbol):
+def test_common(security: Security, symbol: Symbol, security_type: str):
     """Test common securities."""
 
     assert security.asset_currency == currency

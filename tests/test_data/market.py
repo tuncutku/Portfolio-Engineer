@@ -23,8 +23,6 @@ ry_to_series = Series(security.ry_to_raw, name="RY.TO")
 gspc_series = Series(security.gspc_raw, name="^GSPC")
 usdcad_series = Series(fx_index, name="USDCAD")
 
-portfolio_df = concat([aapl_series, tsla_series, ry_to_series], axis=1)
-
 # Sample single value
 aapl_single_value = SingleValue(aapl_series[-1], usd_ccy)
 tsla_single_value = SingleValue(tsla_series[-1], usd_ccy)

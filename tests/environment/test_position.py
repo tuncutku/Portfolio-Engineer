@@ -10,8 +10,8 @@ from src.market.ref_data import usd_ccy, cad_ccy
 
 from tests.test_data import environment as env
 
-start_date = date(2020, 1, 1)
-end_date = date(2021, 1, 1)
+start_date = date(2020, 5, 4)
+end_date = date(2020, 5, 20)
 
 
 def test_position_object(client, _db, load_environment_data):
@@ -33,8 +33,6 @@ def test_position_quantity(client, _db, load_environment_data):
     assert position.is_open
     quantity = position.quantity
     assert quantity.equals(env.position_1_quantity)
-    cum_quantity = position.cumulative_quantity_index()
-    assert isinstance(cum_quantity, Series)
     cum_quantity_with_dates = position.cumulative_quantity_index(
         date(2020, 1, 4), date(2021, 5, 23)
     )
@@ -49,7 +47,7 @@ def test_position_cost(client, _db, load_environment_data):
     assert cost.equals(env.position_1_cost)
 
 
-def test_position_values(client, _db, load_environment_data, mock_symbol):
+def test_position_values(client, _db, load_environment_data, mock_current_md):
     """Unit test for position values."""
 
     position = Position.find_by_id(1)
@@ -61,3 +59,5 @@ def test_position_values(client, _db, load_environment_data, mock_symbol):
     # Test position historical value
     position_hist_value = position.historical_value(start_date, end_date)
     assert position_hist_value == env.position_1_values_index
+    position_hist_cad_value = position.historical_value(start_date, end_date, cad_ccy)
+    assert position_hist_cad_value == env.position_1_values_cad_index
