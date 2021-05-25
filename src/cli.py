@@ -8,7 +8,6 @@ from pylint import epylint
 from src.extensions import db
 
 from src.environment import User, Portfolio, Position, Order
-from src.market.alerts import Up
 from src.market.types import OrderSideType
 from src.market.ref_data import aapl
 
@@ -51,14 +50,14 @@ def register_cli(app):
         order = Order(10, OrderSideType.Buy, 120, datetime(2020, 4, 1))
 
         user.save_to_db()
-        alert = user.add_price_alert(aapl, Up(20))
+        # alert = user.add_price_alert(aapl, Up(20))
         user.add_portfolio(portfolio)
         portfolio.add_position(aapl)
         position.add_order(order)
 
         user.confirm_user()
         portfolio.daily_report.activate()
-        alert.activate()
+        # alert.activate()
 
     @app.cli.command("init_db")
     def init_db():

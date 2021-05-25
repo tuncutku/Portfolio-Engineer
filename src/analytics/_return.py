@@ -59,7 +59,8 @@ def weighted_periodic_return(
     """Calculate weighted periodic return."""
 
     security_returns = security_values.pct_change(period)
-    security_weights = security_quantities.div(security_quantities.sum(axis=1), axis=0)
+    position_values = security_values * security_quantities
+    security_weights = position_values.div(position_values.sum(axis=1), axis=0)
     portfolio_returns = (security_returns * security_weights).sum(axis=1)
 
     if cumulative:
@@ -75,5 +76,4 @@ def _filter_values(values: PandasDataType, start: date, end: date) -> PandasData
 
     greater = values.index.date >= start
     smaller = values.index.date <= end
-
     return values.loc[greater & smaller]

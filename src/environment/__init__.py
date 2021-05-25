@@ -18,5 +18,5 @@ def add_daily_alert(mapper, connection, target):
 
     @event.listens_for(db.session, "after_flush", once=True)
     def receive_after_flush(session, context):
-        new_daily_report = DailyReport(portfolio=target)
+        new_daily_report = DailyReport(target)
         db.session.add(new_daily_report)

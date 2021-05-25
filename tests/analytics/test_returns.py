@@ -25,7 +25,12 @@ def test_single_return():
 def test_weighted_return():
     """Unit test for single weighted return analytics."""
 
-    returns = weighted_periodic_return(securities_df, quantities_df, cumulative=True)
+    returns = weighted_periodic_return(securities_df, quantities_df)
+    assert returns.equals(analytics.weighted_return_series)
+    cum_returns = weighted_periodic_return(
+        securities_df, quantities_df, cumulative=True
+    )
+    assert cum_returns.equals(analytics.weighted_cum_return_series)
 
 
 # def test_holding_period_return():

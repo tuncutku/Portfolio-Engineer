@@ -16,6 +16,8 @@ def test_daily_alert_object(client, _db, load_environment_data):
     assert alert == DailyReport.find_by_id(1)
     assert alert.id == 1
     assert alert.active
+    alert.deactivate()
+    assert alert.active is False
 
 
 def test_daily_report_alert(client, _db, load_environment_data):
@@ -37,22 +39,20 @@ def test_daily_report_alert(client, _db, load_environment_data):
     assert content["Return_table"]
 
 
-def test_price_alert(client, _db, load_environment_data):
+def test_market_alert(client, _db, load_environment_data, mock_current_md):
     """Unit test for daily alert methods."""
 
-    price_alert = MarketAlert.find_by_id(1)
+    market_alert = MarketAlert.find_by_id(1)
 
-    assert price_alert.condition()
-    assert price_alert.email_template == "email/market_alert.html"
-    assert price_alert.recipients[0] == env.user_1_raw["email"]
+    assert market_alert.condition()
+    assert market_alert.email_template == "email/market_alert.html"
+    assert market_alert.recipients[0] == env.user_1_raw["email"]
 
-    content = price_alert.generate_email_content()
+    content = market_alert.generate_email_content()
     assert str(content["symbol"]) == "AAPL"
-    # assert str(content["alert_type"]) == "AAPL"
-    # assert str(content["condition"]) == "AAPL"
-    # assert str(content["target"]) == "AAPL"
-    assert isinstance(content["current_value"], SingleValue)
+    assert str(content["signal"]) == "Price alert with the condition upper than: 10."
+    assert content["current_value"] == 120.0
     assert isinstance(content["triggered_time"], str)
 
-    price_alert.deactivate()
-    assert not price_alert.active
+    market_alert.deactivate()
+    assert not market_alert.active

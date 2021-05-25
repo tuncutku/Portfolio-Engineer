@@ -9,8 +9,6 @@ from src.environment.base import BaseModel
 from src.environment.portfolio import Portfolio
 from src.environment.alerts import MarketAlert
 from src.extensions import db, bcrypt
-from src.market import Security
-from src.market.alerts import MarketSignal
 
 
 class User(BaseModel, UserMixin):
@@ -65,8 +63,9 @@ class User(BaseModel, UserMixin):
             portfolio.save_to_db()
         return portfolio
 
-    def add_price_alert(self, security: Security, signal: MarketSignal) -> MarketAlert:
+    def add_market_alert(self, alert: MarketAlert, save: bool = True) -> MarketAlert:
         """Add new price alert."""
-        alert = MarketAlert(security=security, signal=signal, user=self)
-        alert.save_to_db()
+        alert.user = self
+        if save:
+            alert.save_to_db()
         return alert

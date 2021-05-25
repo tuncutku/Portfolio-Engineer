@@ -11,8 +11,7 @@ from pandas import concat
 
 from src.environment.base import Alert
 from src.extensions import db
-from src.market import Security
-from src.market.alerts import MarketSignal
+from src.market.alert import Signal
 from src.analytics._return import periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
@@ -27,6 +26,9 @@ class DailyReport(Alert):
 
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     portfolio: Portfolio = db.relationship("Portfolio", back_populates="daily_report")
+
+    def __init__(self, portfolio: Portfolio) -> None:
+        self.portfolio = portfolio
 
     @property
     def subject(self) -> str:
@@ -49,19 +51,24 @@ class DailyReport(Alert):
         start = end - timedelta(40)
 
         security_values = self.portfolio.security_values(start, end)
-        position_values = self.portfolio.position_values(start, end)
         benchmark_value = self.portfolio.benchmark.index(start, end).index
+        position_quantities = self.portfolio.position_quantities(start, end)
 
         periods = [1, 5, 22]
         columns = ["Daily Return", "Weekly Return", "Monthly Return"]
 
-        sec_ret = list()
-        port_ret = list()
-        bench_ret = list()
-        for period in periods:
-            sec_ret.append(periodic_return(security_values, period).tail(1))
-            bench_ret.append(periodic_return(benchmark_value, period).tail(1))
-            port_ret.append(weighted_periodic_return(position_values, period).tail(1))
+        sec_ret = [
+            periodic_return(security_values, period).tail(1) for period in periods
+        ]
+        bench_ret = [
+            periodic_return(benchmark_value, period).tail(1) for period in periods
+        ]
+        port_ret = [
+            weighted_periodic_return(security_values, position_quantities, period).tail(
+                1
+            )
+            for period in periods
+        ]
 
         df = concat([concat(port_ret), concat(bench_ret), concat(sec_ret)], axis=1).T
         df.columns = columns
@@ -84,16 +91,18 @@ class MarketAlert(Alert):
 
     __tablename__ = "market_alert"
 
-    security: Security = db.Column(db.PickleType(), nullable=False)
-    alert_type: str
-    signal: MarketSignal = db.Column(db.PickleType(), nullable=False)
+    signal: Signal = db.Column(db.PickleType(), nullable=False)
 
     user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user: User = db.relationship("User", back_populates="market_alerts")
 
+    def __init__(self, signal: Signal) -> None:
+        self.signal = signal
+        self.active = True
+
     @property
     def subject(self) -> str:
-        return f"Market alert for {self.security.symbol}"
+        return f"Market alert for {self.signal.security.symbol}"
 
     @property
     def email_template(self) -> str:
@@ -104,17 +113,14 @@ class MarketAlert(Alert):
         return [self.user.email]
 
     def condition(self) -> bool:
-        current_value = self.security.value
-        return self.signal.check(current_value.value)
+        return self.signal.check()
 
     def generate_email_content(self) -> dict:
         date_time = datetime.now()
         return {
-            "symbol": self.security.symbol,
-            "alert_type": self.alert_type,
-            "condition": "TBD",
-            "target": self.signal,
-            "current_value": self.security.value,
+            "symbol": self.signal.security.symbol,
+            "signal": self.signal,
+            "current_value": self.signal.target,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
         }
 

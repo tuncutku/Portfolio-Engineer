@@ -1,14 +1,15 @@
 """Sample market data"""
 
-from pandas import Series, concat
+from pandas import Series
 from src.market import SingleValue, IndexValue
-from src.market.ref_data import cad_ccy, usd_ccy
-from src.market.alert import Up
+from src.market.ref_data import cad_ccy, usd_ccy, aapl
+from src.market.alert import Up, Price
 
 from tests.test_data.raw_data.fx import fx_index
 from tests.test_data.raw_data import security
 
 up = Up(10)
+price_signal = Price(aapl, up)
 
 # Sample series
 aapl_series = Series(security.aapl_raw, name="AAPL")

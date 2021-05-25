@@ -5,9 +5,9 @@ import pytest
 from flask_mail import Mail
 
 from src.environment import MarketAlert
-from src.tasks.messenger import daily_report_task, price_alert_task
+from src.tasks.messenger import daily_report_task, market_alert_task
 
-task_list = [daily_report_task, price_alert_task]
+task_list = [daily_report_task, market_alert_task]
 
 
 @pytest.mark.parametrize(

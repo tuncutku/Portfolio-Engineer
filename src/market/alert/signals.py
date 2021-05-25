@@ -21,9 +21,9 @@ class Signal(ABC):
     def __repr__(self) -> str:
         """Repr method."""
 
-    @abstractmethod
-    def __hash__(self) -> int:
-        """Hash the underlying signal."""
+    # @abstractmethod
+    # def __hash__(self) -> int:
+    #     """Hash the underlying signal."""
 
     @property
     @abstractmethod

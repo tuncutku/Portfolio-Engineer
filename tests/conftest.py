@@ -5,13 +5,13 @@ import pytest
 from flask import template_rendered
 
 from src import create_app
-from src.environment import User, Portfolio, Position, Order
+from src.environment import User, Portfolio, Position, Order, MarketAlert
 from src.market import SingleValue
-from src.market.ref_data import usd_ccy
+from src.market import ref_data
 
 from src.extensions import db
 from tests.test_data import environment as env
-from tests.test_data.market import usdcad_series, aapl_index, gspc_index
+from tests.test_data import market as mkt
 
 
 @pytest.fixture
@@ -44,10 +44,11 @@ def load_environment_data(client) -> User:
     order_4 = Order(**env.order_4_raw)
     order_5 = Order(**env.order_5_raw)
     order_6 = Order(**env.order_6_raw)
+    price_alert = MarketAlert(mkt.price_signal)
 
     user.save_to_db()
     user.confirm_user()
-    # user.add_price_alert()
+    user.add_market_alert(price_alert)
     user.add_portfolio(portfolio)
     portfolio.daily_report.activate()
 
@@ -94,7 +95,7 @@ def mock_current_md(mocker):
     mocker.patch(
         "src.market.security.equity.Equity.value",
         new_callable=mocker.PropertyMock,
-        return_value=SingleValue(120.0, usd_ccy),
+        return_value=SingleValue(120.0, ref_data.usd_ccy),
     )
 
     mocker.patch(
