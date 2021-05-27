@@ -4,6 +4,7 @@
 
 
 from dataclasses import dataclass
+from enum import Enum
 
 
 # class Format:
@@ -22,8 +23,23 @@ from dataclasses import dataclass
 class Direction:
     """Form direction object."""
 
-    direction: str
-    n: int
+    value: int
+    name: str
+
+    def __mul__(self, other: float) -> float:
+        return self.value * other
+
+    def __rmul__(self, other: float) -> float:
+        return self * other
+
+
+class Period(Enum):
+    """Form periods."""
+
+    day = 1
+    week = 5
+    month = 21
+    year = 252
 
 
 class Exchange:

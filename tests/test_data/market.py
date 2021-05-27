@@ -3,13 +3,18 @@
 from pandas import Series
 from src.market import SingleValue, IndexValue
 from src.market.ref_data import cad_ccy, usd_ccy, aapl
-from src.market.alert import Up, Price
+from src.market.alert import Up, PriceSignal, BasicReturnSignal
 
 from tests.test_data.raw_data.fx import fx_index
 from tests.test_data.raw_data import security
 
-up = Up(10)
-price_signal = Price(aapl, up)
+# Sample market conditions
+price_up = Up(100)
+percentage_up = Up(0.05)
+
+# Sample market signals
+price_signal = PriceSignal(aapl, price_up)
+return_signal = BasicReturnSignal(aapl, percentage_up, 90)
 
 # Sample series
 aapl_series = Series(security.aapl_raw, name="AAPL")

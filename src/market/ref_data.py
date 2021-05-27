@@ -4,6 +4,12 @@ from src.market.basic import Currency, FX
 from src.market.security import Equity, ETF, Index
 from src.market.symbol import Symbol
 
+from src.market.types import Direction
+
+# Directions
+buy = Direction(1, "Buy")
+sell = Direction(-1, "Sell")
+
 # Currencies
 cad_ccy = Currency("CAD")
 usd_ccy = Currency("USD")

@@ -50,7 +50,7 @@ def test_market_alert(client, _db, load_environment_data, mock_current_md):
 
     content = market_alert.generate_email_content()
     assert str(content["symbol"]) == "AAPL"
-    assert str(content["signal"]) == "Price alert with the condition upper than: 10."
+    assert str(content["signal"]) == "Price alert with the condition upper than: 100."
     assert content["current_value"] == 120.0
     assert isinstance(content["triggered_time"], str)
 

@@ -4,9 +4,9 @@ from datetime import date
 from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 
-from src.views.utils.common import get_business_day
 from src.environment import Position, Order
 from src.market.types import OrderSideType
+from src.market.utils import get_business_day
 
 
 position_blueprint = Blueprint("position", __name__, url_prefix="/position")

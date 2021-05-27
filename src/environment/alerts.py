@@ -113,7 +113,7 @@ class MarketAlert(Alert):
         return [self.user.email]
 
     def condition(self) -> bool:
-        return self.signal.check()
+        return self.signal.check_condition()
 
     def generate_email_content(self) -> dict:
         date_time = datetime.now()

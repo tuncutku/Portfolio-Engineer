@@ -20,7 +20,7 @@ fi
 if [ "$1" == 'run_tests' ]
 then
     echo "Running pytests."
-    pytest
+    pytest --cov=src
     echo "Running pylint on src/."
     pylint src/
 fi
@@ -31,4 +31,3 @@ then
     echo "Initiating_db"
     flask init_db
 fi
-
