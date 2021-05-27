@@ -7,6 +7,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      MAIL_SERVER_EMAIL: ${{ secrets.MAIL_SERVER_EMAIL }}
+      MAIL_SERVER_PASSWORD: ${{ secrets.MAIL_SERVER_PASSWORD }}
+      SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.9.4
