@@ -15,7 +15,10 @@ jobs:
         python-version: 3.9.4
     - name: Install dependencies
       run: |
+        ./doit.sh
+    - name: Install tests
+      run: |
         pytest --cov=src
-    - name: Run tests
+    - name: Run pylint
       run: |
         pylint src/
