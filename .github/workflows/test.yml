@@ -15,8 +15,9 @@ jobs:
         python-version: 3.9.4
     - name: Install dependencies
       run: |
-        ./doit.sh
-    - name: Install tests
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt; 
+    - name: Run tests
       run: |
         pytest --cov=src
     - name: Run pylint
