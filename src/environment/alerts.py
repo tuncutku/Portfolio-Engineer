@@ -1,6 +1,6 @@
 """Periodic Alerts"""
-
 # pylint: disable=no-member, invalid-name
+
 from __future__ import annotations
 
 from datetime import datetime, date, timedelta
@@ -11,9 +11,8 @@ from pandas import concat
 
 from src.environment.base import Alert
 from src.extensions import db
-from src.market import Security
-from src.market.signal import MarketSignal
-from src.analytics._return import single_periodic_return, weighted_periodic_return
+from src.market.alert import Signal
+from src.analytics._return import periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
@@ -23,8 +22,13 @@ if TYPE_CHECKING:
 class DailyReport(Alert):
     """Daily Alert."""
 
+    __tablename__ = "daily_report"
+
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     portfolio: Portfolio = db.relationship("Portfolio", back_populates="daily_report")
+
+    def __init__(self, portfolio: Portfolio) -> None:
+        self.portfolio = portfolio
 
     @property
     def subject(self) -> str:
@@ -47,29 +51,28 @@ class DailyReport(Alert):
         start = end - timedelta(40)
 
         security_values = self.portfolio.security_values(start, end)
-        position_values = self.portfolio.position_values(start, end)
         benchmark_value = self.portfolio.benchmark.index(start, end).index
-
-        # Workaround in case end date data is not valid.
-        for value in [security_values, position_values, benchmark_value]:
-            value.ffill(inplace=True)
+        position_quantities = self.portfolio.position_quantities(start, end)
 
         periods = [1, 5, 22]
         columns = ["Daily Return", "Weekly Return", "Monthly Return"]
 
-        sec_ret = list()
-        port_ret = list()
-        bench_ret = list()
-        for period in periods:
-            sec_ret.append(single_periodic_return(security_values, period).tail(1))
-            bench_ret.append(single_periodic_return(benchmark_value, period).tail(1))
-            port_ret.append(weighted_periodic_return(position_values, period).tail(1))
+        sec_ret = [
+            periodic_return(security_values, period).tail(1) for period in periods
+        ]
+        bench_ret = [
+            periodic_return(benchmark_value, period).tail(1) for period in periods
+        ]
+        port_ret = [
+            weighted_periodic_return(security_values, position_quantities, period).tail(
+                1
+            )
+            for period in periods
+        ]
 
         df = concat([concat(port_ret), concat(bench_ret), concat(sec_ret)], axis=1).T
         df.columns = columns
 
-        portfolio_value = self.portfolio.current_value
-        portfolio_value.round(2)
         return {
             "Main": {
                 "Portfolio name": self.portfolio.name,
@@ -77,57 +80,53 @@ class DailyReport(Alert):
                 "Creation date": self.portfolio.date.strftime("%d %B, %Y"),
                 "Benchmark": self.portfolio.benchmark,
                 "Reporting currency": self.portfolio.reporting_currency,
-                "Current market value": portfolio_value,
+                "Current market value": round(self.portfolio.current_value(), 2),
             },
             "Return_table": Markup(df.to_html()),
         }
 
 
-class PriceAlert(Alert):
+class MarketAlert(Alert):
     """Price Alert."""
 
-    security: Security = db.Column(db.PickleType(), nullable=False)
-    signal: MarketSignal = db.Column(db.PickleType(), nullable=False)
+    __tablename__ = "market_alert"
+
+    signal: Signal = db.Column(db.PickleType(), nullable=False)
 
     user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    user: User = db.relationship("User", back_populates="price_alerts")
+    user: User = db.relationship("User", back_populates="market_alerts")
+
+    def __init__(self, signal: Signal) -> None:
+        self.signal = signal
+        self.active = True
 
     @property
     def subject(self) -> str:
-        return f"Price alert for {self.security.symbol}"
+        return f"Market alert for {self.signal.security.symbol}"
 
     @property
     def email_template(self) -> str:
-        return "email/price_alert.html"
+        return "email/market_alert.html"
 
     @property
     def recipients(self) -> List[str]:
         return [self.user.email]
 
     def condition(self) -> bool:
-        current_value = self.security.value
-        return self.signal.check(current_value.value)
+        return self.signal.apply_operator()
 
     def generate_email_content(self) -> dict:
         date_time = datetime.now()
         return {
-            "symbol": self.security.symbol,
+            "symbol": self.signal.security.symbol,
             "signal": self.signal,
+            "current_value": self.signal.value,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
-            "current_price": self.security.value,
         }
 
 
-# class ReturnAlert(AlertBase):
+# class DailyNews(AlertBase):
 #     pass
-
-# class MovingAverage(AlertBase):
-#     pass
-
-
-# class NewsAlert(AlertBase):
-#     pass
-
 
 # class EconomicAlert(AlertBase):
 #     pass

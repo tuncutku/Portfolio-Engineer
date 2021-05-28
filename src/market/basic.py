@@ -41,13 +41,16 @@ class Currency:
         calender = get_calendar(exchange)
         return calender.valid_days(start, end)
 
+    def holidays(self):
+        """Holidays of the underlying currency."""
+
 
 @dataclass
 class FX:
     """Form fx index object."""
 
-    asset_currency: Currency
     numeraire_currency: Currency
+    asset_currency: Currency
 
     def __repr__(self):
         return f"{self.numeraire_currency}{self.asset_currency} FX Index"

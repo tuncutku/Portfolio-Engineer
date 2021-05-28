@@ -8,7 +8,7 @@ from src.environment.user import User
 from src.environment.portfolio import Portfolio
 from src.environment.position import Position
 from src.environment.order import Order
-from src.environment.alerts import DailyReport, PriceAlert, Alert
+from src.environment.alerts import DailyReport, MarketAlert, Alert
 from src.extensions import db
 
 
@@ -18,5 +18,5 @@ def add_daily_alert(mapper, connection, target):
 
     @event.listens_for(db.session, "after_flush", once=True)
     def receive_after_flush(session, context):
-        new_daily_report = DailyReport(portfolio=target)
+        new_daily_report = DailyReport(target)
         db.session.add(new_daily_report)

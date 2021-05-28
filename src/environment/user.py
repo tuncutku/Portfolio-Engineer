@@ -7,10 +7,8 @@ from flask_login import UserMixin
 
 from src.environment.base import BaseModel
 from src.environment.portfolio import Portfolio
-from src.environment.alerts import PriceAlert
+from src.environment.alerts import MarketAlert
 from src.extensions import db, bcrypt
-from src.market import Security, Currency
-from src.market.signal import MarketSignal
 
 
 class User(BaseModel, UserMixin):
@@ -23,12 +21,15 @@ class User(BaseModel, UserMixin):
     confirmed: bool = db.Column(db.Boolean(), default=False)
 
     portfolios: List[Portfolio] = db.relationship(
-        "Portfolio", backref="user", cascade="all, delete-orphan"
+        "Portfolio", back_populates="user", cascade="all, delete-orphan"
+    )
+    market_alerts: List[MarketAlert] = db.relationship(
+        "MarketAlert", back_populates="user", cascade="all, delete-orphan"
     )
 
-    price_alerts: List[PriceAlert] = db.relationship(
-        "PriceAlert", back_populates="user", cascade="all, delete-orphan"
-    )
+    def __init__(self, email: str, password: str) -> None:
+        self.email = email
+        self.set_password(password)
 
     def __repr__(self):
         return f"<User {self.email}.>"
@@ -41,7 +42,6 @@ class User(BaseModel, UserMixin):
     def set_password(self, password):
         """Set password for new user."""
         self.password = bcrypt.generate_password_hash(password)
-        db.session.commit()
 
     def check_password(self, password):
         """Validate given password by user."""
@@ -52,27 +52,20 @@ class User(BaseModel, UserMixin):
         self.confirmed = True
         db.session.commit()
 
-    def add_portfolio(
-        self,
-        name: str,
-        portfolio_type: str,
-        reporting_currency: Currency,
-        benchmark: Security,
-    ) -> Portfolio:
-        """Add new portfolio."""
+    def get_primary_portfolio(self) -> Portfolio:
+        """Get primary portfolio."""
+        return Portfolio.query.filter_by(user=self, primary=True).first()
 
-        portfolio = Portfolio(
-            name=name,
-            portfolio_type=portfolio_type,
-            reporting_currency=reporting_currency,
-            benchmark=benchmark,
-            user=self,
-        )
-        portfolio.save_to_db()
+    def add_portfolio(self, portfolio: Portfolio, save: bool = True) -> Portfolio:
+        """Add new portfolio."""
+        portfolio.user = self
+        if save:
+            portfolio.save_to_db()
         return portfolio
 
-    def add_price_alert(self, security: Security, signal: MarketSignal) -> PriceAlert:
+    def add_market_alert(self, alert: MarketAlert, save: bool = True) -> MarketAlert:
         """Add new price alert."""
-        alert = PriceAlert(security=security, signal=signal, user=self)
-        alert.save_to_db()
+        alert.user = self
+        if save:
+            alert.save_to_db()
         return alert

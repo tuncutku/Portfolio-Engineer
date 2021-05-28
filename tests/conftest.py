@@ -5,9 +5,13 @@ import pytest
 from flask import template_rendered
 
 from src import create_app
-from src.environment import User
+from src.environment import User, Portfolio, Position, Order, MarketAlert
+from src.market import SingleValue
+from src.market import ref_data
+
 from src.extensions import db
-from tests.test_data import sample_data
+from tests.test_data import environment as env
+from tests.test_data import market as mkt
 
 
 @pytest.fixture
@@ -27,34 +31,35 @@ def _db(client):
 
 
 @pytest.fixture
-def test_user(client) -> User:
+def load_environment_data(client) -> User:
     """Provides sample user, portfolio, position and order."""
 
-    _user = User(email=sample_data.user_1["email"])
-    _user.save_to_db()
-    _user.set_password(sample_data.user_1["password"])
-    _user.confirm_user()
+    user = User(**env.user_1_raw)
+    portfolio = Portfolio(**env.portfolio_1_raw)
+    position_1 = Position(**env.position_1_raw)
+    position_2 = Position(**env.position_2_raw)
+    order_1 = Order(**env.order_1_raw)
+    order_2 = Order(**env.order_2_raw)
+    order_3 = Order(**env.order_3_raw)
+    order_4 = Order(**env.order_4_raw)
+    order_5 = Order(**env.order_5_raw)
+    order_6 = Order(**env.order_6_raw)
+    price_alert = MarketAlert(mkt.price_signal)
 
-    # Add alerts
-    price_alert = _user.add_price_alert(sample_data.aapl, sample_data.up)
-    price_alert.activate()
+    user.save_to_db()
+    user.confirm_user()
+    user.add_market_alert(price_alert)
+    user.add_portfolio(portfolio)
+    portfolio.daily_report.activate()
 
-    for port in sample_data.user_1["portfolios"]:
-        _port = _user.add_portfolio(
-            port["name"],
-            port["portfolio_type"],
-            port["reporting_currency"],
-            port["benchmark"],
-        )
-        _port.daily_report.activate()
-        for position in port["positions"]:
-            _position = _port.add_position(position["security"])
-            for order in position["orders"]:
-                _position.add_order(
-                    order["quantity"], order["direction"], order["cost"], order["time"]
-                )
+    for position in [position_1, position_2]:
+        portfolio.add_position(position)
 
-    yield _user
+    for order in [order_1, order_2, order_3]:
+        position_1.add_order(order)
+
+    for order in [order_4, order_5, order_6]:
+        position_2.add_order(order)
 
 
 @pytest.fixture
@@ -63,9 +68,7 @@ def login(client):
 
     client.post(
         "/users/login",
-        data=dict(
-            email=sample_data.user_1["email"], password=sample_data.user_1["password"]
-        ),
+        data=dict(email=env.user_1_raw["email"], password=env.user_1_raw["password"]),
     )
 
 
@@ -86,16 +89,17 @@ def captured_templates(app):
 
 
 @pytest.fixture
-def mock_symbol(mocker):
-    """Mock symbol methods."""
+def mock_current_md(mocker):
+    """Mock current market data."""
 
     mocker.patch(
-        "src.market.basic.Symbol.info",
+        "src.market.security.equity.Equity.value",
         new_callable=mocker.PropertyMock,
-        return_value={"regularMarketPrice": 50},
+        return_value=SingleValue(120.0, ref_data.usd_ccy),
     )
 
-    # def mock_load(self, start, end):
-    #     return mock_series
-
-    # mocker.patch("src.market.basic.Symbol.index", mock_load)
+    mocker.patch(
+        "src.market.basic.FX.rate",
+        new_callable=mocker.PropertyMock,
+        return_value=1.2,
+    )

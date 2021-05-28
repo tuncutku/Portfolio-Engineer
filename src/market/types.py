@@ -4,14 +4,42 @@
 
 
 from dataclasses import dataclass
+from enum import Enum
+
+
+# class Format:
+#     """Base class for formats."""
+
+
+# class fmt_d(Format):
+#     "${:,.0f}".format("n")
+
+
+# class fmt_pct(Format):
+#     "{0:.2f}%".format("n * 100")
 
 
 @dataclass
 class Direction:
     """Form direction object."""
 
-    direction: str
-    n: int
+    value: int
+    name: str
+
+    def __mul__(self, other: float) -> float:
+        return self.value * other
+
+    def __rmul__(self, other: float) -> float:
+        return self * other
+
+
+class Period(Enum):
+    """Form periods."""
+
+    day = 1
+    week = 5
+    month = 21
+    year = 252
 
 
 class Exchange:

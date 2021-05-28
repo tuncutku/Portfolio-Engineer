@@ -1,3 +1,6 @@
+"""App ocnfiguration"""
+# pylint: disable=too-few-public-methods, consider-using-with
+
 import os
 import tempfile
 from dotenv import load_dotenv
@@ -50,6 +53,19 @@ class ProdConfig(ConfigBase):
     WTF_CSRF_TIME_LIMIT = None
 
 
+class DockerConfig(ConfigBase):
+    """Configuration for local docker setup."""
+
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://user:password@postgres:5432/db"
+
+    CELERY_BROKER_URL = "redis://redis:6379/0"
+    RESULT_BACKEND = "redis://redis:6379/0"
+
+    DEBUG = True
+
+    WTF_CSRF_TIME_LIMIT = None
+
+
 class DevConfig(ConfigBase):
     """Configuration for development."""
 
@@ -76,4 +92,5 @@ config = {
     "production": ProdConfig,
     "development": DevConfig,
     "testing": TestConfig,
+    "docker": DockerConfig,
 }

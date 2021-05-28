@@ -24,13 +24,15 @@ def daily_report_task(self):
                 send_alert_email(alert)
 
 
-@celery.task(bind=True, name="price_alert")
-def price_alert_task(self):
+@celery.task(bind=True, name="market_alert")
+def market_alert_task(self):
     """Background task to send an email with Flask-Mail."""
+    celery_logger.info("Finding users and their active alerts.")
     for user in User.find_all():
-        for alert in user.price_alerts:
+        for alert in user.market_alerts:
             if alert.active and alert.condition():
                 celery_logger.info("Condition satisfied, preparing email.")
                 send_alert_email(alert)
                 celery_logger.info("Price alert was triggered, deactivating the alert.")
                 alert.deactivate()
+                celery_logger.info("Task completed.")

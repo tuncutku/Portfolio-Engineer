@@ -31,9 +31,8 @@ def register():
     """Register user and send a confirmation email."""
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(email=form.email.data)
+        new_user = User(form.email.data, form.password.data)
         new_user.save_to_db()
-        new_user.set_password(form.password.data)
 
         token = generate_confirmation_token(new_user.email)
         confirm_url = url_for("users.confirm_email", token=token, _external=True)
@@ -47,7 +46,6 @@ def register():
         )
 
         flash("You have confirmed your account. Thanks!", "success")
-
         return redirect(url_for("users.login"))
     return render_template("user/register.html", form=form)
 

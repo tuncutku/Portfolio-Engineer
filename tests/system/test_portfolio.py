@@ -1,14 +1,15 @@
 """Test portfolio endpoints"""
 # pylint: disable=unused-argument
 
+from celery.utils.log import MP_LOG
 from src.environment.portfolio import Portfolio
 from src.market import Currency
-from tests.test_data.sample_data import PortfolioType
+from src.market.types import PortfolioType
 
 from tests.system.common import templete_used
 
 
-def test_portfolio_list(client, _db, test_user, login, captured_templates):
+def test_portfolio_list(client, _db, load_environment_data, login, captured_templates):
     """Test endpoint that lists portfolios."""
 
     response = client.get("/portfolio/list")
@@ -18,7 +19,7 @@ def test_portfolio_list(client, _db, test_user, login, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_add_portfolio(client, _db, test_user, login, captured_templates):
+def test_add_portfolio(client, _db, load_environment_data, login, captured_templates):
     """Test endpoint that adds portfolio."""
 
     response = client.get("portfolio/add_portfolio")
@@ -42,13 +43,13 @@ def test_add_portfolio(client, _db, test_user, login, captured_templates):
     assert new_portfolio.name == "New"
     assert new_portfolio.portfolio_type == PortfolioType.margin
     assert new_portfolio.reporting_currency == Currency("USD")
-    assert new_portfolio.primary is False
+    assert new_portfolio.primary is True
 
     template_list = ["portfolio/add_portfolio.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)
 
 
-def test_edit_portfolio(client, _db, test_user, login, captured_templates):
+def test_edit_portfolio(client, _db, load_environment_data, login, captured_templates):
     """Test endpoint that edits an existing portfolio."""
 
     response = client.get("portfolio/edit/1")
@@ -79,7 +80,9 @@ def test_edit_portfolio(client, _db, test_user, login, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_delete_portfolio(client, _db, test_user, login, captured_templates):
+def test_delete_portfolio(
+    client, _db, load_environment_data, login, captured_templates
+):
     """Test endpoint that deletes portfolio."""
 
     response = client.get("portfolio/delete/1", follow_redirects=True)
@@ -90,7 +93,9 @@ def test_delete_portfolio(client, _db, test_user, login, captured_templates):
     templete_used(template_list, captured_templates)
 
 
-def test_set_portfolio_primary(client, _db, test_user, login, captured_templates):
+def test_set_portfolio_primary(
+    client, _db, load_environment_data, login, captured_templates
+):
     """Test endpoint that sets portfolio primary."""
 
     portfolio = Portfolio.find_by_id(1)

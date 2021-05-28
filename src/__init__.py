@@ -82,7 +82,7 @@ def make_celery(app):
             "schedule": crontab(minute="*"),
         },
         "periodic_task_2-every-minute": {
-            "task": "price_alert",
+            "task": "market_alert",
             "schedule": crontab(minute="*"),
         },
     }

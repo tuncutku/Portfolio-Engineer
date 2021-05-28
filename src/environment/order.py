@@ -25,13 +25,27 @@ class Order(BaseModel):
     cost: float = db.Column(db.Float(), nullable=False)
     time: datetime = db.Column(db.DateTime, nullable=False)
 
+    position: Position = db.relationship("Position", back_populates="orders")
     position_id = db.Column(db.Integer(), db.ForeignKey("positions.id"))
 
-    def __repr__(self):
+    def __init__(
+        self,
+        quantity: float,
+        direction: str,
+        cost: float,
+        time: datetime = datetime.now(),
+    ) -> None:
+
+        self.quantity = quantity
+        self.direction = direction
+        self.cost = cost
+        self.time = time
+
+    def __repr__(self) -> str:
         return f"<Order quantity: {self.quantity}, direction: {self.direction}.>"
 
     @property
-    def adjusted_quantity(self):
+    def adjusted_quantity(self) -> float:
         """Quantity of the order adjusted by the direction."""
         return (
             self.quantity

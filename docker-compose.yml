@@ -1,6 +1,25 @@
 version: "3.8"
    
 services:
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:latest
+    restart: on-failure
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      - main
+
   redis:
     container_name: redis
     hostname: redis
@@ -14,7 +33,7 @@ services:
   app:
     build: .
     environment:
-      FLASK_CONFIG: development
+      FLASK_CONFIG: docker
       SECRET_KEY: ${SECRET_KEY}
       SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
       MAIL_SERVER_EMAIL: ${MAIL_SERVER_EMAIL}
@@ -23,6 +42,7 @@ services:
     hostname: app
     depends_on:
       - redis
+      - postgres
     expose:
       - "5001"
     ports:
@@ -31,11 +51,11 @@ services:
     restart: on-failure
     networks:
       - main
-
+  
   worker:
     image: app-image
     environment:
-      FLASK_CONFIG: development
+      FLASK_CONFIG: docker
       SECRET_KEY: ${SECRET_KEY}
       SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
       MAIL_SERVER_EMAIL: ${MAIL_SERVER_EMAIL}
@@ -44,6 +64,7 @@ services:
     container_name: celery_worker
     depends_on:
       - redis
+      - postgres
       - app
     hostname: celery_worker
     restart: on-failure
@@ -53,7 +74,7 @@ services:
   celery_beat:
     image: app-image
     environment:
-      FLASK_CONFIG: development
+      FLASK_CONFIG: docker
       SECRET_KEY: ${SECRET_KEY}
       SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
       MAIL_SERVER_EMAIL: ${MAIL_SERVER_EMAIL}
@@ -62,11 +83,43 @@ services:
     container_name: celery_beat
     depends_on:
       - redis
+      - postgres
       - app
     hostname: celery_beat
     restart: on-failure
     networks:
       - main
 
+  pgadmin4:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    container_name: pgadmin4
+    depends_on:
+      - postgres
+    hostname: pgadmin4
+    restart: on-failure
+    ports:
+      - "5050:80"
+    networks:
+      - main
+
+  flower:  
+    image: mher/flower
+    command: flower --broker=redis://redis:6379/0 --port=8888
+    container_name: flower
+    depends_on:
+      - redis
+    hostname: flower
+    restart: on-failure 
+    ports:  
+      - 8888:8888
+    networks:
+      - main
+
 networks:
   main:
+
+volumes:
+  postgres:
