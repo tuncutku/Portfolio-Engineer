@@ -99,7 +99,7 @@ class AlertPeriod:
     TradingDaysDaily = "1d"
 
 
-class SecurityType:
+class InstrumentType:
     """List of security types."""
 
     Cash = "Cash"
@@ -124,8 +124,8 @@ class PortfolioType:
     custom = "Custom"
 
 
-YFinanceSecurityTypeMapping = {
-    "EQUITY": SecurityType.Equity,
-    "ETF": SecurityType.ETF,
-    "OPTION": SecurityType.Option,
+YFinanceInstrumentTypeMapping = {
+    "EQUITY": InstrumentType.Equity,
+    "ETF": InstrumentType.ETF,
+    "OPTION": InstrumentType.Option,
 }

@@ -10,7 +10,7 @@ from pandas import concat, Series, bdate_range
 from src.extensions import db
 from src.environment.base import BaseModel
 from src.environment.order import Order
-from src.market import Security, Currency, SingleValue, IndexValue
+from src.market import Instrument, Currency, SingleValue, IndexValue
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
@@ -21,7 +21,7 @@ class Position(BaseModel):
 
     __tablename__ = "positions"
 
-    security: Security = db.Column(db.PickleType(), nullable=False)
+    security: Instrument = db.Column(db.PickleType(), nullable=False)
 
     portfolio_id: int = db.Column(db.Integer(), db.ForeignKey("portfolios.id"))
     portfolio: Portfolio = db.relationship("Portfolio", back_populates="positions")
@@ -29,7 +29,7 @@ class Position(BaseModel):
         "Order", back_populates="position", cascade="all, delete-orphan"
     )
 
-    def __init__(self, security: Security) -> None:
+    def __init__(self, security: Instrument) -> None:
         self.security = security
 
     def __repr__(self) -> str:

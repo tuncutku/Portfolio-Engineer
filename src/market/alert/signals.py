@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from math import log
 
-from src.market.security.utils.base import Security
+from src.market.security.utils.base import Instrument
 from src.market.alert.operators import Operator
 
 # from src.market.types import Period
@@ -15,7 +15,7 @@ from src.market.alert.operators import Operator
 class Signal(ABC):
     """Base for signal."""
 
-    security: Security
+    security: Instrument
     operator: Operator
     target: float
     creation_date: date = field(init=False, default=date.today())

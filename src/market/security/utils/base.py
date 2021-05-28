@@ -11,7 +11,7 @@ from src.market.security.utils.value import SingleValue, IndexValue
 
 
 @dataclass
-class Security(ABC):
+class Instrument(ABC):
     """Base class for securities."""
 
     asset_currency: Currency
@@ -24,12 +24,12 @@ class Security(ABC):
 
     @property
     def security_type(self) -> str:
-        """Security type."""
+        """Instrument type."""
         return self.__class__.__name__
 
     @abstractmethod
     def __repr__(self):
-        """Security description."""
+        """Instrument description."""
 
     @property
     def value(self) -> SingleValue:

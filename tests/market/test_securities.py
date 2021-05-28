@@ -5,7 +5,15 @@
 from datetime import date
 import pytest
 
-from src.market import Equity, ETF, Currency, Symbol, Security, SingleValue, IndexValue
+from src.market import (
+    Equity,
+    ETF,
+    Currency,
+    Symbol,
+    Instrument,
+    SingleValue,
+    IndexValue,
+)
 from src.market.ref_data import usd_ccy
 
 start_date = date(2020, 1, 4)
@@ -20,7 +28,7 @@ equity = Equity(currency, Symbol("AAPL"))
     [(etf, Symbol("PBW"), "ETF"), (equity, Symbol("AAPL"), "Equity")],
     ids=["ETF", "Equity"],
 )
-def test_common(security: Security, symbol: Symbol, security_type: str):
+def test_common(security: Instrument, symbol: Symbol, security_type: str):
     """Test common securities."""
 
     assert security.asset_currency == currency

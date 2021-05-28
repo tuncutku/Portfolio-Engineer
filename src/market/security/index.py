@@ -2,11 +2,11 @@
 # pylint: disable=duplicate-code
 
 from dataclasses import dataclass
-from src.market.security.utils.base import Security
+from src.market.security.utils.base import Instrument
 
 
 @dataclass
-class Index(Security):
+class Index(Instrument):
     """Form exchange traded fund object."""
 
     def __repr__(self):

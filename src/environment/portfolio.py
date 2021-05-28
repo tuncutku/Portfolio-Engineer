@@ -12,7 +12,7 @@ from src.extensions import db
 from src.environment.base import BaseModel
 from src.environment.alerts import DailyReport
 from src.environment.position import Position
-from src.market import Security, Currency, Symbol, IndexValue, SingleValue
+from src.market import Instrument, Currency, Symbol, IndexValue, SingleValue
 from src.market.ref_data import cad_ccy, gspc
 from src.market.types import PortfolioType
 
@@ -28,7 +28,7 @@ class Portfolio(BaseModel):
     name: str = db.Column(db.String(255), nullable=False)
     portfolio_type: str = db.Column(db.String(255), nullable=False)
     reporting_currency: Currency = db.Column(db.PickleType(), nullable=False)
-    benchmark: Security = db.Column(db.PickleType(), nullable=False)
+    benchmark: Instrument = db.Column(db.PickleType(), nullable=False)
 
     date: date = db.Column(db.Date(), default=datetime.now())
     primary: bool = db.Column(db.Boolean(), default=False)
@@ -50,7 +50,7 @@ class Portfolio(BaseModel):
         name: str,
         portfolio_type: str = PortfolioType.tfsa,
         reporting_currency: Currency = cad_ccy,
-        benchmark: Security = gspc,
+        benchmark: Instrument = gspc,
     ) -> None:
 
         self.name = name
@@ -115,7 +115,7 @@ class Portfolio(BaseModel):
         db.session.commit()
 
     def edit(
-        self, name: str, currency: Currency, port_type: str, benchmark: Security
+        self, name: str, currency: Currency, port_type: str, benchmark: Instrument
     ) -> None:
         """Edit portfolio."""
         self.name = name

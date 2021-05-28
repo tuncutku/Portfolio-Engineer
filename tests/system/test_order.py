@@ -6,7 +6,7 @@ from datetime import datetime
 from src.environment.position import Position
 from src.environment.order import Order, OrderSideType
 from src.forms.order import date_time_format
-from src.market import Security
+from src.market import Instrument
 
 from tests.system.common import templete_used
 
@@ -41,7 +41,7 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
 
     new_pos = Position.find_by_id(3)
     assert new_pos
-    assert isinstance(new_pos.security, Security)
+    assert isinstance(new_pos.security, Instrument)
 
     template_list = ["order/add_order.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

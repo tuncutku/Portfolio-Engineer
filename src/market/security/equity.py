@@ -1,11 +1,11 @@
 """Equity security"""
 
 from dataclasses import dataclass
-from src.market.security.utils.base import Security
+from src.market.security.utils.base import Instrument
 
 
 @dataclass
-class Equity(Security):
+class Equity(Instrument):
     """Form equity object."""
 
     def __repr__(self):
