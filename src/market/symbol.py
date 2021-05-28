@@ -4,9 +4,11 @@
 from datetime import date, timedelta
 from typing import Union
 from dataclasses import dataclass
+from functools import cached_property
 
 from pandas import Series, bdate_range
 from pandas_datareader.data import DataReader
+
 from yfinance import Ticker
 
 data_source = "yahoo"
@@ -136,7 +138,7 @@ class Symbol:
             return self.symbol == other
         raise ValueError(f"Cannot compare {other}.")
 
-    @property
+    @cached_property
     def info(self) -> dict:
         """Information of the symbol."""
         return Ticker(self.symbol).info

@@ -3,8 +3,14 @@
 from src.market.basic import Currency, FX
 from src.market.security import Equity, ETF, Index
 from src.market.symbol import Symbol
-
+from src.market.alert import UpEqual, DownEqual, Up, Down
 from src.market.types import Direction
+
+#  Operators
+up = Up()
+down = Down()
+up_equal = UpEqual()
+down_equal = DownEqual()
 
 # Directions
 buy = Direction(1, "Buy")

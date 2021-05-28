@@ -5,30 +5,53 @@ from datetime import date
 
 import pytest
 
-from src.market.ref_data import aapl
-from src.market.alert import Signal, Up
+from src.market.alert import Signal
+from src.market.ref_data import aapl, up
 
 from tests.test_data import market as mkt
 
 AlertResults = namedtuple(
-    "AlertResults", ["condition", "target", "expiry_check", "condition_check"]
+    "AlertResults",
+    ["operator", "value", "target", "check_expiry", "apply_operator", "str"],
 )
 signal_test_contents = [
-    (mkt.price_signal, AlertResults(Up(100), 120.0, False, True)),
-    (mkt.return_signal, AlertResults(Up(0.05), 0.28768, False, True)),
+    (
+        mkt.price_signal,
+        AlertResults(
+            up,
+            120,
+            100,
+            False,
+            True,
+            "Signal triggered when current price is upper than 100.",
+        ),
+    ),
+    (
+        mkt.return_signal,
+        AlertResults(
+            up,
+            0.28768,
+            0.02,
+            False,
+            True,
+            "Signal triggered when return is upper than 2.00%.",
+        ),
+    ),
 ]
 signal_test_names = [signal[0].__class__.__name__ for signal in signal_test_contents]
 
 
 @pytest.mark.parametrize("signal, results", signal_test_contents, ids=signal_test_names)
-def test_return_signal(mock_current_md, signal: Signal, results: AlertResults):
+def test_signals(mock_current_md, signal: Signal, results: AlertResults):
     """Test price signal."""
 
     assert signal.security == aapl
     assert signal.creation_date == date.today()
 
-    assert signal.condition == results.condition
+    assert signal.operator == results.operator
+    assert signal.value == results.value
     assert signal.target == results.target
+    assert str(signal) == results.str
 
-    assert signal.check_expiry() == results.expiry_check
-    assert signal.check_condition() == results.condition_check
+    assert signal.check_expiry() == results.check_expiry
+    assert signal.apply_operator() == results.apply_operator
