@@ -12,12 +12,11 @@ db_file = tempfile.NamedTemporaryFile()
 load_dotenv()
 
 
-class ConfigBase(object):
+class ConfigBase:
     """Base class for configuration."""
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SECURITY_PASSWORD_SALT = os.environ.get("SECRET_KEY")
-    # POSTS_PER_PAGE = 10
 
     # Celery config
     CELERY_BROKER_URL = "redis://localhost:6379/0"
@@ -36,51 +35,35 @@ class ConfigBase(object):
     MAIL_PASSWORD = os.environ.get("MAIL_SERVER_PASSWORD")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_SERVER_EMAIL")
 
-    # Cash config
-    CACHE_TYPE = "redis"
-    CACHE_REDIS_HOST = ""
-    CACHE_REDIS_PORT = "6379"
-    CACHE_REDIS_PASSWORD = ""
-    CACHE_REDIS_DB = "0"
-
-
-class ProdConfig(ConfigBase):
-    """Configuration for production."""
-
-    CELERY_BROKER_URL = "redis://redis:6379/0"
-    RESULT_BACKEND = "redis://redis:6379/0"
-
     WTF_CSRF_TIME_LIMIT = None
+
+
+class HerokuConfig(ConfigBase):
+    """Configuration for Heroku deployment."""
+
+    CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+    RESULT_BACKEND = os.environ.get("CELERY_BROKER_URL")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 
 
 class DockerConfig(ConfigBase):
     """Configuration for local docker setup."""
 
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://user:password@postgres:5432/db"
-
-    CELERY_BROKER_URL = "redis://redis:6379/0"
-    RESULT_BACKEND = "redis://redis:6379/0"
-
     DEBUG = True
-
-    WTF_CSRF_TIME_LIMIT = None
 
 
 class DevConfig(ConfigBase):
     """Configuration for development."""
 
-    DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    CACHE_TYPE = "simple"
-
-    WTF_CSRF_TIME_LIMIT = None
+    DEBUG = True
 
 
 class TestConfig(ConfigBase):
     """Configuration for testing."""
 
     TESTING = True
-
     DEBUG = True
     DEBUG_TB_ENABLED = False
     WTF_CSRF_ENABLED = False
@@ -89,7 +72,7 @@ class TestConfig(ConfigBase):
 
 
 config = {
-    "production": ProdConfig,
+    "heroku": HerokuConfig,
     "development": DevConfig,
     "testing": TestConfig,
     "docker": DockerConfig,

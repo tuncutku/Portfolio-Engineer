@@ -5,4 +5,4 @@ WORKDIR /app
 RUN ./doit.sh
 
 EXPOSE 5000
-CMD ["python3", "run.py"]
+CMD ["python3", "run_app.py"]

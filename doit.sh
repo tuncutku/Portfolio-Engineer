@@ -27,7 +27,7 @@ fi
 
 if [ "$1" == 'init_db' ]
 then
-    export FLASK_APP=run.py
+    export FLASK_APP=run_app.py
     echo "Initiating_db"
     flask init_db
 fi
