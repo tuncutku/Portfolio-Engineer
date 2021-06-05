@@ -12,6 +12,16 @@ from pandas_datareader.yahoo.quotes import YahooQuotesReader
 
 
 @dataclass
+class Info:
+    """Requests to pull information from yfinance."""
+
+    currency = "currency"
+    price = "price"
+    name = "shortName"
+    instrument_type = "quoteType"
+
+
+@dataclass
 class Symbol:
     """Form object to get market data of the underlying symbol."""
 

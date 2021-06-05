@@ -6,7 +6,7 @@ from datetime import datetime
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from src.environment import Portfolio
-from src.market import Symbol
+from src.market import Symbol, Info
 
 
 class Ticker:
@@ -31,7 +31,7 @@ class Location:
 
     def __call__(self, form, field):
         symbol = Symbol(field.data)
-        if symbol.get_info("currency") not in ["USD", "CAD"]:
+        if symbol.get_info(Info.currency) not in ["USD", "CAD"]:
             if not self.message:
                 self.message = "Only US and Canadian securities are supported!"
             raise ValidationError(self.message)
