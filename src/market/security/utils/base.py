@@ -32,10 +32,14 @@ class Instrument(ABC):
         """Instrument description."""
 
     @property
+    def name(self) -> str:
+        """Get short name of the undelying."""
+        return self.symbol.get_info("shortName")
+
+    @property
     def value(self) -> SingleValue:
         """Get current value of the underlying."""
-        raw_price = self.symbol.info["price"]
-        return SingleValue(raw_price.item(), self.asset_currency)
+        return SingleValue(self.symbol.get_info("price"), self.asset_currency)
 
     def index(
         self,

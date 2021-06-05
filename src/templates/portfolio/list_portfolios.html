@@ -52,9 +52,9 @@
                             <table class="table">
                                 <thead>
                                     <tr class="text-center">
-                                        <th scope="col">Name</th>
                                         <th scope="col">Instrument Type</th>
-                                        <th scope="col">Currency</th>
+                                        <th scope="col">Symbol</th>
+                                        <th scope="col">Name</th>
                                         <th scope="col">Market Cap</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -63,9 +63,9 @@
                                     {% for position in port.positions if position.is_open %}
                                     <tr class="text-center">
 
-                                        <td class="align-middle">{{ position.security.symbol }}</td>
                                         <td class="align-middle">{{ position.security.security_type }}</td>
-                                        <td class="align-middle">{{ position.security.asset_currency }}</td>
+                                        <td class="align-middle">{{ position.security.symbol }}</td>
+                                        <td class="align-middle">{{ position.security.name }}</td>
                                         <td class="align-middle">{{ position.current_value() }}</td>
                                         <td class="align-middle">
 

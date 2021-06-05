@@ -14,7 +14,6 @@ from src.market import (
     SingleValue,
     IndexValue,
 )
-from src.market.ref_data import usd_ccy
 
 start_date = date(2020, 1, 4)
 
@@ -35,6 +34,7 @@ def test_common(security: Instrument, symbol: Symbol, security_type: str):
     assert security.symbol == symbol
     assert security.security_type == security_type
 
+    assert isinstance(security.name, str)
     assert isinstance(security.value, SingleValue)
     assert isinstance(security.index(start_date), IndexValue)
 
