@@ -8,6 +8,5 @@ from src.views.utils.yfinance import security_map
 def get_security(symbol: Symbol) -> Instrument:
     """Form security by given symbol."""
 
-    info = symbol.info
-    f = security_map[info["quoteType"]]
-    return f(info)
+    get_instrument = security_map[symbol.get_info("quoteType")]
+    return get_instrument(symbol)

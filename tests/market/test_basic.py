@@ -4,6 +4,7 @@
 
 from datetime import date
 from pandas import Series, DatetimeIndex
+from pandas.core.frame import DataFrame
 
 import pytest
 
@@ -49,7 +50,8 @@ def test_symbol():
     assert symbol == "AAPL"
     assert symbol.is_valid
     assert not wrong_symbol.is_valid
-    assert isinstance(symbol.info, dict)
+    assert isinstance(symbol.info, DataFrame)
+    assert isinstance(symbol.get_info("price"), float)
     assert isinstance(symbol.index(date(2020, 1, 1), date.today()), Series)
     assert symbol.is_trading_day(date(2020, 1, 3))
     assert not symbol.is_trading_day(date(2020, 1, 1))

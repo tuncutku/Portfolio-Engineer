@@ -63,8 +63,7 @@ class FX:
     @cached_property
     def rate(self) -> float:
         """Current fx rate."""
-        request = "regularMarketPrice"
-        return self.symbol.info[request]
+        return self.symbol.get_info("price")
 
     def index(self, start: date, end: date = date.today()) -> Series:
         """FX index."""

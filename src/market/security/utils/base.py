@@ -34,7 +34,8 @@ class Instrument(ABC):
     @property
     def value(self) -> SingleValue:
         """Get current value of the underlying."""
-        return SingleValue(self.symbol.info["regularMarketPrice"], self.asset_currency)
+        raw_price = self.symbol.info["price"]
+        return SingleValue(raw_price.item(), self.asset_currency)
 
     def index(
         self,
