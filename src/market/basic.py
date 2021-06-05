@@ -11,7 +11,7 @@ from pandas_datareader.data import DataReader
 from pandas_market_calendars import get_calendar
 
 from src.market.types import Exchange
-from src.market.symbol import Symbol
+from src.market.symbol import Symbol, Info
 
 
 T = TypeVar("T")
@@ -63,7 +63,7 @@ class FX:
     @cached_property
     def rate(self) -> float:
         """Current fx rate."""
-        return self.symbol.get_info("price")
+        return self.symbol.get_info(Info.price)
 
     def index(self, start: date, end: date = date.today()) -> Series:
         """FX index."""

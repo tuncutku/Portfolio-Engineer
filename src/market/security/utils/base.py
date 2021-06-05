@@ -6,7 +6,7 @@ from datetime import date
 from dataclasses import dataclass
 
 from src.market.basic import Currency
-from src.market.symbol import Symbol
+from src.market.symbol import Symbol, Info
 from src.market.security.utils.value import SingleValue, IndexValue
 
 
@@ -34,12 +34,12 @@ class Instrument(ABC):
     @property
     def name(self) -> str:
         """Get short name of the undelying."""
-        return self.symbol.get_info("shortName")
+        return self.symbol.get_info(Info.name)
 
     @property
     def value(self) -> SingleValue:
         """Get current value of the underlying."""
-        return SingleValue(self.symbol.get_info("price"), self.asset_currency)
+        return SingleValue(self.symbol.get_info(Info.price), self.asset_currency)
 
     def index(
         self,

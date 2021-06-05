@@ -3,12 +3,11 @@
 
 
 from datetime import date
-from pandas import Series, DatetimeIndex
-from pandas.core.frame import DataFrame
+from pandas import DataFrame, Series, DatetimeIndex
 
 import pytest
 
-from src.market import Symbol
+from src.market import Symbol, Info
 from src.market.ref_data import usd_ccy, cad_ccy, usdcad
 
 start_date = date(2020, 1, 2)
@@ -51,7 +50,7 @@ def test_symbol():
     assert symbol.is_valid
     assert not wrong_symbol.is_valid
     assert isinstance(symbol.info, DataFrame)
-    assert isinstance(symbol.get_info("price"), float)
+    assert isinstance(symbol.get_info(Info.price), float)
     assert isinstance(symbol.index(date(2020, 1, 1), date.today()), Series)
     assert symbol.is_trading_day(date(2020, 1, 3))
     assert not symbol.is_trading_day(date(2020, 1, 1))

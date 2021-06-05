@@ -1,12 +1,12 @@
 """Yahoo market mapping."""
 
-from src.market import Currency, Equity, ETF, Index
+from src.market import Currency, Equity, ETF, Index, Info
 from src.market import ref_data
 
 security_map = {
-    "EQUITY": lambda symbol: Equity(Currency(symbol.get_info("currency")), symbol),
-    "ETF": lambda symbol: ETF(Currency(symbol.get_info("currency")), symbol),
-    "INDEX": lambda symbol: Index(Currency(symbol.get_info("currency")), symbol),
+    "EQUITY": lambda symbol: Equity(Currency(symbol.get_info(Info.currency)), symbol),
+    "ETF": lambda symbol: ETF(Currency(symbol.get_info(Info.currency)), symbol),
+    "INDEX": lambda symbol: Index(Currency(symbol.get_info(Info.currency)), symbol),
 }
 
 currency_map = {
