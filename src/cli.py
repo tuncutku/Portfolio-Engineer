@@ -52,7 +52,7 @@ def register_cli(app):
         user.save_to_db()
         # alert = user.add_price_alert(aapl, Up(20))
         user.add_portfolio(portfolio)
-        portfolio.add_position(aapl)
+        portfolio.add_position(position)
         position.add_order(order)
 
         user.confirm_user()

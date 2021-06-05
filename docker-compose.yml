@@ -33,6 +33,7 @@ services:
   app:
     build: .
     environment:
+      FLASK_APP: run_app.py
       FLASK_CONFIG: docker
       SECRET_KEY: ${SECRET_KEY}
       SECURITY_PASSWORD_SALT: ${SECURITY_PASSWORD_SALT}
