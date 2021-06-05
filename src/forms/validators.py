@@ -31,7 +31,7 @@ class Location:
 
     def __call__(self, form, field):
         symbol = Symbol(field.data)
-        if symbol.info["currency"] not in ["USD", "CAD"]:
+        if symbol.get_info("currency") not in ["USD", "CAD"]:
             if not self.message:
                 self.message = "Only US and Canadian securities are supported!"
             raise ValidationError(self.message)
