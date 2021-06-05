@@ -51,7 +51,7 @@ class SingleValue:
         """Convert single value currency."""
         if self.currency == currency:
             return self
-        return SingleValue(self.value * FX(currency, self.currency).rate, currency)
+        return SingleValue(self.value * FX(self.currency, currency).rate, currency)
 
 
 @dataclass
