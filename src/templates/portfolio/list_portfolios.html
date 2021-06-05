@@ -54,7 +54,6 @@
                                     <tr class="text-center">
                                         <th scope="col">Instrument Type</th>
                                         <th scope="col">Symbol</th>
-                                        <th scope="col">Name</th>
                                         <th scope="col">Market Cap</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -65,7 +64,6 @@
 
                                         <td class="align-middle">{{ position.security.security_type }}</td>
                                         <td class="align-middle">{{ position.security.symbol }}</td>
-                                        <td class="align-middle">{{ position.security.name }}</td>
                                         <td class="align-middle">{{ position.current_value() }}</td>
                                         <td class="align-middle">
 
@@ -97,14 +95,14 @@
                                         <ul class="list-group">
                                             <a href="{{ url_for('alert.list_alerts', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success">Manage Alerts</a>
-                                            {% if port["Primary"] == False%}
+                                            {% if port.primary == False%}
                                             <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>
                                             {% endif %}
-                                            <a href="{{ url_for('portfolio.edit_portfolio', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success mt-2">Edit Portfolio</a>
                                             <a href="{{ url_for('order.add_order', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success mt-2">Add Order</a>
+                                            <a href="{{ url_for('portfolio.edit_portfolio', portfolio_id=port['id']) }}"
+                                                class="btn btn-outline-success mt-2">Edit Portfolio</a>
                                             <a href="{{ url_for('portfolio.delete_portfolio', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-danger mt-2">Delete Portfolio</a>
                                         </ul>
