@@ -70,7 +70,9 @@ def generate_edit_order_form(order: Order) -> Form:
         direction = SelectField(
             u"Direction", default=order.direction, choices=order_side_choices
         )
-        cost = FloatField(u"Cost", [Optional(), PositiveFloat()], default=order.cost)
+        cost = FloatField(
+            u"Cost", [Optional(), PositiveFloat()], default=order.cost.value
+        )
         exec_datetime = DateTimeField(
             u"Order Date",
             [Optional(), FutureDate()],

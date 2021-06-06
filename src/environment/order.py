@@ -9,6 +9,7 @@ from pandas import Series
 
 from src.extensions import db
 from src.environment.base import BaseModel
+from src.market import SingleValue
 from src.market.types import OrderSideType
 
 if TYPE_CHECKING:
@@ -22,7 +23,7 @@ class Order(BaseModel):
 
     quantity: float = db.Column(db.Integer(), nullable=False)
     direction: str = db.Column(db.String(255), nullable=False)
-    cost: float = db.Column(db.Float(), nullable=False)
+    cost: SingleValue = db.Column(db.PickleType(), nullable=False)
     time: datetime = db.Column(db.DateTime, nullable=False)
 
     position: Position = db.relationship("Position", back_populates="orders")
@@ -32,7 +33,7 @@ class Order(BaseModel):
         self,
         quantity: float,
         direction: str,
-        cost: float,
+        cost: SingleValue,
         time: datetime = datetime.now(),
     ) -> None:
 
@@ -56,7 +57,7 @@ class Order(BaseModel):
     @property
     def cost_df(self) -> Series:
         """Purchase price and fee of the order."""
-        return Series([self.cost], index=[self.time], name="Cost")
+        return Series([self.cost.value], index=[self.time], name="Cost")
 
     @property
     def quantity_df(self) -> Series:
@@ -67,7 +68,7 @@ class Order(BaseModel):
         self,
         quantity: float,
         direction: str,
-        cost: float,
+        cost: SingleValue,
         time: datetime,
     ) -> None:
         """Edit an existing order."""

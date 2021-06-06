@@ -5,8 +5,8 @@ from flask_login import login_required
 
 from src.environment import Portfolio, Position, Order
 from src.forms.order import AddOrderForm, generate_edit_order_form
-from src.market import Symbol
-from src.views.utils.common import get_security
+from src.market import Symbol, SingleValue
+from src.views.utils.common import get_instrument
 
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
@@ -34,7 +34,7 @@ def edit_order(order_id: int):
         order.edit(
             form.quantity.data,
             form.direction.data,
-            form.cost.data,
+            SingleValue(form.cost.data, order.cost.currency),
             form.exec_datetime.data,
         )
         return redirect(url_for("portfolio.list_portfolios"))
@@ -50,18 +50,17 @@ def add_order(portfolio_id):
     form = AddOrderForm()
     if form.validate_on_submit():
         symbol = Symbol(form.symbol.data)
+        instrument = get_instrument(symbol)
         port = Portfolio.find_by_id(portfolio_id)
-        pos = port.get_position_by_symbol(symbol)
+        pos = port.get_position_by_symbol(symbol) or port.add_position(
+            Position(instrument)
+        )
         order = Order(
             form.quantity.data,
             form.direction.data,
-            form.cost.data,
+            SingleValue(form.cost.data, instrument.asset_currency),
             form.exec_datetime.data,
         )
-
-        if pos is None:
-            pos: Position = port.add_position(Position(get_security(symbol)))
-
         pos.add_order(order)
         return redirect(url_for("portfolio.list_portfolios"))
 
