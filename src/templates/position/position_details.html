@@ -23,7 +23,8 @@
 
                     <p class="card-text">Symbol: {{ position.security.symbol }}</p>
                     <p class="card-text">Instrument type: {{ position.security.security_type }}</p>
-                    <p class="card-text">Currency: {{ position.security.asset_currency }}</p>
+                    <p class="card-text">Name: {{ position.security.name }}</p>
+                    <p class="card-text">Current price: {{ position.security.value }}</p>
                     <p class="card-text">Total position value: {{ position.current_value() }}</p>
 
                     <div class="card">
@@ -37,13 +38,12 @@
                             <table class="table">
                                 <thead>
                                     <tr class="text-center">
-                                        {% if position["Instrument Type"] == "EQUITY" %}
                                         <th scope="col">Execution Time</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Cost</th>
                                         <th scope="col">Direction</th>
                                         <th scope="col">Actions</th>
-                                        {% endif %}
+
                                     </tr>
                                 </thead>
                                 <tbody>
