@@ -8,6 +8,7 @@ from pylint import epylint
 from src.extensions import db
 
 from src.environment import User, Portfolio, Position, Order
+from src.market import SingleValue
 from src.market.types import OrderSideType
 from src.market.ref_data import aapl
 
@@ -47,7 +48,12 @@ def register_cli(app):
         user = User("tuncutku10@gmail.com", "1234")
         portfolio = Portfolio("My portfolio 1")
         position = Position(aapl)
-        order = Order(10, OrderSideType.Buy, 120, datetime(2020, 4, 1))
+        order = Order(
+            10,
+            OrderSideType.Buy,
+            SingleValue(120, aapl.asset_currency),
+            datetime(2020, 4, 1),
+        )
 
         user.save_to_db()
         # alert = user.add_price_alert(aapl, Up(20))

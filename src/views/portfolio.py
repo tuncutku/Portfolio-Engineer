@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 from src.environment import Portfolio
 from src.market import Symbol, Currency
 from src.forms.portfolio import AddPortfolioForm, generate_edit_portfolio_form
-from src.views.utils.common import get_security
+from src.views.utils.common import get_instrument
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
@@ -38,7 +38,7 @@ def add_portfolio():
     if form.validate_on_submit():
 
         symbol = Symbol(form.benchmark.data)
-        security = get_security(symbol)
+        security = get_instrument(symbol)
         currency = Currency(form.port_reporting_currency.data)
 
         portfolio = Portfolio(
@@ -65,7 +65,7 @@ def edit_portfolio(portfolio_id):
     if form.validate_on_submit():
 
         symbol = Symbol(form.benchmark.data)
-        security = get_security(symbol)
+        security = get_instrument(symbol)
         currency = Currency(form.port_reporting_currency.data)
 
         port.edit(

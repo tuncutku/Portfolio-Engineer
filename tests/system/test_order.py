@@ -6,7 +6,8 @@ from datetime import datetime
 from src.environment.position import Position
 from src.environment.order import Order, OrderSideType
 from src.forms.order import date_time_format
-from src.market import Instrument
+from src.market import Instrument, SingleValue
+from src.market.ref_data import usd_ccy
 
 from tests.system.common import templete_used
 
@@ -36,7 +37,7 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
     new_order = Order.find_by_id(7)
     assert new_order.quantity == 6
     assert new_order.direction == OrderSideType.Sell
-    assert new_order.cost == 10
+    assert new_order.cost == SingleValue(10, usd_ccy)
     assert new_order.time == datetime(2020, 1, 2)
 
     new_pos = Position.find_by_id(3)
@@ -63,20 +64,20 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
         "order/edit/1",
         data=dict(
             symbol="AAPL",
-            quantity=6,
-            direction=OrderSideType.Sell,
-            cost=10,
-            exec_datetime=datetime(2019, 1, 2).strftime(date_time_format),
+            quantity=10,
+            direction=OrderSideType.Buy,
+            cost=101,
+            exec_datetime=datetime(2019, 1, 3).strftime(date_time_format),
         ),
         follow_redirects=True,
     )
     assert response.status_code == 200
 
     order_test = Order.find_by_id(1)
-    assert order_test.quantity == 6
-    assert order_test.direction == OrderSideType.Sell
-    assert order_test.cost == 10
-    assert order_test.time == datetime(2019, 1, 2)
+    assert order_test.quantity == 10
+    assert order_test.direction == OrderSideType.Buy
+    assert order_test.cost == SingleValue(101, usd_ccy)
+    assert order_test.time == datetime(2019, 1, 3)
 
     template_list = ["order/edit_order.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)
