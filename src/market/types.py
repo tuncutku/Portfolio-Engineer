@@ -1,6 +1,6 @@
 """Market data types"""
 
-# pylint: disable=too-few-public-methods, invalid-name
+# pylint: disable=no-member, invalid-name, too-few-public-methods
 
 
 from dataclasses import dataclass
@@ -20,11 +20,17 @@ from enum import Enum
 
 
 @dataclass
-class Direction:
+class Direction(Enum):
     """Form direction object."""
 
-    value: int
-    name: str
+    buy = 1
+    sell = -1
+
+    def __str__(self) -> str:
+        return self.name.capitalize()
+
+    def __repr__(self) -> str:
+        return self.name.capitalize()
 
     def __mul__(self, other: float) -> float:
         return self.value * other
