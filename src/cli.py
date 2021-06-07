@@ -9,8 +9,7 @@ from src.extensions import db
 
 from src.environment import User, Portfolio, Position, Order
 from src.market import SingleValue
-from src.market.types import OrderSideType
-from src.market.ref_data import aapl
+from src.market.ref_data import aapl, buy
 
 
 def register_cli(app):
@@ -50,7 +49,7 @@ def register_cli(app):
         position = Position(aapl)
         order = Order(
             10,
-            OrderSideType.Buy,
+            buy,
             SingleValue(120, aapl.asset_currency),
             datetime(2020, 4, 1),
         )

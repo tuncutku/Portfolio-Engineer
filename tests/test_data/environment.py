@@ -5,8 +5,7 @@ import pytz
 from pandas import Series, DataFrame
 
 from src.market import IndexValue, SingleValue
-from src.market.ref_data import aapl, ry_to, usd_ccy, cad_ccy
-from src.market.types import OrderSideType
+from src.market.ref_data import aapl, ry_to, usd_ccy, cad_ccy, buy, sell
 
 from tests.test_data.raw_data.quantity import (
     sample_quantity_raw,
@@ -50,37 +49,37 @@ portfolio_quantities_df = DataFrame(portfolio_quantities_raw)
 # Raw data
 order_1_raw = {
     "quantity": 10,
-    "direction": OrderSideType.Buy,
+    "direction": buy,
     "cost": SingleValue(130, usd_ccy),
     "time": datetime(2020, 2, 3, tzinfo=pytz.utc),
 }
 order_2_raw = {
     "quantity": 2,
-    "direction": OrderSideType.Sell,
+    "direction": sell,
     "cost": SingleValue(122, usd_ccy),
     "time": datetime(2020, 7, 1, tzinfo=pytz.utc),
 }
 order_3_raw = {
     "quantity": 14,
-    "direction": OrderSideType.Buy,
+    "direction": buy,
     "cost": SingleValue(126, usd_ccy),
     "time": datetime(2021, 1, 13, tzinfo=pytz.utc),
 }
 order_4_raw = {
     "quantity": 20,
-    "direction": OrderSideType.Buy,
+    "direction": buy,
     "cost": SingleValue(100, cad_ccy),
     "time": datetime(2019, 11, 13, tzinfo=pytz.utc),
 }
 order_5_raw = {
     "quantity": 10,
-    "direction": OrderSideType.Buy,
+    "direction": buy,
     "cost": SingleValue(111, cad_ccy),
     "time": datetime(2020, 7, 1, tzinfo=pytz.utc),
 }
 order_6_raw = {
     "quantity": 22,
-    "direction": OrderSideType.Sell,
+    "direction": sell,
     "cost": SingleValue(115, cad_ccy),
     "time": datetime(2020, 9, 10, tzinfo=pytz.utc),
 }

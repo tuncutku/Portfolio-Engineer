@@ -4,10 +4,10 @@
 from datetime import datetime
 
 from src.environment.position import Position
-from src.environment.order import Order, OrderSideType
+from src.environment.order import Order
 from src.forms.order import date_time_format
 from src.market import Instrument, SingleValue
-from src.market.ref_data import usd_ccy
+from src.market.ref_data import usd_ccy, buy, sell
 
 from tests.system.common import templete_used
 
@@ -25,7 +25,7 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
         data=dict(
             symbol="FB",
             quantity=6,
-            direction=OrderSideType.Sell,
+            direction=sell,
             cost=10,
             exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
         ),
@@ -36,7 +36,7 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
 
     new_order = Order.find_by_id(7)
     assert new_order.quantity == 6
-    assert new_order.direction == OrderSideType.Sell
+    assert new_order.direction == sell
     assert new_order.cost == SingleValue(10, usd_ccy)
     assert new_order.time == datetime(2020, 1, 2)
 
@@ -65,7 +65,7 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
         data=dict(
             symbol="AAPL",
             quantity=10,
-            direction=OrderSideType.Buy,
+            direction=buy,
             cost=101,
             exec_datetime=datetime(2019, 1, 3).strftime(date_time_format),
         ),
@@ -75,7 +75,7 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
 
     order_test = Order.find_by_id(1)
     assert order_test.quantity == 10
-    assert order_test.direction == OrderSideType.Buy
+    assert order_test.direction == buy
     assert order_test.cost == SingleValue(101, usd_ccy)
     assert order_test.time == datetime(2019, 1, 3)
 

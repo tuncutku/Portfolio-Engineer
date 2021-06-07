@@ -20,14 +20,11 @@ from enum import Enum
 
 
 @dataclass
-class Direction(Enum):
+class Direction:
     """Form direction object."""
 
-    buy = 1
-    sell = -1
-
-    def __str__(self) -> str:
-        return self.name.capitalize()
+    name: str
+    value: int
 
     def __repr__(self) -> str:
         return self.name.capitalize()
@@ -55,19 +52,6 @@ class Exchange:
     XTSE = "XTSE"
     XIST = "XIST"
     EUREX = "EUREX"
-
-
-class OrderSideType:
-    """List of order types."""
-
-    Buy = "Buy"
-    Sell = "Sell"
-    Short = "Sell Short"
-    Cov = "Cover the short"
-    BTO = "Buy-to-Open"
-    STC = "Sell-to-Close"
-    STO = "Sell-to-Open"
-    BTC = "Buy-to-Close"
 
 
 class OptionType:

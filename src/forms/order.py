@@ -15,13 +15,13 @@ from wtforms import (
 from wtforms.validators import DataRequired, Optional
 from src.environment import Order
 from src.market import Symbol
-from src.market.types import OrderSideType
+from src.market.ref_data import buy, sell
 from src.forms.validators import Ticker, Location, FutureDate, PositiveFloat
 
 
-order_side_choices = [
-    (OrderSideType.Buy, OrderSideType.Buy),
-    (OrderSideType.Sell, OrderSideType.Sell),
+direction_choices = [
+    (buy, buy),
+    (sell, sell),
 ]
 
 date_time_format = "%Y-%m-%d"
@@ -32,9 +32,7 @@ class AddOrderForm(Form):
 
     symbol = StringField(u"Ticker", [DataRequired(), Ticker(), Location()])
     quantity = IntegerField(u"Order Quantity", [DataRequired()])
-    direction = SelectField(
-        u"Direction", default=OrderSideType.Buy, choices=order_side_choices
-    )
+    direction = SelectField(u"Direction", default=buy, choices=direction_choices)
     cost = FloatField(u"Cost", [Optional(), PositiveFloat()], default=0)
     exec_datetime = DateTimeField(
         u"Order Date",
@@ -68,7 +66,7 @@ def generate_edit_order_form(order: Order) -> Form:
             u"Order Quantity", [DataRequired()], default=order.quantity
         )
         direction = SelectField(
-            u"Direction", default=order.direction, choices=order_side_choices
+            u"Direction", default=order.direction, choices=direction_choices
         )
         cost = FloatField(
             u"Cost", [Optional(), PositiveFloat()], default=order.cost.value

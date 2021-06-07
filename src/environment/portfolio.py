@@ -112,7 +112,7 @@ class Portfolio(BaseModel):
     def set_as_primary(self) -> None:
         """Check if a portfolio is set as primary."""
         self.primary = True
-        db.session.commit()
+        self.commit()
 
     def edit(
         self, name: str, currency: Currency, port_type: str, benchmark: Instrument
@@ -122,7 +122,7 @@ class Portfolio(BaseModel):
         self.reporting_currency = currency
         self.portfolio_type = port_type
         self.benchmark = benchmark
-        db.session.commit()
+        self.commit()
 
     def get_positions_by_security_type(self, security_type) -> List[Position]:
         """Get position by security type."""
