@@ -50,7 +50,7 @@ class User(BaseModel, UserMixin):
     def confirm_user(self) -> None:
         """Set user as confirmed."""
         self.confirmed = True
-        db.session.commit()
+        self.commit()
 
     def get_primary_portfolio(self) -> Portfolio:
         """Get primary portfolio."""

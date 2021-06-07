@@ -33,11 +33,16 @@ class BaseModel(db.Model):
     def save_to_db(self) -> None:
         """Save object to db."""
         db.session.add(self)
-        db.session.commit()
+        self.commit()
 
     def delete_from_db(self) -> None:
         """Delete object from db."""
         db.session.delete(self)
+        self.commit()
+
+    @staticmethod
+    def commit():
+        """Commit changes."""
         db.session.commit()
 
 
@@ -74,12 +79,12 @@ class Alert(BaseModel):
     def activate(self) -> None:
         """Activate alert."""
         self.active = True
-        db.session.commit()
+        self.commit()
 
     def deactivate(self) -> None:
         """Deactivate alert."""
         self.active = False
-        db.session.commit()
+        self.commit()
 
     def generate_email(self) -> Email:
         """Generate email object."""

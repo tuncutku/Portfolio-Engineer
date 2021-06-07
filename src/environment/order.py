@@ -73,4 +73,4 @@ class Order(BaseModel):
         self.direction = direction
         self.cost = cost
         self.time = time
-        db.session.commit()
+        self.commit()
