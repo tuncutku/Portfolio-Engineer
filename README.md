@@ -2,7 +2,7 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-[![Build Status](https://github.com/tuncutku/Portfolio-Engineer/actions/workflows/test.yml/badge.svg?branch=dev)](https://github.com/tuncutku/Portfolio-Engineer/actions/workflows/test.yml)
+[![Build Status](https://github.com/tuncutku/Portfolio-Engineer/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/tuncutku/Portfolio-Engineer/actions/workflows/test.yml)
 
 
 
