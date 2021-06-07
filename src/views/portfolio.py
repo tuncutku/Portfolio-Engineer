@@ -104,3 +104,27 @@ def set_portfolio_primary(portfolio_id):
     current_portfolio.set_as_primary()
 
     return redirect(url_for("portfolio.list_portfolios"))
+
+
+@portfolio_blueprint.route("/activate_daily_report/<int:portfolio_id>", methods=["GET"])
+@login_required
+def activate_daily_report(portfolio_id):
+    """Activate daily report for a given portfolio."""
+
+    port = Portfolio.find_by_id(portfolio_id)
+    port.daily_report.activate()
+
+    return redirect(url_for("portfolio.list_portfolios"))
+
+
+@portfolio_blueprint.route(
+    "/deactivate_daily_report/<int:portfolio_id>", methods=["GET"]
+)
+@login_required
+def deactivate_daily_report(portfolio_id):
+    """Activate daily report for a given portfolio."""
+
+    port = Portfolio.find_by_id(portfolio_id)
+    port.daily_report.deactivate()
+
+    return redirect(url_for("portfolio.list_portfolios"))

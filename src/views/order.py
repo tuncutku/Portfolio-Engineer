@@ -18,7 +18,11 @@ def delete_order(order_id: int):
     """Delete an order."""
 
     order = Order.find_by_id(order_id)
+    position = order.position
     order.delete_from_db()
+
+    if not position.orders:
+        position.delete_from_db()
 
     return redirect(url_for("portfolio.list_portfolios"))
 

@@ -93,8 +93,13 @@
                                 <div class="row justify-content-center">
                                     <div class="col-11">
                                         <ul class="list-group">
-                                            <a href="{{ url_for('alert.list_alerts', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success">Manage Alerts</a>
+                                            {% if port.daily_report.active == False%}
+                                            <a href="{{ url_for('portfolio.activate_daily_report', portfolio_id=port['id']) }}"
+                                                class="btn btn-outline-success">Activate Daily Report</a>
+                                            {% else %}
+                                            <a href="{{ url_for('portfolio.deactivate_daily_report', portfolio_id=port['id']) }}"
+                                                class="btn btn-outline-success">Deactivate Daily Report</a>
+                                            {% endif %}
                                             {% if port.primary == False%}
                                             <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
                                                 class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>

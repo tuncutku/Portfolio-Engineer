@@ -1,7 +1,6 @@
 """Test portfolio endpoints"""
 # pylint: disable=unused-argument
 
-from celery.utils.log import MP_LOG
 from src.environment.portfolio import Portfolio
 from src.market import Currency
 from src.market.types import PortfolioType
@@ -106,4 +105,24 @@ def test_set_portfolio_primary(
     assert portfolio.primary is True
 
     template_list = ["portfolio/list_portfolios.html"]
+    templete_used(template_list, captured_templates)
+
+
+def test_portfolio_daily_report(
+    client, _db, load_environment_data, login, captured_templates
+):
+    """Test endpoints that activates and deactivates daily report."""
+
+    portfolio = Portfolio.find_by_id(1)
+    daily_report = portfolio.daily_report
+
+    response = client.get("portfolio/deactivate_daily_report/1", follow_redirects=True)
+    assert response.status_code == 200
+    assert daily_report.active is False
+
+    response = client.get("portfolio/activate_daily_report/1", follow_redirects=True)
+    assert response.status_code == 200
+    assert daily_report.active is True
+
+    template_list = ["portfolio/list_portfolios.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

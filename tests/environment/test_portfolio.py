@@ -26,6 +26,7 @@ def test_portfolio_object(client, _db, load_environment_data):
     assert port.reporting_currency == cad_ccy
     assert port.benchmark == gspc
     assert not port.primary
+    assert port.daily_report.active is True
     assert isinstance(port.date, date)
     assert repr(port) == "<Portfolio portfolio_1.>"
 
