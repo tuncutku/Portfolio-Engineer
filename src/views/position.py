@@ -5,8 +5,8 @@ from flask import Blueprint, url_for, render_template, redirect
 from flask_login import login_required
 
 from src.environment import Position, Order
-from src.market.types import OrderSideType
 from src.market.utils import get_business_day
+from src.market.ref_data import buy, sell
 
 
 position_blueprint = Blueprint("position", __name__, url_prefix="/position")
@@ -33,7 +33,7 @@ def close_position(position_id):
     if position.is_open:
         order = Order(
             position.open_quantity,
-            OrderSideType.Sell if position.open_quantity > 0 else OrderSideType.Buy,
+            sell if position.open_quantity > 0 else buy,
             position.security.value.value,
             get_business_day(date.today()),
         )
