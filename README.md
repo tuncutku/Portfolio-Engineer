@@ -1,30 +1,23 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Build Status](https://github.com/tuncutku/Portfolio-Engineer/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/tuncutku/Portfolio-Engineer/actions/workflows/test.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
-
-<!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 * [About the Project](#about-the-project)
-  * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Roadmap](#roadmap)
+* [First time developer setup](#first-time-developer-setup)
+* [Project Structure](#project-structure)
+* [Work with ./doit.sh](#work-with-./doit.sh)
+* [Work with CLI](#work-with-cli)
+* [Work with Celery](#work-with-celery)
+* [Docker commands](#docker-commands)
 * [License](#license)
-* [Contact](#contact)
 
 
-
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
 
-Portfolio engineer is an application for monitoring portfolio performance, conducting portfolio analytics as well as settign custom alerts.
+Portfolio engineer is an application for monitoring portfolio performance, conducting portfolio analytics as well as setting custom alerts.
 
 Instrument coverage:
 * Equities
@@ -40,82 +33,89 @@ Portfolio analytics coverage:
 * Portfolio optimization
 * Factor analysis
 
+Alert coverage:
+* Price
+* Return
 
-<!-- GETTING STARTED -->
-## Getting Started
+## First time developer setup
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+1. To pull portfolio engineer repository:
+   `git clone https://github.com/tuncutku/Portfolio-Engineer.git`
+2. Create virtual environment and activate it:
+   `./doit.sh`
+3. Run unit tests:
+   `./doit.sh run_tests`
+4. Create a new branch:
+   `git checkout <name of the user>-<git issue number>-<short description of the issue>`
+4. Pull request naming:
+   `<issue number>-<short description of the issue>`
 
-### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-```sh
-npm install npm@latest -g
+## Project Structure
+
+```bash
+falcon/
+├── src/
+│   ├── analytics/                # Analytics library
+│   ├── api/
+│   ├── dashapp/
+│   ├── environment/
+│   ├── forms/
+│   ├── market/                   # Instruments and other market components
+│   ├── tasks/
+│   ├── templates/
+│   ├── views/
+│   ├── cli.py
+│   └── extensions.py/
+├── tests/
+│   └── conftest.py
+│       ...
+├── docker-compose.yml
+├── Dockerfile
+├── doit.sh
+├── README.md
+├── config.py
+├── run_app.py
+├── run_celery.py
+└── requirements.txt
 ```
 
-### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-```sh
-git clone https://github.com/your_username_/Project-Name.git
-```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
-```JS
-const API_KEY = 'ENTER YOUR API';
+## Work with `./doit.sh`
+
+Provide the `doit.sh` command with one of the following commands as an argument:
+
+```bash
+./doit.sh
 ```
 
+| Argument                      | Description                                                                |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| run_tests                     | Run unit tests.                                                            |
+| init_db                       | Run linters against code and also check style.                             |
 
 
-<!-- USAGE EXAMPLES -->
-## Usage
+If you do not provide a command argument, the `doit.sh` command returns a list of them.
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+## Work with CLI
 
+* `flask check_style`
+* `flask create_user`
+* `flask init_db`
+* `flask clear_database`
+* `flask test --coverage`
 
+## Work with Celery
 
-<!-- ROADMAP -->
-## Roadmap
+* Run celery worker: `celery -A celery_worker.celery worker --loglevel=info`
+* Run celery beat: `celery -A celery_worker.celery beat --loglevel=info`
 
-See the [open issues](https://github.com/tuncutku/Portfolio-Engineer/issues) for a list of proposed features (and known issues).
+## Docker commands
 
+* Build image: `docker build -t portfolioengineer -f deploy/Dockerfile .`
+* Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolioengineer`
+* Run docker compose: `docker-compose --env-file .env -f "docker-compose.yml" up -d --build`
 
-
-<!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
-
-
-<!-- CONTACT -->
-## Contact
-
-Tunç Utku - [https://www.linkedin.com/in/tuncutku](https://www.linkedin.com/in/tuncutku)
-
-Project Link - [https://github.com/tuncutku/Portfolio-Engineer](https://github.com/tuncutku/Portfolio-Engineer)
-
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
