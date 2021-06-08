@@ -40,21 +40,13 @@ Alert coverage:
 ## First time developer setup
 
 1. To pull portfolio engineer repository:
-   ```bash
-   git clone https://github.com/tuncutku/Portfolio-Engineer.git
-   ```
+   `git clone https://github.com/tuncutku/Portfolio-Engineer.git`
 2. Create virtual environment and activate it:
-   ```bash
-   ./doit.sh
-   ```
+   `./doit.sh`
 3. Run unit tests:
-   ```bash
-   ./doit.sh run_tests
-   ```
+   `./doit.sh run_tests`
 4. Create a new branch:
-   ```bash
-   git checkout <name of the user>-<git issue number>-<short description of the issue>
-   ```
+   `git checkout <name of the user>-<git issue number>-<short description of the issue>`
 
 
 ## Project Structure
