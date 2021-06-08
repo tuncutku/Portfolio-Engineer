@@ -2,7 +2,6 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
-<!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 * [About the Project](#about-the-project)
@@ -13,7 +12,6 @@
 * [Work with Celery](#work-with-celery)
 * [Docker commands](#docker-commands)
 * [License](#license)
-
 
 
 ## About The Project
@@ -107,22 +105,22 @@ If you do not provide a command argument, the `doit.sh` command returns a list o
 
 ## Work with CLI
 
-`flask check_style`
-`flask create_user`
-`flask init_db`
-`flask clear_database`
-`flask test --coverage`
+* `flask check_style`
+* `flask create_user`
+* `flask init_db`
+* `flask clear_database`
+* `flask test --coverage`
 
 ## Work with Celery
 
-Run celery worker: `celery -A celery_worker.celery worker --loglevel=info`
-Run celery beat: `celery -A celery_worker.celery beat --loglevel=info`
+* Run celery worker: `celery -A celery_worker.celery worker --loglevel=info`
+* Run celery beat: `celery -A celery_worker.celery beat --loglevel=info`
 
 ## Docker commands
 
-Build image: `docker build -t portfolioengineer -f deploy/Dockerfile .`
-Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolioengineer`
-Run docker compose: `docker-compose --env-file .env -f "docker-compose.yml" up -d --build`
+* Build image: `docker build -t portfolioengineer -f deploy/Dockerfile .`
+* Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolioengineer`
+* Run docker compose: `docker-compose --env-file .env -f "docker-compose.yml" up -d --build`
 
 ## License
 
