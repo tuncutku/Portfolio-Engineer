@@ -47,6 +47,8 @@ Alert coverage:
    `./doit.sh run_tests`
 4. Create a new branch:
    `git checkout <name of the user>-<git issue number>-<short description of the issue>`
+4. Pull request naming:
+   `<issue number>-<short description of the issue>`
 
 
 ## Project Structure
