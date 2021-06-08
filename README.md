@@ -15,9 +15,6 @@
 
 
 
-
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
 
@@ -44,30 +41,31 @@ Alert coverage:
 
 ## Project Structure
 
-* src/services contains implementation of the cloud services used to run the build system and demo the products
-* src/packages contains python packages that are deliverable to a clients
-* src/infra contains python packages that are shared across different projects, but are only for internal use
-
-Directory structure, key locations:
-
 ```bash
 falcon/
 ├── src/
-│   ├── services/                # SDK customer trials infrastructure
-│   └── packages/
-│       ├── fincad_f3/           # `fincad.f3` python-package
+│   ├── analytics/                # Analytics library
+│   ├── api/
+│   ├── dashapp/
+│   ├── environment/
+│   ├── forms/
+│   ├── market/
+│   ├── tasks/
+│   ├── templates/
+│   ├── views/
+│   ├── cli.py
+│   └── extensions.py/
+├── tests/
+│   └── conftest.py
 │       ...
-│   └── infra/
-│       ├── fincad_devdocs/       # `fincad.devdocs` python-package
-│       ...
-├── conftest.py
-├── scripts
-├── dodo.py
+├── docker-compose.yml
+├── Dockerfile
 ├── doit.sh
 ├── README.md
-├── dev_packages.txt
-├── requirements_dev.in
-└── requirements_dev.txt
+├── config.py
+├── run_app.py
+├── run_celery.py
+└── requirements.txt
 ```
 
 
@@ -81,27 +79,16 @@ Provide the `doit.sh` command with one of the following commands as an argument:
 
 | Argument                      | Description                                                                |
 | ----------------------------- | -------------------------------------------------------------------------- |
-| unit_tests                    | Run unit tests.                                                            |
-| check_code                    | Run linters against code and also check style.                             |
-| compile_dependencies          | Generate requirements files.                                               |
-| analytics_instrument_coverage | Generate analytics instrument coverage report.                             |
-| analytics_profile_tests       | Profile analytics unit-tests.                                              |
-| analytics_profiler_report     | Generate profiler report based on results under analytics.                 |
-| fincad_f3_build_whl           | Make wheel-file from fincad.f3 package.                                    |
-| fincad_f3_download_core       | Download F3 core library.                                                  |
-| fincad_f3_generate_python_api | Generate python API for F3 core library.                                   |
-| fincad_sdk_build_zip          | Make the installer of FINCAD SDK.                                          |
-| fix_style                     | Fix code style.                                                            |
-| generate_docs                 | Generate Sphinx Documentation.                                             |
-| install_dev                   | Install development and production requirements and configure the VS Code. |
-| run_codeclimate_cli           | Run CodeClimate CLI for modified files. (Note: Works with WSL 2)           |
-| test_docs                     | Test docs against the style guide.                                         |
+| run_tests                     | Run unit tests.                                                            |
+| init_db                       | Run linters against code and also check style.                             |
+
 
 If you do not provide a command argument, the `doit.sh` command returns a list of them.
 
 ## Deployment
 
-
+### Docker
+### Heroku
 
 
 
