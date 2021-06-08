@@ -6,11 +6,12 @@
 ## Table of Contents
 
 * [About the Project](#about-the-project)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Usage](#usage)
-* [Roadmap](#roadmap)
+* [First time developer setup](#first-time-developer-setup)
+* [Project Structure](#project-structure)
+* [Work with ./doit.sh](#work-with-./doit.sh)
+* [Work with CLI](#work-with-cli)
+* [Work with Celery](#work-with-celery)
+* [Docker commands](#docker-commands)
 * [License](#license)
 
 
@@ -38,6 +39,25 @@ Alert coverage:
 * Price
 * Return
 
+## First time developer setup
+
+1. To pull portfolio engineer repository:
+   ```bash
+   git clone https://github.com/tuncutku/Portfolio-Engineer.git
+   ```
+2. Create virtual environment and activate it:
+   ```bash
+   ./doit.sh
+   ```
+3. Run unit tests:
+   ```bash
+   ./doit.sh run_tests
+   ```
+4. Create a new branch:
+   ```bash
+   git checkout <name of the user>-<git issue number>-<short description of the issue>
+   ```
+
 
 ## Project Structure
 
@@ -49,7 +69,7 @@ falcon/
 │   ├── dashapp/
 │   ├── environment/
 │   ├── forms/
-│   ├── market/
+│   ├── market/                   # Instruments and other market components
 │   ├── tasks/
 │   ├── templates/
 │   ├── views/
@@ -85,16 +105,25 @@ Provide the `doit.sh` command with one of the following commands as an argument:
 
 If you do not provide a command argument, the `doit.sh` command returns a list of them.
 
-## Deployment
+## Work with CLI
 
-### Docker
-### Heroku
+`flask check_style`
+`flask create_user`
+`flask init_db`
+`flask clear_database`
+`flask test --coverage`
 
+## Work with Celery
 
+Run celery worker: `celery -A celery_worker.celery worker --loglevel=info`
+Run celery beat: `celery -A celery_worker.celery beat --loglevel=info`
 
+## Docker commands
 
+Build image: `docker build -t portfolioengineer -f deploy/Dockerfile .`
+Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolioengineer`
+Run docker compose: `docker-compose --env-file .env -f "docker-compose.yml" up -d --build`
 
-<!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
