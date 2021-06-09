@@ -5,7 +5,7 @@ from datetime import date
 
 import pytest
 
-from src.market.alert import Signal
+from src.market.signal import Signal
 from src.market.ref_data import aapl, up
 
 from tests.test_data import market as mkt

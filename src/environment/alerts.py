@@ -11,7 +11,7 @@ from pandas import concat
 
 from src.environment.base import Alert
 from src.extensions import db
-from src.market.alert import Signal
+from src.market.signal import Signal
 from src.analytics._return import periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
