@@ -93,12 +93,6 @@ def mock_current_md(mocker):
     """Mock current market data."""
 
     mocker.patch(
-        "src.market.security.equity.Equity.value",
-        new_callable=mocker.PropertyMock,
-        return_value=SingleValue(120.0, ref_data.usd_ccy),
-    )
-
-    mocker.patch(
         "src.market.basic.FX.rate",
         new_callable=mocker.PropertyMock,
         return_value=1.2,

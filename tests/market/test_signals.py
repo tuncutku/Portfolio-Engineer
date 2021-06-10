@@ -41,7 +41,7 @@ signal_test_contents = [
             up,
             0.05,
             False,
-            False,
+            True,
             "Signal triggered when the return calculated by max or min price from the starting date is upper than 5.00%.",
         ),
     ),

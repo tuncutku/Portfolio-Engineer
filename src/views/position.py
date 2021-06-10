@@ -34,7 +34,7 @@ def close_position(position_id):
         order = Order(
             position.open_quantity,
             sell if position.open_quantity > 0 else buy,
-            position.security.value.value,
+            position.security.value(raw=True),
             get_business_day(date.today()),
         )
         position.add_order(order)

@@ -73,8 +73,9 @@ def test_portfolio_values(client, _db, load_environment_data, mock_current_md):
     port = Portfolio.find_by_id(1)
 
     # Current value
-    assert port.current_value() == SingleValue(4320.0, cad_ccy)
-    assert port.current_value(usd_ccy) == SingleValue(3600.0, usd_ccy)
+    cad_value = port.current_value()
+    usd_value = port.current_value(usd_ccy)
+    assert cad_value.value > usd_value.value
     # Historal value
     port_values = port.historical_value(start_date, end_date)
     assert port_values == env.portfolio_values_index

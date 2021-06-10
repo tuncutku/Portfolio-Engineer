@@ -65,7 +65,7 @@ class PriceSignal(Signal):
 
     @property
     def value(self) -> float:
-        return round(self.underlying.value.value, 5)
+        return round(self.underlying.value(raw=True), 5)
 
 
 @dataclass
@@ -80,7 +80,7 @@ class DailyReturnSignal(Signal):
 
     @property
     def value(self) -> float:
-        current_price = self.underlying.value.value
+        current_price = self.underlying.value(raw=True)
         open_price = self.underlying.symbol.get_info(Info.market_open)
         return round(log(current_price / open_price), 5)
 
@@ -103,7 +103,7 @@ class LimitReturnSignal(Signal):
         if self.start_date == date.today():
             value = 0
         else:
-            current_price = self.underlying.value.value
+            current_price = self.underlying.value(raw=True)
             index = self.underlying.index(self.start_date)
             extrema = EXTREMA_MAP[type(self.operator)]
             value = round(log(current_price / extrema(index)), 5)

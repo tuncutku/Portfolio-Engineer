@@ -35,7 +35,8 @@ def test_common(security: Instrument, symbol: Symbol, security_type: str):
     assert security.security_type == security_type
 
     assert isinstance(security.name, str)
-    assert isinstance(security.value, SingleValue)
+    assert isinstance(security.value(), SingleValue)
+    assert isinstance(security.value(raw=True), float)
     assert isinstance(security.index(start_date), IndexValue)
 
 
