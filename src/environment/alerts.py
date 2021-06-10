@@ -123,10 +123,3 @@ class MarketAlert(Alert):
             "current_value": self.signal.value,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
         }
-
-
-# class DailyNews(AlertBase):
-#     pass
-
-# class EconomicAlert(AlertBase):
-#     pass

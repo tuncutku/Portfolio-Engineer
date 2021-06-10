@@ -1,16 +1,18 @@
 """Sample market data"""
 
+from datetime import date
 from pandas import Series
 from src.market import SingleValue, IndexValue
 from src.market.ref_data import cad_ccy, usd_ccy, aapl, up
-from src.market.signal import PriceSignal, BasicReturnSignal
+from src.market.signal import PriceSignal, DailyReturnSignal, LimitReturnSignal
 
 from tests.test_data.raw_data.fx import fx_index
 from tests.test_data.raw_data import security
 
 # Sample market signals
-price_signal = PriceSignal(aapl, up, 100)
-return_signal = BasicReturnSignal(aapl, up, 0.02, 90)
+price_signal = PriceSignal(up, 100, aapl)
+return_signal = DailyReturnSignal(up, 0.02, aapl)
+limit_signal = LimitReturnSignal(up, 0.05, aapl, date(2021, 1, 4))
 
 # Sample series
 aapl_series = Series(security.aapl_raw, name="AAPL")

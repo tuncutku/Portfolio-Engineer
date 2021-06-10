@@ -79,3 +79,8 @@ def test_index_replace():
 
     market.aapl_index.replace(environment.sample_cost_raw)
     assert market.aapl_index == market.aapl_replaced_index
+
+
+def test_index_iter():
+    """Test index iter method."""
+    assert len(list(market.aapl_index)) == 13
