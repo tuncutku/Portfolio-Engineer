@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import date
 from math import log
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from src.market.symbol import Info
 from src.market.basic import Currency
@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 class Signal(ABC):
     """Base for signal."""
 
+    underlying: Union[Instrument, Portfolio]
     operator: Operator
     target: float
     creation_date: date = field(init=False, default=date.today())
@@ -59,21 +60,17 @@ class Signal(ABC):
 class PriceSignal(Signal):
     """Price signal."""
 
-    security: Instrument
-
     def __repr__(self) -> str:
         return f"Signal triggered when current price is {self.operator} than {self.target}."
 
     @property
     def value(self) -> float:
-        return round(self.security.value.value, 5)
+        return round(self.underlying.value.value, 5)
 
 
 @dataclass
 class DailyReturnSignal(Signal):
     """Price signal."""
-
-    security: Instrument
 
     def __repr__(self) -> str:
         target_pct = "{0:.2f}%".format(self.target * 100)
@@ -83,8 +80,8 @@ class DailyReturnSignal(Signal):
 
     @property
     def value(self) -> float:
-        current_price = self.security.value.value
-        open_price = self.security.symbol.get_info(Info.market_open)
+        current_price = self.underlying.value.value
+        open_price = self.underlying.symbol.get_info(Info.market_open)
         return round(log(current_price / open_price), 5)
 
 
@@ -95,7 +92,6 @@ EXTREMA_MAP = {Up: min, UpEqual: min, Down: max, DownEqual: max}
 class LimitReturnSignal(Signal):
     """Price signal."""
 
-    security: Instrument
     start_date: date = date.today()
 
     def __repr__(self) -> str:
@@ -107,8 +103,8 @@ class LimitReturnSignal(Signal):
         if self.start_date == date.today():
             value = 0
         else:
-            current_price = self.security.value.value
-            index = self.security.index(self.start_date)
+            current_price = self.underlying.value.value
+            index = self.underlying.index(self.start_date)
             extrema = EXTREMA_MAP[type(self.operator)]
             value = round(log(current_price / extrema(index)), 5)
         return value
@@ -118,22 +114,19 @@ class LimitReturnSignal(Signal):
 class DailyPortfolioReturnSignal(Signal):
     """Daily portfolio return signal."""
 
-    portfolio: Portfolio
-
     def __repr__(self) -> str:
         target_pct = "{0:.2f}%".format(self.target * 100)
         return f"Signal triggered when portfolio daily return is {self.operator} than {target_pct}."
 
     @property
     def value(self) -> float:
-        return self.portfolio.current_value()
+        return self.underlying.current_value()
 
 
 @dataclass
 class PortfolioValueSignal(Signal):
     """Portfolio value signal."""
 
-    portfolio: Portfolio
     currency: Currency = None
 
     def __repr__(self) -> str:
@@ -142,7 +135,7 @@ class PortfolioValueSignal(Signal):
 
     @property
     def value(self) -> float:
-        return self.portfolio.current_value(self.currency)
+        return self.underlying.current_value(self.currency)
 
 
 # @dataclass

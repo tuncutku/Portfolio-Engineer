@@ -10,7 +10,7 @@ class Index(Instrument):
     """Form exchange traded fund object."""
 
     def __repr__(self):
-        return "<Index {}.>".format(self.symbol.symbol)
+        return "Index {}".format(self.symbol.symbol)
 
     # @property
     # def industry(self):

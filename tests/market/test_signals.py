@@ -53,7 +53,7 @@ signal_test_names = [signal[0].__class__.__name__ for signal in signal_test_cont
 def test_signals(mock_current_md, signal: Signal, results: AlertResults):
     """Test price signal."""
 
-    assert signal.security == aapl
+    assert signal.underlying == aapl
     assert signal.creation_date == date.today()
 
     assert signal.operator == results.operator

@@ -49,7 +49,7 @@ def test_market_alert(client, _db, load_environment_data, mock_current_md):
     assert market_alert.recipients[0] == env.user_1_raw["email"]
 
     content = market_alert.generate_email_content()
-    assert str(content["symbol"]) == "AAPL"
+    assert str(content["symbol"]) == "Equity AAPL"
     assert (
         str(content["signal"])
         == "Signal triggered when current price is upper than 100."

@@ -102,7 +102,7 @@ class MarketAlert(Alert):
 
     @property
     def subject(self) -> str:
-        return f"Market alert for {self.signal.security.symbol}"
+        return f"Market alert for {self.signal.underlying}"
 
     @property
     def email_template(self) -> str:
@@ -118,7 +118,7 @@ class MarketAlert(Alert):
     def generate_email_content(self) -> dict:
         date_time = datetime.now()
         return {
-            "symbol": self.signal.security.symbol,
+            "symbol": self.signal.underlying,
             "signal": self.signal,
             "current_value": self.signal.value,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
