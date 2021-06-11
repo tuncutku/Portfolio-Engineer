@@ -12,7 +12,7 @@ from src.extensions import db
 from src.environment.base import BaseModel
 from src.environment.alerts import DailyReport
 from src.environment.position import Position
-from src.market import Instrument, Currency, Symbol, IndexValue, SingleValue
+from src.market import Instrument, Currency, Symbol, IndexValue, SingleValue, Info
 from src.market.ref_data import cad_ccy, gspc
 from src.market.types import PortfolioType
 
@@ -92,13 +92,16 @@ class Portfolio(BaseModel):
         quantities = self.position_quantities(start, end)
         return values * quantities
 
-    def current_value(self, currency: Currency = None) -> SingleValue:
+    def current_value(
+        self, currency: Currency = None, request: str = Info.price
+    ) -> SingleValue:
         """Current market value of the portfolio."""
         reporting_currency = currency or self.reporting_currency
-        position_values = sum(
-            [position.current_value(reporting_currency) for position in self.positions]
-        )
-        return round(position_values, 3)
+        position_values = [
+            position.current_value(reporting_currency, request)
+            for position in self.positions
+        ]
+        return round(sum(position_values), 3)
 
     def historical_value(
         self, start: date, end: date = None, currency: Currency = None

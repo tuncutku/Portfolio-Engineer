@@ -4,7 +4,11 @@ from datetime import date
 from pandas import Series
 from src.market import SingleValue, IndexValue
 from src.market.ref_data import cad_ccy, usd_ccy, aapl, up
-from src.market.signal import PriceSignal, DailyReturnSignal, LimitReturnSignal
+from src.market.signal import (
+    PriceSignal,
+    DailyReturnSignal,
+    LimitReturnSignal,
+)
 
 from tests.test_data.raw_data.fx import fx_index
 from tests.test_data.raw_data import security
