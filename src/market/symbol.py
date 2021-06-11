@@ -22,6 +22,7 @@ class Info:
     instrument_type = "quoteType"
     market_open = "regularMarketOpen"
     time_zone = "exchangeTimezoneShortName"
+    volume = "regularMarketVolume"
 
     # Option requests
     underlying_symbol = "underlyingSymbol"
