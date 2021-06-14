@@ -102,13 +102,14 @@ If you do not provide a command argument, the `doit.sh` command returns a list o
 * `flask check_style`
 * `flask create_user`
 * `flask init_db`
-* `flask clear_database`
+* `flask clear_db`
 * `flask test --coverage`
 
 ## Work with Celery
 
-* Run celery worker: `celery -A celery_worker.celery worker --loglevel=info`
-* Run celery beat: `celery -A celery_worker.celery beat --loglevel=info`
+* Run celery worker: `celery -A run_celery.celery worker --loglevel=info`
+* Run celery beat: `celery -A run_celery.celery beat --loglevel=info`
+* Run celery worker and beat at the same time: `celery -A run_celery.celery worker --loglevel=info -B `
 
 ## Docker commands
 

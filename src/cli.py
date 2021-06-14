@@ -70,7 +70,7 @@ def register_cli(app):
 
         db.create_all()
 
-    @app.cli.command("clear_database")
-    def clear_database():
+    @app.cli.command("clear_db")
+    def clear_db():
 
         db.drop_all()
