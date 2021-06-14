@@ -1,5 +1,4 @@
 """Exchange traded fund"""
-# pylint: disable=duplicate-code
 
 from dataclasses import dataclass
 from src.market.security.utils.base import Instrument

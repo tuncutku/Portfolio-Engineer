@@ -2,11 +2,9 @@
 # pylint: disable=unused-argument
 
 from datetime import date
-from pandas import Series
 
 from src.environment import Position
-from src.market import SingleValue
-from src.market.ref_data import usd_ccy, cad_ccy
+from src.market.ref_data import cad_ccy
 
 from tests.test_data import environment as env
 

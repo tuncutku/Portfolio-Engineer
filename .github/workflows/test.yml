@@ -28,3 +28,4 @@ jobs:
     - name: Run pylint
       run: |
         pylint src/
+        pylint tests/

@@ -3,7 +3,7 @@
 
 import pytest
 
-from src.environment import Portfolio, DailyReport, MarketAlert, alerts
+from src.environment import Portfolio, DailyReport, MarketAlert
 from src.market import SingleValue
 from src.market.ref_data import gspc, cad_ccy
 from tests.test_data import environment as env

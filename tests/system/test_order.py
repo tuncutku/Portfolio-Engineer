@@ -20,17 +20,14 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
     assert "Add new order" in response.get_data(as_text=True)
 
     # Test to post an order that has a position.
-    response = client.post(
-        "order/1/add_order",
-        data=dict(
-            symbol="FB",
-            quantity=6,
-            direction=sell,
-            cost=10,
-            exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
-        ),
-        follow_redirects=True,
+    data = dict(
+        symbol="FB",
+        quantity=6,
+        direction=sell,
+        cost=10,
+        exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
     )
+    response = client.post("order/1/add_order", data=data, follow_redirects=True)
 
     assert response.status_code == 200
 
@@ -60,17 +57,14 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
     assert "2020-02-03" in response.get_data(as_text=True)
     assert "Buy" in response.get_data(as_text=True)
 
-    response = client.post(
-        "order/edit/1",
-        data=dict(
-            symbol="AAPL",
-            quantity=10,
-            direction=buy,
-            cost=101,
-            exec_datetime=datetime(2019, 1, 3).strftime(date_time_format),
-        ),
-        follow_redirects=True,
+    data = dict(
+        symbol="AAPL",
+        quantity=10,
+        direction=buy,
+        cost=101,
+        exec_datetime=datetime(2019, 1, 3).strftime(date_time_format),
     )
+    response = client.post("order/edit/1", data=data, follow_redirects=True)
     assert response.status_code == 200
 
     order_test = Order.find_by_id(1)

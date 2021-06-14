@@ -6,8 +6,6 @@ from flask import template_rendered
 
 from src import create_app
 from src.environment import User, Portfolio, Position, Order, MarketAlert
-from src.market import SingleValue
-from src.market import ref_data
 
 from src.extensions import db
 from tests.test_data import environment as env

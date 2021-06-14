@@ -1,8 +1,6 @@
 """Test environment object relations"""
 # pylint: disable=unused-argument
 
-from datetime import datetime
-
 from src.environment import User, Portfolio, Position, Order, DailyReport, MarketAlert
 
 

@@ -10,20 +10,22 @@ from datetime import date
 from math import log
 from typing import TYPE_CHECKING, Union
 
+from flask_login import current_user
+
 from src.market.symbol import Info
 from src.market.basic import Currency
 from src.market.security.utils.base import Instrument
 from src.market.signal.operators import Operator, Up, UpEqual, Down, DownEqual
 
 if TYPE_CHECKING:
-    from src.environment import Portfolio
+    from src.environment import User
 
 
 @dataclass
 class Signal(ABC):
     """Base for signal."""
 
-    underlying: Union[Instrument, Portfolio]
+    underlying: Union[Instrument, str]
     operator: Operator
     target: float
     creation_date: date = field(init=False, default=date.today())
@@ -32,10 +34,6 @@ class Signal(ABC):
     @abstractmethod
     def __repr__(self) -> str:
         """Repr method."""
-
-    # @abstractmethod
-    # def __hash__(self) -> int:
-    #     """Hash the underlying signal."""
 
     @property
     @abstractmethod
@@ -119,8 +117,10 @@ class DailyPortfolioReturnSignal(Signal):
 
     @property
     def value(self) -> float:
-        current_value = self.underlying.current_value()
-        open_value = self.underlying.current_value(request=Info.market_open)
+        user: User = current_user
+        portfolio = user.get_portfolio_by_name(self.underlying)
+        current_value = portfolio.current_value()
+        open_value = portfolio.current_value(request=Info.market_open)
         return round(log(current_value.value / open_value.value), 5)
 
 
@@ -135,14 +135,6 @@ class PortfolioValueSignal(Signal):
 
     @property
     def value(self) -> float:
-        return self.underlying.current_value(self.currency).value
-
-
-# @dataclass
-# class MovingAverageSignal(Signal):
-#     """Volume signal."""
-
-
-# @dataclass
-# class VolumeSignal(Signal):
-#     """Volume signal."""
+        user: User = current_user
+        portfolio = user.get_portfolio_by_name(self.underlying)
+        return portfolio.current_value(self.currency).value

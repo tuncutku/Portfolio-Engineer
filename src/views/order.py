@@ -5,9 +5,7 @@ from flask_login import login_required
 
 from src.environment import Portfolio, Position, Order
 from src.forms.order import AddOrderForm, generate_edit_order_form
-from src.market import Symbol, SingleValue
-from src.views.utils.common import get_instrument, DIRECTION_MAP
-
+from src.market import Symbol, SingleValue, get_instrument, DIRECTION_MAP
 
 order_blueprint = Blueprint("order", __name__, url_prefix="/order")
 

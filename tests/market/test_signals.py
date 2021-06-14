@@ -1,4 +1,5 @@
 """Test alert objects."""
+# pylint: disable=unused-argument, line-too-long
 
 from collections import namedtuple
 from datetime import date
@@ -62,18 +63,18 @@ def test_single_instrument_signals(
     assert signal.active is True
 
 
-def test_portfolio_signals(client, _db, load_environment_data):
+def test_portfolio_signals(client, _db, load_environment_data, login):
     """Test portfolio daily return signal."""
 
     port = Portfolio.find_by_id(1)
-    port_return = DailyPortfolioReturnSignal(port, up, 0.05)
-    port_value = PortfolioValueSignal(port, up, 100000)
+    port_return = DailyPortfolioReturnSignal(port.name, up, 0.05)
+    port_value = PortfolioValueSignal(port.name, up, 100000)
 
     return_str = "Signal triggered when portfolio daily return is upper than 5.00%."
     value_str = "Signal triggered when portfolio current value is upper than 100000."
 
     for signal, string in zip((port_return, port_value), (return_str, value_str)):
-        assert signal.underlying == port
+        assert signal.underlying == port.name
         assert signal.creation_date == date.today()
         assert signal.operator == up
         assert isinstance(signal.value, float)

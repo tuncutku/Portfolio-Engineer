@@ -23,6 +23,7 @@ then
     pytest --cov=src --cov-report term-missing
     echo "Running pylint on src/."
     pylint src/
+    pylint tests/
 fi
 
 if [ "$1" == 'init_db' ]

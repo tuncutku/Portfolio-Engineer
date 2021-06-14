@@ -4,9 +4,8 @@ from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
 
 from src.environment import Portfolio
-from src.market import Symbol, Currency
+from src.market import Symbol, Currency, get_instrument
 from src.forms.portfolio import AddPortfolioForm, generate_edit_portfolio_form
-from src.views.utils.common import get_instrument
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")

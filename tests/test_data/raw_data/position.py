@@ -1,3 +1,5 @@
+"""Sample positions"""
+
 from pandas import Timestamp
 
 position_1_values_raw = {

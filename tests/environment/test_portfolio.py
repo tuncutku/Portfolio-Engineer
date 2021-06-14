@@ -4,7 +4,7 @@
 from datetime import date
 
 from src.environment import User, Portfolio
-from src.market import SingleValue, Symbol, Equity, ETF
+from src.market import Symbol, Equity, ETF
 from src.market.ref_data import usd_ccy, cad_ccy, gspc, aapl
 from src.market.types import PortfolioType
 from tests.test_data import environment as env
@@ -58,6 +58,7 @@ def test_portfolio_edit(client, _db, load_environment_data):
 def test_portfolio_get_methods(client, _db, load_environment_data):
     """Test portfolio get position methods."""
 
+    user = User.find_by_id(1)
     port = Portfolio.find_by_id(1)
 
     assert port.get_position_by_symbol(Symbol("AAPL"))
@@ -65,6 +66,7 @@ def test_portfolio_get_methods(client, _db, load_environment_data):
     assert len(port.get_positions_by_security_type(Equity)) == 2
     assert len(port.get_positions_by_security_type(ETF)) == 0
     assert len(port.get_open_positions()) == 2
+    assert port == user.get_portfolio_by_name("portfolio_1")
 
 
 def test_portfolio_values(client, _db, load_environment_data, mock_current_md):

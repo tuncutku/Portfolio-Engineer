@@ -2,6 +2,7 @@
 # pylint: disable=unused-argument
 
 from flask_mail import Mail
+
 from src.environment.user import User
 from src.views.user import generate_confirmation_token
 
@@ -31,11 +32,8 @@ def test_register_user(client, _db, captured_templates):
 
     with Mail().record_messages() as outbox:
 
-        response = client.post(
-            "/users/register",
-            data=dict(email=email, password=password, confirm=password),
-            follow_redirects=True,
-        )
+        data = dict(email=email, password=password, confirm=password)
+        response = client.post("/users/register", data=data, follow_redirects=True)
 
         assert len(outbox) == 1
         assert outbox[0].subject == "Account confirmation - Portfolio Engineer"
@@ -44,20 +42,16 @@ def test_register_user(client, _db, captured_templates):
     assert User.find_by_email(email)
 
     # Test wrong confirmation email.
-    response = client.post(
-        "/users/register",
-        data=dict(email="test_2@gmail.com", password="1234", confirm="12345"),
-        follow_redirects=True,
-    )
+    data = dict(email="test_2@gmail.com", password="1234", confirm="12345")
+    response = client.post("/users/register", data=data, follow_redirects=True)
+
     assert "Field must be equal to password." in response.get_data(as_text=True)
     assert not User.find_by_email("test_2@gmail.com")
 
     # Test registering existing user.
-    response = client.post(
-        "/users/register",
-        data=dict(email=email, password=password, confirm=password),
-        follow_redirects=True,
-    )
+    data = dict(email=email, password=password, confirm=password)
+    response = client.post("/users/register", data=data, follow_redirects=True)
+
     assert "User with that email address already exists." in response.get_data(
         as_text=True
     )
@@ -83,11 +77,8 @@ def test_login_user(client, _db, captured_templates, load_environment_data):
     passwords = ["12345", "1234"]
 
     for email, password in zip(emails, passwords):
-        response = client.post(
-            "/users/login",
-            data=dict(email=email, password=password),
-            follow_redirects=True,
-        )
+        data = dict(email=email, password=password)
+        response = client.post("/users/login", data=data, follow_redirects=True)
 
         assert response.status_code == 200
         assert (
@@ -96,11 +87,8 @@ def test_login_user(client, _db, captured_templates, load_environment_data):
         )
 
     # Test correct email and password
-    response = client.post(
-        "/users/login",
-        data=dict(email=env.user_1_raw["email"], password=env.user_1_raw["password"]),
-        follow_redirects=True,
-    )
+    data = dict(email=env.user_1_raw["email"], password=env.user_1_raw["password"])
+    response = client.post("/users/login", data=data, follow_redirects=True)
 
     assert response.status_code == 200
     assert "My Portfolios:" in response.get_data(as_text=True)
