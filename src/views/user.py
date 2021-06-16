@@ -3,7 +3,7 @@
 # pylint: disable=no-value-for-parameter, bare-except
 import os
 
-from flask import Blueprint, session, url_for, render_template, redirect, flash
+from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_user, logout_user
 from itsdangerous import URLSafeTimedSerializer
 
