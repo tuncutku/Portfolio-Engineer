@@ -1,0 +1,44 @@
+{% macro get_alert_table(status, alerts) -%}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr class="text-center">
+                    <th scope="col">Signal type</th>
+                    <th scope="col">Underlying</th>
+                    <th scope="col">Operator</th>
+                    <th scope="col">Target</th>
+                    <th scope="col">Creation Date</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts if alert.active == status %}
+                <tr class="text-center">
+                    <td class="align-middle">{{ alert.signal.signal_type }}</td>
+                    <td class="align-middle">{{ alert.signal.underlying }}</td>
+                    <td class="align-middle">{{ alert.signal.operator }}</td>
+                    <td class="align-middle">{{ alert.signal.target }}</td>
+                    <td class="align-middle">{{ alert.signal.creation_date }}</td>
+                    <td class="align-middle">{{ render_alert_options(alert.id, alert.active) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{%- endmacro -%}
+
+{% macro render_alert_options(alert_id, status) -%}
+{% if status %}
+<a href="{{ url_for('alert.deactivate_alert', alert_id=alert_id) }}" class="btn btn-outline-success">Deactivate
+    Alert</a>
+{% else %}
+<a href="{{ url_for('alert.activate_alert', alert_id=alert_id) }}" class="btn btn-outline-success">Activate
+    Alert</a>
+{% endif %}
+<a href="{{ url_for('alert.delete_alert', alert_id=alert_id) }}" class="btn btn-outline-danger">Delete
+    Alert</a>
+{%- endmacro -%}
