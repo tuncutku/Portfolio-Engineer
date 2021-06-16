@@ -102,19 +102,43 @@ def test_login_user(client, _db, captured_templates, load_environment_data):
     templete_used(template_list, captured_templates)
 
 
-def test_email_confirmation(client, _db, captured_templates):
-    """System test for user email confirmation endpoint."""
+def test_logout_user(client, _db, load_environment_data, login, captured_templates):
+    """Test logout user."""
+
+    response = client.get("/users/logout", follow_redirects=True)
+    assert response.status_code == 200
+
+    template_list = ["home.html"]
+    templete_used(template_list, captured_templates)
+
+
+def test_correct_email_confirmation(client, _db, captured_templates):
+    """System test for correct user email confirmation endpoint."""
 
     user = User("hello_world", "1234")
     user.save_to_db()
 
     assert not user.confirmed
-
     token = generate_confirmation_token(user.email)
     response = client.get(f"/users/confirm/{token}", follow_redirects=True)
     assert response.status_code == 200
-
     assert user.confirmed
+
+    template_list = ["user/login.html"]
+    templete_used(template_list, captured_templates)
+
+
+def test_wrong_email_confirmation(client, _db, captured_templates):
+    """System test for wrong user email confirmation endpoint."""
+
+    user = User("hello_world", "1234")
+    user.save_to_db()
+
+    assert not user.confirmed
+    token = "1234"
+    response = client.get(f"/users/confirm/{token}", follow_redirects=True)
+    assert response.status_code == 200
+    assert not user.confirmed
 
     template_list = ["user/login.html"]
     templete_used(template_list, captured_templates)

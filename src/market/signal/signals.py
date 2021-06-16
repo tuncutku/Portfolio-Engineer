@@ -56,11 +56,6 @@ class PriceSignal(Signal):
     def __repr__(self) -> str:
         return f"Signal triggered when current price is {self.operator} than {self.target}."
 
-    def __hash__(self) -> int:
-        return hash(
-            (self.__class__.__name__, self.underlying, self.operator, self.target)
-        )
-
     @property
     def signal_type(self) -> str:
         return "Price signal"
@@ -78,11 +73,6 @@ class DailyReturnSignal(Signal):
         target_pct = "{0:.2f}%".format(self.target * 100)
         return (
             f"Signal triggered when daily return is {self.operator} than {target_pct}."
-        )
-
-    def __hash__(self) -> int:
-        return hash(
-            (self.__class__.__name__, self.underlying, self.operator, self.target)
         )
 
     @property
@@ -109,17 +99,6 @@ class LimitReturnSignal(Signal):
         target_pct = "{0:.2f}%".format(self.target * 100)
         return f"Signal triggered when the return calculated by max or min price from the starting date is {self.operator} than {target_pct}."
 
-    def __hash__(self) -> int:
-        return hash(
-            (
-                self.__class__.__name__,
-                self.underlying,
-                self.operator,
-                self.target,
-                self.start_date,
-            )
-        )
-
     @property
     def signal_type(self) -> str:
         return "Limit return signal"
@@ -144,11 +123,6 @@ class DailyPortfolioReturnSignal(Signal):
         target_pct = "{0:.2f}%".format(self.target * 100)
         return f"Signal triggered when portfolio daily return is {self.operator} than {target_pct}."
 
-    def __hash__(self) -> int:
-        return hash(
-            (self.__class__.__name__, self.underlying, self.operator, self.target)
-        )
-
     @property
     def signal_type(self) -> str:
         return "Daily portfolio return signal"
@@ -170,11 +144,6 @@ class PortfolioValueSignal(Signal):
 
     def __repr__(self) -> str:
         return f"Signal triggered when portfolio current value is {self.operator} than {self.target}."
-
-    def __hash__(self) -> int:
-        return hash(
-            (self.__class__.__name__, self.underlying, self.operator, self.target)
-        )
 
     @property
     def signal_type(self) -> str:

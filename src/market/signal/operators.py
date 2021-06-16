@@ -13,10 +13,6 @@ class Operator(ABC):
         """String representation of the signal."""
 
     @abstractmethod
-    def __hash__(self) -> int:
-        """Hash the underlying operator."""
-
-    @abstractmethod
     def check(self, target: float, value: float) -> bool:
         """Check if market movement is achieved."""
 
@@ -27,9 +23,6 @@ class Up(Operator):
 
     def __repr__(self) -> str:
         return "upper"
-
-    def __hash__(self) -> int:
-        return hash((self.__class__.__name__))
 
     def check(self, target: float, value: float):
         return value > target
@@ -42,9 +35,6 @@ class UpEqual(Operator):
     def __repr__(self) -> str:
         return "upper or equal"
 
-    def __hash__(self) -> int:
-        return hash((self.__class__.__name__))
-
     def check(self, target: float, value: float):
         return value >= target
 
@@ -56,9 +46,6 @@ class Down(Operator):
     def __repr__(self) -> str:
         return "lower"
 
-    def __hash__(self) -> int:
-        return hash((self.__class__.__name__))
-
     def check(self, target: float, value: float):
         return value < target
 
@@ -69,9 +56,6 @@ class DownEqual(Operator):
 
     def __repr__(self) -> str:
         return "lower or equal"
-
-    def __hash__(self) -> int:
-        return hash((self.__class__.__name__))
 
     def check(self, target: float, value: float):
         return value <= target

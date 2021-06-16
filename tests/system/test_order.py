@@ -80,10 +80,13 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
 def test_delete_order(client, _db, captured_templates, load_environment_data, login):
     """System test for delete order endpoint."""
 
-    assert Order.find_by_id(1) is not None
-    response = client.get("order/delete_order/1", follow_redirects=True)
-    assert response.status_code == 200
-    assert Order.find_by_id(1) is None
+    assert Position.find_by_id(1) is not None
+    for idx in [1, 2, 3]:
+        assert Order.find_by_id(idx) is not None
+        response = client.get(f"order/delete_order/{idx}", follow_redirects=True)
+        assert response.status_code == 200
+        assert Order.find_by_id(idx) is None
 
-    template_list = ["portfolio/list_portfolios.html"]
+    assert Position.find_by_id(1) is None
+    template_list = ["portfolio/list_portfolios.html"] * 3
     templete_used(template_list, captured_templates)

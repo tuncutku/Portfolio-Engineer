@@ -1,7 +1,16 @@
 """Test environment object relations"""
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, pointless-statement
 
-from src.environment import User, Portfolio, Position, Order, DailyReport, MarketAlert
+import pytest
+from src.environment import (
+    User,
+    Portfolio,
+    Position,
+    Order,
+    DailyReport,
+    MarketAlert,
+    Alert,
+)
 
 
 classes = [User, Portfolio, Position, Order]
@@ -25,3 +34,24 @@ def test_object_number(client, _db, load_environment_data):
     assert len(Order.find_all()) == 6
     assert len(DailyReport.find_all()) == 1
     assert len(MarketAlert.find_all()) == 1
+
+
+def test_base_model(client, _db):
+    """Test base object."""
+
+    alert_base = Alert()
+
+    with pytest.raises(NotImplementedError):
+        alert_base.recipients
+
+    with pytest.raises(NotImplementedError):
+        alert_base.subject
+
+    with pytest.raises(NotImplementedError):
+        alert_base.email_template
+
+    with pytest.raises(NotImplementedError):
+        alert_base.condition()
+
+    with pytest.raises(NotImplementedError):
+        alert_base.generate_email_content()

@@ -21,6 +21,8 @@ def test_user_login_form(client, _db, load_environment_data):
 
     form = post_data({"email": "tuncutku10@gmail.com"}, LoginForm)
 
+    # new_form = LoginForm(email="tu", password="1")
+
     assert form
 
 
