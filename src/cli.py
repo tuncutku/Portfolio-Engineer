@@ -28,7 +28,6 @@ def register_cli(app):
                     "--cov=src",
                     "--cov-report",
                     "xml:cov.xml",
-                    "--cov-config=.coveragerc",
                 ]
             )
         else:

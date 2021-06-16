@@ -56,6 +56,39 @@ def add_alert():
     return render_template("alert/add_alert.html", form=alert_form)
 
 
+@alert_blueprint.route("/deactivate_alert/<int:alert_id>", methods=["GET"])
+@login_required
+def deactivate_alert(alert_id):
+    """Deactivate alert."""
+
+    alert = MarketAlert.find_by_id(alert_id)
+    alert.deactivate()
+
+    return redirect(url_for("alert.list_alerts"))
+
+
+@alert_blueprint.route("/activate_alert/<int:alert_id>", methods=["GET"])
+@login_required
+def activate_alert(alert_id):
+    """Activate alert."""
+
+    alert = MarketAlert.find_by_id(alert_id)
+    alert.activate()
+
+    return redirect(url_for("alert.list_alerts"))
+
+
+@alert_blueprint.route("/delete_alert/<int:alert_id>", methods=["GET"])
+@login_required
+def delete_alert(alert_id):
+    """Delete alert."""
+
+    alert = MarketAlert.find_by_id(alert_id)
+    alert.delete_from_db()
+
+    return redirect(url_for("alert.list_alerts"))
+
+
 def get_signal(
     signal: str, underlying: Union[Instrument, str], operator, target, start_date
 ) -> Signal:

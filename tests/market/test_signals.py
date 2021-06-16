@@ -1,7 +1,6 @@
 """Test alert objects."""
-# pylint: disable=unused-argument, line-too-long
+# pylint: disable=unused-argument, line-too-long, invalid-name
 
-from collections import namedtuple
 from datetime import date
 
 import pytest
@@ -12,38 +11,27 @@ from src.market.ref_data import aapl, up
 
 from tests.test_data import market as mkt
 
-AlertResults = namedtuple(
-    "AlertResults",
-    ["target", "apply_operator", "str"],
-)
+
+price_signal_str = "Signal triggered when current price is upper than 100."
+return_signal_str = "Signal triggered when daily return is upper than 10.00%."
+limit_signal_str = "Signal triggered when the return calculated by max or min price from the starting date is upper than 10.00%."
+
+
 signal_test_contents = [
-    (
-        mkt.price_signal,
-        AlertResults(
-            100, True, "Signal triggered when current price is upper than 100."
-        ),
-    ),
-    (
-        mkt.return_signal,
-        AlertResults(
-            0.02, False, "Signal triggered when daily return is upper than 2.00%."
-        ),
-    ),
-    (
-        mkt.limit_signal,
-        AlertResults(
-            0.05,
-            True,
-            "Signal triggered when the return calculated by max or min price from the starting date is upper than 5.00%.",
-        ),
-    ),
+    (mkt.price_signal, 100, True, price_signal_str),
+    (mkt.return_signal, 0.1, False, return_signal_str),
+    (mkt.limit_signal, 0.1, True, limit_signal_str),
 ]
 signal_test_names = [signal[0].__class__.__name__ for signal in signal_test_contents]
 
 
-@pytest.mark.parametrize("signal, results", signal_test_contents, ids=signal_test_names)
+@pytest.mark.parametrize(
+    "signal, target, apply_operator, string",
+    signal_test_contents,
+    ids=signal_test_names,
+)
 def test_single_instrument_signals(
-    mock_current_md, signal: Signal, results: AlertResults
+    mock_current_md, signal: Signal, target: float, apply_operator: bool, string: str
 ):
     """Test price signal."""
 
@@ -52,15 +40,9 @@ def test_single_instrument_signals(
 
     assert signal.operator == up
     assert isinstance(signal.value, float)
-    assert signal.target == results.target
-    assert str(signal) == results.str
-    assert signal.apply_operator() == results.apply_operator
-
-    assert signal.active is True
-    signal.deactivate()
-    assert signal.active is False
-    signal.activate()
-    assert signal.active is True
+    assert signal.target == target
+    assert str(signal) == string
+    assert signal.apply_operator() == apply_operator
 
 
 def test_portfolio_signals(client, _db, load_environment_data, login):

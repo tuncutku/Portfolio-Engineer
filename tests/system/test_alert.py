@@ -39,8 +39,7 @@ def test_add_alert(client, _db, load_environment_data, login, captured_templates
     assert alert.signal.underlying == aapl or alert.signal.underlying == "portfolio_1"
     assert alert.signal.operator == up
     assert alert.signal.target == data["target"]
-    assert alert.signal.creation_date == date(2021, 6, 13)
-    assert alert.signal.active is True
+    assert alert.signal.creation_date == date.today()
 
     template_list = ["alert/add_alert.html", "alert/list_alerts.html"]
     templete_used(template_list, captured_templates)

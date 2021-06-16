@@ -1,6 +1,6 @@
 """Market Signals"""
 
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, trailing-whitespace
 
 from __future__ import annotations
 
@@ -29,11 +29,15 @@ class Signal(ABC):
     operator: Operator
     target: float
     creation_date: date = field(init=False, default=date.today())
-    active: bool = field(init=False, default=True)
 
     @abstractmethod
     def __repr__(self) -> str:
         """Repr method."""
+
+    @property
+    @abstractmethod
+    def signal_type(self) -> str:
+        """Signal type."""
 
     @property
     @abstractmethod
@@ -44,14 +48,6 @@ class Signal(ABC):
         """Check the signal condition."""
         return self.operator.check(self.target, self.value)
 
-    def activate(self) -> None:
-        """Activate signal."""
-        self.active = True
-
-    def deactivate(self) -> None:
-        """Activate signal."""
-        self.active = False
-
 
 @dataclass
 class PriceSignal(Signal):
@@ -60,6 +56,15 @@ class PriceSignal(Signal):
     def __repr__(self) -> str:
         return f"Signal triggered when current price is {self.operator} than {self.target}."
 
+    def __hash__(self) -> int:
+        return hash(
+            (self.__class__.__name__, self.underlying, self.operator, self.target)
+        )
+
+    @property
+    def signal_type(self) -> str:
+        return "Price signal"
+
     @property
     def value(self) -> float:
         return round(self.underlying.value(raw=True), 5)
@@ -67,13 +72,22 @@ class PriceSignal(Signal):
 
 @dataclass
 class DailyReturnSignal(Signal):
-    """Price signal."""
+    """Daily return signal."""
 
     def __repr__(self) -> str:
         target_pct = "{0:.2f}%".format(self.target * 100)
         return (
             f"Signal triggered when daily return is {self.operator} than {target_pct}."
         )
+
+    def __hash__(self) -> int:
+        return hash(
+            (self.__class__.__name__, self.underlying, self.operator, self.target)
+        )
+
+    @property
+    def signal_type(self) -> str:
+        return "Daily return signal"
 
     @property
     def value(self) -> float:
@@ -87,13 +101,28 @@ EXTREMA_MAP = {Up: min, UpEqual: min, Down: max, DownEqual: max}
 
 @dataclass
 class LimitReturnSignal(Signal):
-    """Price signal."""
+    """Limit return signal."""
 
     start_date: date = date.today()
 
     def __repr__(self) -> str:
         target_pct = "{0:.2f}%".format(self.target * 100)
         return f"Signal triggered when the return calculated by max or min price from the starting date is {self.operator} than {target_pct}."
+
+    def __hash__(self) -> int:
+        return hash(
+            (
+                self.__class__.__name__,
+                self.underlying,
+                self.operator,
+                self.target,
+                self.start_date,
+            )
+        )
+
+    @property
+    def signal_type(self) -> str:
+        return "Limit return signal"
 
     @property
     def value(self) -> float:
@@ -115,6 +144,15 @@ class DailyPortfolioReturnSignal(Signal):
         target_pct = "{0:.2f}%".format(self.target * 100)
         return f"Signal triggered when portfolio daily return is {self.operator} than {target_pct}."
 
+    def __hash__(self) -> int:
+        return hash(
+            (self.__class__.__name__, self.underlying, self.operator, self.target)
+        )
+
+    @property
+    def signal_type(self) -> str:
+        return "Daily portfolio return signal"
+
     @property
     def value(self) -> float:
         user: User = current_user
@@ -132,6 +170,15 @@ class PortfolioValueSignal(Signal):
 
     def __repr__(self) -> str:
         return f"Signal triggered when portfolio current value is {self.operator} than {self.target}."
+
+    def __hash__(self) -> int:
+        return hash(
+            (self.__class__.__name__, self.underlying, self.operator, self.target)
+        )
+
+    @property
+    def signal_type(self) -> str:
+        return "Portfolio value signal"
 
     @property
     def value(self) -> float:

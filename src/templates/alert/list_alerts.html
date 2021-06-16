@@ -1,126 +1,46 @@
 {% extends "base/portfolio.html" %}
 {% block content %}
+
+{% import 'alert/macro.html' as macro_file -%}
+
 <div class="container mt-5">
     <h2 class="text-success">
         Market Alerts:
     </h2>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert alert-danger" role="alert">
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
-
-
 </div>
 
-
-{% for port in portfolios %}
 <div class="container mt-4 mb-3">
     <div class="card">
-        <h5 class="card-header">
-
-            <div class="row">
-                <div class="col-8">
-                    Portfolio: {{ port.name }}
-                </div>
-                <div class="col-4 text-end">
-                    Portfolio creation date: {{port.date.strftime('%Y-%m-%d') }}
-                </div>
-            </div>
-        </h5>
         <div class="row">
-            <div class="col-9">
+            <div class="col-12">
                 <div class="card-body">
 
-                    <p class="card-text">Reporting currency: {{ port.reporting_currency }}</p>
-                    <p class="card-text">Total market value: {{ port.current_value() }}</p>
-                    <p class="card-text">Benchmark: {{ port.benchmark.symbol }}</p>
-
-                    <div class="card">
-
-                        <h6 class="card-header">
-                            Open Positions
-                        </h6>
-
-                        <div class="card-body">
-
-                            <table class="table">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th scope="col">Instrument Type</th>
-                                        <th scope="col">Symbol</th>
-                                        <th scope="col">Market Cap</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for position in port.positions if position.is_open %}
-                                    <tr class="text-center">
-
-                                        <td class="align-middle">{{ position.security.security_type }}</td>
-                                        <td class="align-middle">{{ position.security.symbol }}</td>
-                                        <td class="align-middle">{{ position.current_value() }}</td>
-                                        <td class="align-middle">
-
-                                            <a href="{{ url_for('position.position_details', position_id=position.id) }}"
-                                                class="btn btn-outline-success">View details</a>
-                                            <a href="{{ url_for('position.close_position', position_id=position.id) }}"
-                                                class="btn btn-outline-danger">Close Position</a>
-
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home"
+                                type="button" role="tab" aria-controls="home" aria-selected="true">Active
+                                Alerts</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                                type="button" role="tab" aria-controls="profile" aria-selected="false">Inactive
+                                Alerts</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            {{ macro_file.get_alert_table(True, alerts) }}
                         </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="col align-self-center">
-                <div class="row justify-content-center mt-4 mb-4">
-                    <div class="col-10">
-                        <div class="card">
-                            <h5 class="card-header text-center bg-success text-white bg-gradient">
-                                Actions
-                            </h5>
-                            <div class="card-body">
-                                <div class="row justify-content-center">
-                                    <div class="col-11">
-                                        <ul class="list-group">
-                                            {% if port.daily_report.active == False%}
-                                            <a href="{{ url_for('portfolio.activate_daily_report', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success">Activate Daily Report</a>
-                                            {% else %}
-                                            <a href="{{ url_for('portfolio.deactivate_daily_report', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success">Deactivate Daily Report</a>
-                                            {% endif %}
-                                            {% if port.primary == False%}
-                                            <a href="{{ url_for('portfolio.set_portfolio_primary', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success mt-2">Set Portfolio as Primary</a>
-                                            {% endif %}
-                                            <a href="{{ url_for('order.add_order', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success mt-2">Add Order</a>
-                                            <a href="{{ url_for('portfolio.edit_portfolio', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-success mt-2">Edit Portfolio</a>
-                                            <a href="{{ url_for('portfolio.delete_portfolio', portfolio_id=port['id']) }}"
-                                                class="btn btn-outline-danger mt-2">Delete Portfolio</a>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            {{ macro_file.get_alert_table(False, alerts) }}
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
-{% endfor %}
 {% endblock %}
