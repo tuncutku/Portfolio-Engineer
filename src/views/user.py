@@ -68,7 +68,7 @@ def confirm_email(token):
 @user_blueprint.route("/guest", methods=["GET", "POST"])
 def guest():
     """Guest user."""
-    session["email"] = "Hey"
+    login_user(User.find_by_email("guest_user@gmail.com"))
     return redirect(url_for("portfolio.list_portfolios"))
 
 

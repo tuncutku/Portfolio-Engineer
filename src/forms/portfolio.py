@@ -30,7 +30,7 @@ class AddPortfolioForm(Form):
         u"Portfolio Name", [DataRequired(), Length(max=20), PortfolioName()]
     )
     port_type = SelectField(u"Portfolio Type", default=1, choices=port_type_choices)
-    port_reporting_currency = SelectField(
+    reporting_currency = SelectField(
         u"Reporting Currency", default=1, choices=currency_choices
     )
     benchmark = StringField(u"Benchmark", [DataRequired(), Ticker()], default="^GSPC")
@@ -52,7 +52,7 @@ def generate_edit_portfolio_form(portfolio: Portfolio):
             choices=port_type_choices,
             default=portfolio.portfolio_type,
         )
-        port_reporting_currency = SelectField(
+        reporting_currency = SelectField(
             u"Reporting Currency",
             choices=currency_choices,
             default=portfolio.reporting_currency,

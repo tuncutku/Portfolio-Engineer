@@ -99,11 +99,10 @@ If you do not provide a command argument, the `doit.sh` command returns a list o
 
 ## Work with CLI
 
-* `flask check_style`
-* `flask create_user`
 * `flask init_db`
+* `flask seed_data`
 * `flask clear_db`
-* `flask test --coverage`
+
 
 ## Work with Celery
 

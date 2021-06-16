@@ -3,7 +3,7 @@
 from tests.system.common import templete_used
 
 
-def test_unauthorized_request(client, captured_templates):
+def test_unauthorized_request(client, _db, captured_templates):
     """System test for add order endpoint."""
 
     response = client.get("/portfolio/list", follow_redirects=True)
