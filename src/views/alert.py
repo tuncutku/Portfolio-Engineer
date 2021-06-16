@@ -1,46 +1,123 @@
 """Alert endpoints"""
 
-from flask import Blueprint, url_for, render_template, redirect
-from flask_login import login_required
+from typing import Union
+from flask import Blueprint, url_for, render_template, redirect, flash
+from flask_login import login_required, current_user
 
-from src.environment.portfolio import Portfolio
+from src.forms import AddAlertForm
+from src.environment import User, MarketAlert
+from src.market import Instrument, Symbol, get_instrument
+from src.market.ref_data import up, down, up_equal, down_equal
+from src.market.signal import (
+    Signal,
+    DailyPortfolioReturnSignal,
+    DailyReturnSignal,
+    PriceSignal,
+    LimitReturnSignal,
+    PortfolioValueSignal,
+)
 
 
 alert_blueprint = Blueprint("alert", __name__, url_prefix="/alert")
 
 
-@alert_blueprint.route("/list/<int:portfolio_id>", methods=["GET"])
+@alert_blueprint.route("/list", methods=["GET"])
 @login_required
-def list_alerts(portfolio_id):
+def list_alerts():
     """List alerts."""
 
-    port = Portfolio.find_by_id(portfolio_id)
-    daily_alert = port.daily_report
+    user: User = current_user
 
-    return render_template(
-        "alert/list_alerts.html",
-        daily_alert_status=daily_alert.is_active,
-        portfolio_id=portfolio_id,
-    )
+    return render_template("alert/list_alerts.html", alerts=user.market_alerts)
 
 
-@alert_blueprint.route("/activate_daily_report/<int:portfolio_id>", methods=["GET"])
+@alert_blueprint.route("/add_alert", methods=["GET", "POST"])
 @login_required
-def activate(portfolio_id):
-    """Activate alert."""
+def add_alert():
+    """Add new alert."""
 
-    port = Portfolio.find_by_id(portfolio_id)
-    port.daily_report.activate()
+    user: User = current_user
+    alert_form = AddAlertForm()
 
-    return redirect(url_for("alert.list_alerts", portfolio_id=portfolio_id))
+    if alert_form.validate_on_submit():
+        signal = get_signal(
+            alert_form.signal.data,
+            alert_form.underlying.data,
+            alert_form.operator.data,
+            alert_form.target.data,
+            alert_form.start_date.data,
+        )
+
+        if signal not in [alert.signal for alert in user.market_alerts]:
+            user.add_market_alert(MarketAlert(signal))
+            return redirect(url_for("alert.list_alerts"))
+        flash("Market alert already exists, please activate it.", "danger")
+
+    return render_template("alert/add_alert.html", form=alert_form)
 
 
-@alert_blueprint.route("/deactivate_daily_report/<int:portfolio_id>", methods=["GET"])
+@alert_blueprint.route("/deactivate_alert/<int:alert_id>", methods=["GET"])
 @login_required
-def deactivate(portfolio_id):
+def deactivate_alert(alert_id):
     """Deactivate alert."""
 
-    port = Portfolio.find_by_id(portfolio_id)
-    port.daily_report.deactivate()
+    alert = MarketAlert.find_by_id(alert_id)
+    alert.deactivate()
 
-    return redirect(url_for("alert.list_alerts", portfolio_id=portfolio_id))
+    return redirect(url_for("alert.list_alerts"))
+
+
+@alert_blueprint.route("/activate_alert/<int:alert_id>", methods=["GET"])
+@login_required
+def activate_alert(alert_id):
+    """Activate alert."""
+
+    alert = MarketAlert.find_by_id(alert_id)
+    alert.activate()
+
+    return redirect(url_for("alert.list_alerts"))
+
+
+@alert_blueprint.route("/delete_alert/<int:alert_id>", methods=["GET"])
+@login_required
+def delete_alert(alert_id):
+    """Delete alert."""
+
+    alert = MarketAlert.find_by_id(alert_id)
+    alert.delete_from_db()
+
+    return redirect(url_for("alert.list_alerts"))
+
+
+def get_signal(
+    signal: str, underlying: Union[Instrument, str], operator, target, start_date
+) -> Signal:
+    """Get underlying portfolio or instrument."""
+
+    operator_dict = {
+        "Up": up,
+        "Up or Equal": up_equal,
+        "Down": down,
+        "Down or Equal": down_equal,
+    }
+    operator = operator_dict[operator]
+    signal_dict = {
+        "Price Signal": lambda: PriceSignal(
+            get_instrument(Symbol(underlying)), operator, target
+        ),
+        "Daily Return Signal": lambda: DailyReturnSignal(
+            get_instrument(Symbol(underlying)), operator, target
+        ),
+        "Limit Return Signal": lambda: LimitReturnSignal(
+            get_instrument(Symbol(underlying)), operator, target, start_date
+        ),
+        "Portfolio Value Signal": lambda: PortfolioValueSignal(
+            underlying, operator, target
+        ),
+        "Daily Portfolio Return Signal": lambda: DailyPortfolioReturnSignal(
+            underlying, operator, target
+        ),
+    }
+
+    func = signal_dict[signal]
+    return func()

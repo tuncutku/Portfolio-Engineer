@@ -1,5 +1,4 @@
 """Exchange traded fund"""
-# pylint: disable=duplicate-code
 
 from dataclasses import dataclass
 from src.market.security.utils.base import Instrument
@@ -10,7 +9,7 @@ class ETF(Instrument):
     """Form exchange traded fund object."""
 
     def __repr__(self):
-        return "<ETF {}.>".format(self.symbol.symbol)
+        return "ETF {}".format(self.symbol.symbol)
 
     # @property
     # def industry(self):

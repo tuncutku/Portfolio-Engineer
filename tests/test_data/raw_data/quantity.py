@@ -1,4 +1,4 @@
-"""Sample quantity"""
+"""Sample quantities"""
 
 from pandas import Timestamp
 

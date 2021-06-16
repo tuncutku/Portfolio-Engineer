@@ -1,8 +1,9 @@
 """Test alert objects"""
 # pylint: disable=unused-argument
 
+import pytest
 
-from src.environment import Portfolio, DailyReport, MarketAlert, alerts
+from src.environment import Portfolio, DailyReport, MarketAlert
 from src.market import SingleValue
 from src.market.ref_data import gspc, cad_ccy
 from tests.test_data import environment as env
@@ -49,12 +50,12 @@ def test_market_alert(client, _db, load_environment_data, mock_current_md):
     assert market_alert.recipients[0] == env.user_1_raw["email"]
 
     content = market_alert.generate_email_content()
-    assert str(content["symbol"]) == "AAPL"
+    assert str(content["symbol"]) == "Equity AAPL"
     assert (
         str(content["signal"])
         == "Signal triggered when current price is upper than 100."
     )
-    assert content["current_value"] == 120.0
+    assert content["current_value"] == pytest.approx(120, 20)
     assert isinstance(content["triggered_time"], str)
 
     market_alert.deactivate()

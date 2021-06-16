@@ -25,16 +25,13 @@ def test_add_portfolio(client, _db, load_environment_data, login, captured_templ
     assert response.status_code == 200
     assert "Add new custom portfolio" in response.get_data(as_text=True)
 
-    response = client.post(
-        "portfolio/add_portfolio",
-        data=dict(
-            port_name="New",
-            port_type=PortfolioType.margin,
-            port_reporting_currency="USD",
-            benchmark="^GSPC",
-        ),
-        follow_redirects=True,
+    data = dict(
+        port_name="New",
+        port_type=PortfolioType.margin,
+        port_reporting_currency="USD",
+        benchmark="^GSPC",
     )
+    response = client.post("portfolio/add_portfolio", data=data, follow_redirects=True)
     assert response.status_code == 200
 
     new_portfolio = Portfolio.find_by_id(2)
@@ -59,15 +56,12 @@ def test_edit_portfolio(client, _db, load_environment_data, login, captured_temp
     assert "Margin" in response.get_data(as_text=True)
     assert "USD" in response.get_data(as_text=True)
 
-    response = client.post(
-        "portfolio/edit/1",
-        data=dict(
-            port_name="edited_portfolio",
-            port_type=PortfolioType.custom,
-            port_reporting_currency="CAD",
-        ),
-        follow_redirects=True,
+    data = dict(
+        port_name="edited_portfolio",
+        port_type=PortfolioType.custom,
+        port_reporting_currency="CAD",
     )
+    response = client.post("portfolio/edit/1", data=data, follow_redirects=True)
     assert response.status_code == 200
 
     portfolio_test = Portfolio.find_by_id(1)

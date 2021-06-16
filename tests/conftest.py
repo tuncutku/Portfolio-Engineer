@@ -6,8 +6,6 @@ from flask import template_rendered
 
 from src import create_app
 from src.environment import User, Portfolio, Position, Order, MarketAlert
-from src.market import SingleValue
-from src.market import ref_data
 
 from src.extensions import db
 from tests.test_data import environment as env
@@ -91,12 +89,6 @@ def captured_templates(app):
 @pytest.fixture
 def mock_current_md(mocker):
     """Mock current market data."""
-
-    mocker.patch(
-        "src.market.security.equity.Equity.value",
-        new_callable=mocker.PropertyMock,
-        return_value=SingleValue(120.0, ref_data.usd_ccy),
-    )
 
     mocker.patch(
         "src.market.basic.FX.rate",

@@ -13,7 +13,7 @@
 
             <div class="row">
                 <div class="col-8">
-                    Name: {{ position["Name"] }}
+                    Symbol: {{ position.security.symbol }}
                 </div>
             </div>
         </h5>
@@ -21,10 +21,9 @@
             <div class="col-12">
                 <div class="card-body">
 
-                    <p class="card-text">Symbol: {{ position.security.symbol }}</p>
                     <p class="card-text">Instrument type: {{ position.security.security_type }}</p>
                     <p class="card-text">Name: {{ position.security.name }}</p>
-                    <p class="card-text">Current price: {{ position.security.value }}</p>
+                    <p class="card-text">Current price: {{ position.security.value() }}</p>
                     <p class="card-text">Total position value: {{ position.current_value() }}</p>
 
                     <div class="card">

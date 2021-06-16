@@ -20,17 +20,14 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
     assert "Add new order" in response.get_data(as_text=True)
 
     # Test to post an order that has a position.
-    response = client.post(
-        "order/1/add_order",
-        data=dict(
-            symbol="FB",
-            quantity=6,
-            direction=sell,
-            cost=10,
-            exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
-        ),
-        follow_redirects=True,
+    data = dict(
+        symbol="FB",
+        quantity=6,
+        direction=sell,
+        cost=10,
+        exec_datetime=datetime(2020, 1, 2).strftime(date_time_format),
     )
+    response = client.post("order/1/add_order", data=data, follow_redirects=True)
 
     assert response.status_code == 200
 
@@ -60,17 +57,14 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
     assert "2020-02-03" in response.get_data(as_text=True)
     assert "Buy" in response.get_data(as_text=True)
 
-    response = client.post(
-        "order/edit/1",
-        data=dict(
-            symbol="AAPL",
-            quantity=10,
-            direction=buy,
-            cost=101,
-            exec_datetime=datetime(2019, 1, 3).strftime(date_time_format),
-        ),
-        follow_redirects=True,
+    data = dict(
+        symbol="AAPL",
+        quantity=10,
+        direction=buy,
+        cost=101,
+        exec_datetime=datetime(2019, 1, 3).strftime(date_time_format),
     )
+    response = client.post("order/edit/1", data=data, follow_redirects=True)
     assert response.status_code == 200
 
     order_test = Order.find_by_id(1)
@@ -86,10 +80,13 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
 def test_delete_order(client, _db, captured_templates, load_environment_data, login):
     """System test for delete order endpoint."""
 
-    assert Order.find_by_id(1) is not None
-    response = client.get("order/delete_order/1", follow_redirects=True)
-    assert response.status_code == 200
-    assert Order.find_by_id(1) is None
+    assert Position.find_by_id(1) is not None
+    for idx in [1, 2, 3]:
+        assert Order.find_by_id(idx) is not None
+        response = client.get(f"order/delete_order/{idx}", follow_redirects=True)
+        assert response.status_code == 200
+        assert Order.find_by_id(idx) is None
 
-    template_list = ["portfolio/list_portfolios.html"]
+    assert Position.find_by_id(1) is None
+    template_list = ["portfolio/list_portfolios.html"] * 3
     templete_used(template_list, captured_templates)

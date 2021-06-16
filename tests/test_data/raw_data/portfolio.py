@@ -1,3 +1,5 @@
+"""Sample portfolios"""
+
 from pandas import Timestamp
 
 portfolio_values_raw = {

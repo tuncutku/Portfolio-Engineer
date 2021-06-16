@@ -14,9 +14,8 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Optional
 from src.environment import Order
-from src.market import Symbol
 from src.market.ref_data import buy, sell
-from src.forms.validators import Ticker, Location, FutureDate, PositiveFloat
+from src.forms.validators import Ticker, Location, FutureDate, PositiveFloat, TradingDay
 
 
 direction_choices = [
@@ -36,19 +35,10 @@ class AddOrderForm(Form):
     cost = FloatField(u"Cost", [Optional(), PositiveFloat()], default=0)
     exec_datetime = DateTimeField(
         u"Order Date",
-        [DataRequired(), FutureDate()],
+        [DataRequired(), FutureDate(), TradingDay()],
         render_kw={"placeholder": datetime.now().strftime(date_time_format)},
         format=date_time_format,
     )
-
-    def validate(self):
-        """Additinal input validation."""
-        check_validate = super(AddOrderForm, self).validate()
-        if not check_validate:
-            return False
-        return check_trading_date(
-            self, self.symbol.data, self.exec_datetime.data.date()
-        )
 
 
 def generate_edit_order_form(order: Order) -> Form:
@@ -73,28 +63,9 @@ def generate_edit_order_form(order: Order) -> Form:
         )
         exec_datetime = DateTimeField(
             u"Order Date",
-            [Optional(), FutureDate()],
+            [DataRequired(), FutureDate(), TradingDay()],
             default=order.time,
             format=date_time_format,
         )
 
-        def validate(self):
-            """Additinal input validation."""
-            check_validate = super(EditOrderForm, self).validate()
-            if not check_validate:
-                return False
-            return check_trading_date(
-                self, self.symbol.data, self.exec_datetime.data.date()
-            )
-
     return EditOrderForm()
-
-
-def check_trading_date(self, symbol_input, date_input) -> bool:
-    """Validate trading date."""
-
-    symbol = Symbol(symbol_input)
-    if not symbol.is_trading_day(date_input):
-        self.exec_datetime.errors.append("Selected date is not a trading day.")
-        return False
-    return True

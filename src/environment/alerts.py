@@ -11,7 +11,7 @@ from pandas import concat
 
 from src.environment.base import Alert
 from src.extensions import db
-from src.market.alert import Signal
+from src.market.signal import Signal
 from src.analytics._return import periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
@@ -102,7 +102,7 @@ class MarketAlert(Alert):
 
     @property
     def subject(self) -> str:
-        return f"Market alert for {self.signal.security.symbol}"
+        return f"Market alert for {self.signal.underlying}"
 
     @property
     def email_template(self) -> str:
@@ -118,15 +118,8 @@ class MarketAlert(Alert):
     def generate_email_content(self) -> dict:
         date_time = datetime.now()
         return {
-            "symbol": self.signal.security.symbol,
+            "symbol": self.signal.underlying,
             "signal": self.signal,
             "current_value": self.signal.value,
             "triggered_time": date_time.strftime("%d %B, %Y, %H:%M"),
         }
-
-
-# class DailyNews(AlertBase):
-#     pass
-
-# class EconomicAlert(AlertBase):
-#     pass

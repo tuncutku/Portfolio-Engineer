@@ -1,12 +1,9 @@
 """Test basic analytics"""
 
-from datetime import date
-from pandas import Series, concat, DataFrame
 
 from src.analytics._return import (
     periodic_return,
     weighted_periodic_return,
-    holding_period_return,
 )
 
 from tests.test_data import analytics

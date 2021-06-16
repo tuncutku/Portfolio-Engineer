@@ -2,11 +2,9 @@
 # pylint: disable=unused-argument
 
 from datetime import date
-from pandas import Series
 
 from src.environment import Position
-from src.market import SingleValue
-from src.market.ref_data import usd_ccy, cad_ccy
+from src.market.ref_data import cad_ccy
 
 from tests.test_data import environment as env
 
@@ -53,8 +51,9 @@ def test_position_values(client, _db, load_environment_data, mock_current_md):
     position = Position.find_by_id(1)
 
     # Test current value
-    assert position.current_value() == SingleValue(2640, usd_ccy)
-    assert position.current_value(cad_ccy) == SingleValue(3168.0, cad_ccy)
+    usd_value = position.current_value()
+    cad_value = position.current_value(cad_ccy)
+    assert cad_value.value > usd_value.value
 
     # Test position historical value
     position_hist_value = position.historical_value(start_date, end_date)

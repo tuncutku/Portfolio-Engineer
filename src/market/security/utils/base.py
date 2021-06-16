@@ -1,9 +1,12 @@
 """Base for securities"""
-# pylint: disable=no-name-in-module
+# pylint: disable=no-name-in-module, too-many-arguments
 
 from abc import abstractmethod, ABC
 from datetime import date
 from dataclasses import dataclass
+from typing import Union
+
+from pandas.core.series import Series
 
 from src.market.basic import Currency
 from src.market.symbol import Symbol, Info
@@ -36,10 +39,12 @@ class Instrument(ABC):
         """Get short name of the undelying."""
         return self.symbol.get_info(Info.name)
 
-    @property
-    def value(self) -> SingleValue:
+    def value(
+        self, request: str = Info.price, raw: bool = False
+    ) -> Union[SingleValue, float]:
         """Get current value of the underlying."""
-        return SingleValue(self.symbol.get_info(Info.price), self.asset_currency)
+        price = self.symbol.get_info(request)
+        return price if raw else SingleValue(price, self.asset_currency)
 
     def index(
         self,
@@ -47,8 +52,8 @@ class Instrument(ABC):
         end: date = date.today(),
         request: str = "Adj Close",
         bday: bool = True,
-    ) -> IndexValue:
+        raw: bool = False,
+    ) -> Union[IndexValue, Series]:
         """Get index of the underlying."""
-        return IndexValue(
-            self.symbol.index(start, end, request, bday), self.asset_currency
-        )
+        index = self.symbol.index(start, end, request, bday)
+        return index if raw else IndexValue(index, self.asset_currency)

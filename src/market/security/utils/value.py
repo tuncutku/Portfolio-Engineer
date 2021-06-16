@@ -74,6 +74,9 @@ class IndexValue:
             return ccy and _len and _sum
         raise ValueError(f"Cannot compare {other}.")
 
+    def __iter__(self):
+        return iter(self.index)
+
     def __mul__(self, other: Union[float, int, Series]) -> "IndexValue":
         return IndexValue(self.index * other, self.currency)
 

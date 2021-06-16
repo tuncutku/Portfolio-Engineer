@@ -9,7 +9,7 @@ class Equity(Instrument):
     """Form equity object."""
 
     def __repr__(self):
-        return "<Equity {}.>".format(self.symbol.symbol)
+        return "Equity {}".format(self.symbol.symbol)
 
     # @property
     # def industry(self):

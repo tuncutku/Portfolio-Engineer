@@ -56,6 +56,10 @@ class User(BaseModel, UserMixin):
         """Get primary portfolio."""
         return Portfolio.query.filter_by(user=self, primary=True).first()
 
+    def get_portfolio_by_name(self, name: str) -> Portfolio:
+        """Get portfolio by name."""
+        return Portfolio.query.filter_by(user=self, name=name).first()
+
     def add_portfolio(self, portfolio: Portfolio, save: bool = True) -> Portfolio:
         """Add new portfolio."""
         portfolio.user = self

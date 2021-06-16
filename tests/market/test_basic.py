@@ -28,6 +28,7 @@ def test_currency():
 def test_fx():
     """Test fx index."""
 
+    assert str(usdcad) == "USDCAD FX Index"
     assert usdcad.symbol == Symbol("USDCAD=X")
     assert usdcad.asset_currency == cad_ccy
     assert usdcad.numeraire_currency == usd_ccy
@@ -44,6 +45,9 @@ def test_symbol():
 
     symbol = Symbol("AAPL")
     wrong_symbol = Symbol("1111111111111")
+
+    with pytest.raises(ValueError):
+        symbol == ["AAPL"]
 
     assert str(symbol) == "AAPL"
     assert symbol == "AAPL"

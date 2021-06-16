@@ -4,9 +4,8 @@ from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
 
 from src.environment import Portfolio
-from src.market import Symbol, Currency
+from src.market import Symbol, Currency, get_instrument
 from src.forms.portfolio import AddPortfolioForm, generate_edit_portfolio_form
-from src.views.utils.common import get_instrument
 
 
 portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
@@ -17,16 +16,13 @@ portfolio_blueprint = Blueprint("portfolio", __name__, url_prefix="/portfolio")
 def list_portfolios():
     """List portfolios of the user including current market values."""
 
-    port_list = current_user.portfolios
-    port_list.sort(key=lambda x: x.primary, reverse=True)
+    portfolios = current_user.portfolios
+    portfolios.sort(key=lambda x: x.primary, reverse=True)
 
-    if not port_list:
+    if not portfolios:
         flash("Add a custom portfolio!")
 
-    return render_template(
-        "portfolio/list_portfolios.html",
-        portfolios=port_list,
-    )
+    return render_template("portfolio/list_portfolios.html", portfolios=portfolios)
 
 
 @portfolio_blueprint.route("/add_portfolio", methods=["GET", "POST"])

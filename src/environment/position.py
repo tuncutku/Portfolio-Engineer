@@ -10,7 +10,7 @@ from pandas import concat, Series, bdate_range
 from src.extensions import db
 from src.environment.base import BaseModel
 from src.environment.order import Order
-from src.market import Instrument, Currency, SingleValue, IndexValue
+from src.market import Instrument, Currency, SingleValue, IndexValue, Info
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
@@ -64,9 +64,13 @@ class Position(BaseModel):
         """Cost of the position including purchase price and fee."""
         return concat([order.cost_df for order in self.orders]).sort_index()
 
-    def current_value(self, currency: Currency = None) -> SingleValue:
+    def current_value(
+        self, currency: Currency = None, request: str = Info.price
+    ) -> SingleValue:
         """Current value of the security."""
-        value = self.security.value.to(currency) if currency else self.security.value
+        value = self.security.value(request)
+        if currency:
+            value = value.to(currency)
         return value * self.open_quantity
 
     def security_historical_value(

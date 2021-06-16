@@ -1,5 +1,5 @@
 """Symbol object used to extract market data."""
-# pylint: disable=invalid-name, pointless-statement
+# pylint: disable=invalid-name, pointless-statement, too-many-instance-attributes
 
 from datetime import date, timedelta
 from typing import Union
@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from functools import cached_property
 
 from pandas import DataFrame, Series, bdate_range
+from pandas_datareader._utils import RemoteDataError
 from pandas_datareader.yahoo.daily import YahooDailyReader
 from pandas_datareader.yahoo.quotes import YahooQuotesReader
 
@@ -19,6 +20,14 @@ class Info:
     price = "price"
     name = "shortName"
     instrument_type = "quoteType"
+    market_open = "regularMarketOpen"
+    time_zone = "exchangeTimezoneShortName"
+    volume = "regularMarketVolume"
+
+    # Option requests
+    underlying_symbol = "underlyingSymbol"
+    expire_date = "expireDate"
+    strike = "strike"
 
 
 @dataclass
@@ -54,7 +63,7 @@ class Symbol:
         try:
             self.info
             return True
-        except IndexError:
+        except (IndexError, RemoteDataError):
             return False
 
     def is_trading_day(self, trade_date: date) -> bool:
