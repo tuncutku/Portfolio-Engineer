@@ -14,7 +14,7 @@ def register_cli(app):
     """Register command line interface."""
 
     @app.cli.command("seed_data")
-    def create_user():
+    def seed_data():
 
         db.create_all()
 

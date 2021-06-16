@@ -3,7 +3,7 @@
 # pylint: disable=no-value-for-parameter, bare-except
 import os
 
-from flask import Blueprint, session, url_for, render_template, redirect, flash
+from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_user, logout_user
 from itsdangerous import URLSafeTimedSerializer
 
@@ -68,7 +68,7 @@ def confirm_email(token):
 @user_blueprint.route("/guest", methods=["GET", "POST"])
 def guest():
     """Guest user."""
-    session["email"] = "Hey"
+    login_user(User.find_by_email("guest_user@gmail.com"))
     return redirect(url_for("portfolio.list_portfolios"))
 
 

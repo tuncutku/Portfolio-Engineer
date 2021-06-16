@@ -35,7 +35,7 @@ def add_portfolio():
 
         symbol = Symbol(form.benchmark.data)
         security = get_instrument(symbol)
-        currency = Currency(form.port_reporting_currency.data)
+        currency = Currency(form.reporting_currency.data)
 
         portfolio = Portfolio(
             form.port_name.data,
@@ -59,11 +59,9 @@ def edit_portfolio(portfolio_id):
     port = Portfolio.find_by_id(portfolio_id)
     form = generate_edit_portfolio_form(port)
     if form.validate_on_submit():
-
         symbol = Symbol(form.benchmark.data)
         security = get_instrument(symbol)
-        currency = Currency(form.port_reporting_currency.data)
-
+        currency = Currency(form.reporting_currency.data)
         port.edit(
             form.port_name.data,
             currency,

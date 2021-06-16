@@ -31,7 +31,7 @@ def test_add_order(client, _db, load_environment_data, login, captured_templates
 
     assert response.status_code == 200
 
-    new_order = Order.find_by_id(7)
+    new_order = Order.find_by_id(9)
     assert new_order.quantity == 6
     assert new_order.direction == sell
     assert new_order.cost == SingleValue(10, usd_ccy)

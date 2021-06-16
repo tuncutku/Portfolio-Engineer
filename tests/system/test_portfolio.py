@@ -28,13 +28,13 @@ def test_add_portfolio(client, _db, load_environment_data, login, captured_templ
     data = dict(
         port_name="New",
         port_type=PortfolioType.margin,
-        port_reporting_currency="USD",
+        reporting_currency="USD",
         benchmark="^GSPC",
     )
     response = client.post("portfolio/add_portfolio", data=data, follow_redirects=True)
     assert response.status_code == 200
 
-    new_portfolio = Portfolio.find_by_id(2)
+    new_portfolio = Portfolio.find_by_id(3)
 
     assert new_portfolio.name == "New"
     assert new_portfolio.portfolio_type == PortfolioType.margin
@@ -59,7 +59,7 @@ def test_edit_portfolio(client, _db, load_environment_data, login, captured_temp
     data = dict(
         port_name="edited_portfolio",
         port_type=PortfolioType.custom,
-        port_reporting_currency="CAD",
+        reporting_currency="CAD",
     )
     response = client.post("portfolio/edit/1", data=data, follow_redirects=True)
     assert response.status_code == 200
