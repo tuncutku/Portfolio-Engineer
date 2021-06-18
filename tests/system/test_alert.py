@@ -1,7 +1,7 @@
 """Test portfolio endpoints"""
 # pylint: disable=unused-argument
 
-from datetime import date, datetime
+from datetime import date
 
 import pytest
 
@@ -23,6 +23,50 @@ def test_alert_list(client, _db, load_environment_data, login, captured_template
 
     template_list = ["alert/list_alerts.html"]
     templete_used(template_list, captured_templates)
+
+
+def test_activate_alert(client, _db, load_environment_data, login, captured_templates):
+    """Test endpoint that activates alerts."""
+
+    alert = MarketAlert.find_by_id(1)
+    alert.deactivate()
+
+    assert alert.active is False
+    response = client.get("/alert/activate_alert/1", follow_redirects=True)
+    assert response.status_code == 200
+    assert alert.active is True
+
+    template_list = ["alert/list_alerts.html"]
+    templete_used(template_list, captured_templates)
+
+
+def test_deactivate_alert(
+    client, _db, load_environment_data, login, captured_templates
+):
+    """Test endpoint that deactivates alerts."""
+
+    alert = MarketAlert.find_by_id(1)
+    assert alert.active is True
+
+    response = client.get("/alert/deactivate_alert/1", follow_redirects=True)
+    assert response.status_code == 200
+    assert alert.active is False
+
+    template_list = ["alert/list_alerts.html"]
+    templete_used(template_list, captured_templates)
+
+
+def test_delete_alert(client, _db, load_environment_data, login, captured_templates):
+    """Test endpoint that delete alerts."""
+
+    alert = MarketAlert.find_by_id(1)
+    assert alert
+
+    response = client.get("/alert/delete_alert/1", follow_redirects=True)
+    assert response.status_code == 200
+
+    alert = MarketAlert.find_by_id(1)
+    assert not alert
 
 
 @pytest.mark.parametrize("data", successful_alerts)

@@ -1,9 +1,7 @@
 """Create app and celery"""
 # pylint: disable=too-few-public-methods
 
-from flask import Flask, render_template, has_app_context
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from flask import Flask
 from celery import Celery
 from celery.schedules import crontab
 
@@ -29,6 +27,7 @@ from src.views import (
     alert_blueprint,
     home_blueprint,
 )
+from src.cli import cli_blueprint
 
 # from src.dashapp import register_dash_app
 
@@ -53,14 +52,18 @@ def create_app(object_name=None):
     mail.init_app(app)
     jwt.init_app(app)
 
-    app.register_blueprint(user_blueprint)
-    app.register_blueprint(portfolio_blueprint)
-    app.register_blueprint(position_blueprint)
-    app.register_blueprint(order_blueprint)
-    app.register_blueprint(error_handler_blueprint)
-    app.register_blueprint(report_blueprint)
-    app.register_blueprint(alert_blueprint)
-    app.register_blueprint(home_blueprint)
+    for blueprint in [
+        user_blueprint,
+        portfolio_blueprint,
+        position_blueprint,
+        order_blueprint,
+        error_handler_blueprint,
+        report_blueprint,
+        alert_blueprint,
+        home_blueprint,
+        cli_blueprint,
+    ]:
+        app.register_blueprint(blueprint)
 
     # register_dash_app(app)
     make_celery(app)
@@ -70,6 +73,7 @@ def create_app(object_name=None):
 
 def make_celery(app):
     """Make celery app."""
+
     celery = Celery(
         app.import_name,
         broker=app.config["CELERY_BROKER_URL"],

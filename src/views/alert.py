@@ -27,7 +27,6 @@ def list_alerts():
     """List alerts."""
 
     user: User = current_user
-
     return render_template("alert/list_alerts.html", alerts=user.market_alerts)
 
 
@@ -63,7 +62,6 @@ def deactivate_alert(alert_id):
 
     alert = MarketAlert.find_by_id(alert_id)
     alert.deactivate()
-
     return redirect(url_for("alert.list_alerts"))
 
 
@@ -74,7 +72,6 @@ def activate_alert(alert_id):
 
     alert = MarketAlert.find_by_id(alert_id)
     alert.activate()
-
     return redirect(url_for("alert.list_alerts"))
 
 
@@ -85,7 +82,6 @@ def delete_alert(alert_id):
 
     alert = MarketAlert.find_by_id(alert_id)
     alert.delete_from_db()
-
     return redirect(url_for("alert.list_alerts"))
 
 

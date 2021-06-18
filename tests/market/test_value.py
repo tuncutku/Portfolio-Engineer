@@ -1,8 +1,10 @@
 """Test basic objects"""
-# pylint: disable=pointless-statement, unused-argument, no-self-use
+# pylint: disable=pointless-statement, unused-argument, no-self-use, expression-not-assigned
 
 
 import pytest
+
+from pandas import Series
 
 from src.market import SingleValue, IndexValue
 from src.market.ref_data import usd_ccy, cad_ccy
@@ -18,6 +20,9 @@ def test_value(mock_current_md):
         95.12802429199219, cad_ccy
     )
     assert round(market.aapl_single_value, 5) == SingleValue(79.27335, usd_ccy)
+
+    with pytest.raises(ValueError):
+        market.aapl_single_value == 79
 
 
 def test_value_sum():
@@ -52,6 +57,9 @@ def test_index():
     assert market.aapl_index.to(cad_ccy) == IndexValue(market.aapl_series_cad, cad_ccy)
     assert round(market.aapl_index, 5) == IndexValue(market.aapl_series_round, usd_ccy)
 
+    with pytest.raises(ValueError):
+        market.aapl_index == Series([79])
+
 
 def test_index_sum():
     """Test index summation."""
@@ -59,10 +67,17 @@ def test_index_sum():
     with pytest.raises(ValueError):
         market.aapl_index + market.ry_to_index
 
+    with pytest.raises(ValueError):
+        market.aapl_index + Series([79])
+
     sum_index = market.aapl_index + market.pbw_index
     sum_index_inverse = market.pbw_index + market.aapl_index
 
     assert sum_index == market.appl_pbw_sum_index
+    assert sum_index == sum_index_inverse
+
+    sum_index = market.aapl_index + 2
+    sum_index_inverse = 2 + market.aapl_index
     assert sum_index == sum_index_inverse
 
 

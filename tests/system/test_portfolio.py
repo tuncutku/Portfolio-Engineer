@@ -91,14 +91,21 @@ def test_set_portfolio_primary(
 ):
     """Test endpoint that sets portfolio primary."""
 
-    portfolio = Portfolio.find_by_id(1)
-    assert portfolio.primary is False
+    portfolio_1 = Portfolio.find_by_id(1)
+    assert portfolio_1.primary is False
+
     response = client.get("portfolio/set_primary/1", follow_redirects=True)
     assert response.status_code == 200
-    portfolio = Portfolio.find_by_id(1)
-    assert portfolio.primary is True
+    portfolio_1 = Portfolio.find_by_id(1)
+    portfolio_2 = Portfolio.find_by_id(2)
+    assert portfolio_1.primary is True
+    assert portfolio_2.primary is False
 
-    template_list = ["portfolio/list_portfolios.html"]
+    response = client.get("portfolio/set_primary/2", follow_redirects=True)
+    assert portfolio_1.primary is False
+    assert portfolio_2.primary is True
+
+    template_list = ["portfolio/list_portfolios.html", "portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)
 
 

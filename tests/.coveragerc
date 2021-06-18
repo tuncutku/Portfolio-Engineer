@@ -3,7 +3,7 @@ exclude_lines =
     pragma: no cover
     if TYPE_CHECKING:
     raise NotImplementedError
-fail_under = 90
+fail_under = 95
 precision = 2
 skip_covered = true
 show_missing = true

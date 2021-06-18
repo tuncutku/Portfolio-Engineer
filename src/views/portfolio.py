@@ -91,7 +91,7 @@ def delete_portfolio(portfolio_id):
 def set_portfolio_primary(portfolio_id):
     """Set a portfolio primary which will be viewed at the top when listing portfolios."""
 
-    primary_portfolio = current_user.get_primary_portfolio()
+    primary_portfolio: Portfolio = current_user.get_primary_portfolio()
 
     if primary_portfolio:
         primary_portfolio.primary = False

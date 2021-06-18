@@ -68,8 +68,15 @@ def test_portfolio_signals(client, _db, load_environment_data, login):
 def test_operators():
     """Test operators."""
 
-    for operator, string in zip(
-        (up, up_equal, down, down_equal),
-        ("upper", "upper or equal", "lower", "lower or equal"),
-    ):
+    operators = (up, up_equal, down, down_equal)
+    operator_strings = ("upper", "upper or equal", "lower", "lower or equal")
+    results = (False, False, True, True)
+
+    target = 2
+    value = 1
+
+    for operator, string in zip(operators, operator_strings):
         assert str(operator) == string
+
+    for operator, result in zip(operators, results):
+        assert operator.check(target, value) is result
