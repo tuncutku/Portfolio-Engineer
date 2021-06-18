@@ -14,6 +14,7 @@ env
 cov.xml
 pytest.ini
 runtime.txt
+.pylintrc
 
 celerybeat-schedule.db
 

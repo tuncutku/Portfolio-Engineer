@@ -106,7 +106,7 @@ class LimitReturnSignal(Signal):
     @property
     def value(self) -> float:
         if self.start_date == date.today():
-            value = 0
+            value = 0.0
         else:
             current_price = self.underlying.value(raw=True)
             index = self.underlying.index(self.start_date)

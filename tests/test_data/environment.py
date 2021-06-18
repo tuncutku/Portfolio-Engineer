@@ -87,3 +87,5 @@ position_1_raw = {"security": aapl}
 position_2_raw = {"security": ry_to}
 portfolio_1_raw = {"name": "portfolio_1"}
 user_1_raw = {"email": "tuncutku10@gmail.com", "password": "1234"}
+
+guest_user_raw = {"email": "guest_user@gmail.com", "password": "1234"}

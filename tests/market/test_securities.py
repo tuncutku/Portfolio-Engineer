@@ -23,21 +23,27 @@ equity = Equity(currency, Symbol("AAPL"))
 
 
 @pytest.mark.parametrize(
-    "security, symbol, security_type",
-    [(etf, Symbol("PBW"), "ETF"), (equity, Symbol("AAPL"), "Equity")],
+    "instrument, symbol, security_type, string",
+    [
+        (etf, Symbol("PBW"), "ETF", "ETF PBW"),
+        (equity, Symbol("AAPL"), "Equity", "Equity AAPL"),
+    ],
     ids=["ETF", "Equity"],
 )
-def test_common(security: Instrument, symbol: Symbol, security_type: str):
+def test_common(
+    instrument: Instrument, symbol: Symbol, security_type: str, string: str
+):
     """Test common securities."""
 
-    assert security.asset_currency == currency
-    assert security.symbol == symbol
-    assert security.security_type == security_type
+    assert instrument.asset_currency == currency
+    assert instrument.symbol == symbol
+    assert instrument.security_type == security_type
 
-    assert isinstance(security.name, str)
-    assert isinstance(security.value(), SingleValue)
-    assert isinstance(security.value(raw=True), float)
-    assert isinstance(security.index(start_date), IndexValue)
+    assert str(instrument) == string
+    assert isinstance(instrument.name, str)
+    assert isinstance(instrument.value(), SingleValue)
+    assert isinstance(instrument.value(raw=True), float)
+    assert isinstance(instrument.index(start_date), IndexValue)
 
 
 def test_etf():

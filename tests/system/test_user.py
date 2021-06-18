@@ -1,6 +1,7 @@
 """Test user endpoints"""
 # pylint: disable=unused-argument
 
+from flask_login import current_user
 from flask_mail import Mail
 
 from src.environment.user import User
@@ -22,8 +23,8 @@ def test_home(client, _db, captured_templates):
 def test_register_user(client, _db, captured_templates):
     """System test for user register endpoint."""
 
-    email = env.user_1_raw["email"]
-    password = env.user_1_raw["password"]
+    email = "test@gmail.com"
+    password = "1234"
 
     response = client.get("/users/register")
 
@@ -52,9 +53,7 @@ def test_register_user(client, _db, captured_templates):
     data = dict(email=email, password=password, confirm=password)
     response = client.post("/users/register", data=data, follow_redirects=True)
 
-    assert "User with that email address already exists." in response.get_data(
-        as_text=True
-    )
+    assert "email address already exists." in response.get_data(as_text=True)
 
     template_list = [
         "user/register.html",
@@ -91,7 +90,7 @@ def test_login_user(client, _db, captured_templates, load_environment_data):
     response = client.post("/users/login", data=data, follow_redirects=True)
 
     assert response.status_code == 200
-    assert "My Portfolios:" in response.get_data(as_text=True)
+    assert current_user == User.find_by_id(1)
 
     template_list = [
         "user/login.html",
@@ -105,8 +104,10 @@ def test_login_user(client, _db, captured_templates, load_environment_data):
 def test_logout_user(client, _db, load_environment_data, login, captured_templates):
     """Test logout user."""
 
+    assert current_user == User.find_by_id(1)
     response = client.get("/users/logout", follow_redirects=True)
     assert response.status_code == 200
+    assert current_user != User.find_by_id(1)
 
     template_list = ["home.html"]
     templete_used(template_list, captured_templates)
@@ -141,4 +142,19 @@ def test_wrong_email_confirmation(client, _db, captured_templates):
     assert not user.confirmed
 
     template_list = ["user/login.html"]
+    templete_used(template_list, captured_templates)
+
+
+def test_guest_login(client, _db, captured_templates):
+    """Test guest sign in."""
+
+    data = dict(
+        email=env.guest_user_raw["email"], password=env.guest_user_raw["password"]
+    )
+    response = client.post("/users/guest", data=data, follow_redirects=True)
+
+    assert response.status_code == 200
+    assert current_user == User.find_by_id(1)
+
+    template_list = ["portfolio/list_portfolios.html"]
     templete_used(template_list, captured_templates)

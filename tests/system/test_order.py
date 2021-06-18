@@ -50,12 +50,9 @@ def test_edit_order(client, _db, load_environment_data, login, captured_template
 
     response = client.get("order/edit/1", follow_redirects=True)
     assert response.status_code == 200
-    assert "Edit order:" in response.get_data(as_text=True)
-    assert "AAPL" in response.get_data(as_text=True)
-    assert "10" in response.get_data(as_text=True)
-    assert "130" in response.get_data(as_text=True)
-    assert "2020-02-03" in response.get_data(as_text=True)
-    assert "Buy" in response.get_data(as_text=True)
+
+    for string in ["Edit order:", "AAPL", "10", "130", "2020-02-03", "Buy"]:
+        assert string in response.get_data(as_text=True)
 
     data = dict(
         symbol="AAPL",

@@ -3,9 +3,10 @@
 # pylint: disable=invalid-name
 
 
-import json
+# import json
 from flask import Blueprint
-from werkzeug.exceptions import HTTPException
+
+# from werkzeug.exceptions import HTTPException
 
 
 error_handler_blueprint = Blueprint(
@@ -13,18 +14,18 @@ error_handler_blueprint = Blueprint(
 )
 
 
-@error_handler_blueprint.errorhandler(HTTPException)
-def handle_exception(e):
-    """Exception handling."""
+# @error_handler_blueprint.errorhandler(HTTPException)
+# def handle_exception(e):
+#     """Exception handling."""
 
-    response = e.get_response()
-    # replace the body with JSON
-    response.data = json.dumps(
-        {
-            "code": e.code,
-            "name": e.name,
-            "description": e.description,
-        }
-    )
-    response.content_type = "application/json"
-    return response
+#     response = e.get_response()
+#     # replace the body with JSON
+#     response.data = json.dumps(
+#         {
+#             "code": e.code,
+#             "name": e.name,
+#             "description": e.description,
+#         }
+#     )
+#     response.content_type = "application/json"
+#     return response

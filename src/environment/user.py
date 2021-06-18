@@ -35,7 +35,7 @@ class User(BaseModel, UserMixin):
         return f"<User {self.email}.>"
 
     @classmethod
-    def find_by_email(cls, email: str):
+    def find_by_email(cls, email: str) -> "User":
         """Find user by email."""
         return cls.query.filter_by(email=email).first()
 
