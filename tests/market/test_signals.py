@@ -7,7 +7,7 @@ import pytest
 
 from src.environment import Portfolio
 from src.market.signal import Signal, PortfolioValueSignal, DailyPortfolioReturnSignal
-from src.market.ref_data import aapl, up
+from src.market.ref_data import aapl, up, up_equal, down, down_equal
 
 from tests.test_data import market as mkt
 
@@ -21,6 +21,7 @@ signal_test_contents = [
     (mkt.price_signal, 100, True, price_signal_str),
     (mkt.return_signal, 0.1, False, return_signal_str),
     (mkt.limit_signal, 0.1, True, limit_signal_str),
+    (mkt.limit_signal_default, 0.1, False, limit_signal_str),
 ]
 signal_test_names = [signal[0].__class__.__name__ for signal in signal_test_contents]
 
@@ -62,3 +63,13 @@ def test_portfolio_signals(client, _db, load_environment_data, login):
         assert isinstance(signal.value, float)
         assert signal.apply_operator() is False
         assert str(signal) == string
+
+
+def test_operators():
+    """Test operators."""
+
+    for operator, string in zip(
+        (up, up_equal, down, down_equal),
+        ("upper", "upper or equal", "lower", "lower or equal"),
+    ):
+        assert str(operator) == string

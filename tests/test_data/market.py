@@ -17,6 +17,7 @@ from tests.test_data.raw_data import security
 price_signal = PriceSignal(aapl, up, 100)
 return_signal = DailyReturnSignal(aapl, up, 0.1)
 limit_signal = LimitReturnSignal(aapl, up, 0.1, date(2021, 1, 4))
+limit_signal_default = LimitReturnSignal(aapl, up, 0.1)
 
 # Sample series
 aapl_series = Series(security.aapl_raw, name="AAPL")

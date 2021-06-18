@@ -12,7 +12,7 @@ from wtforms import (
     DateTimeField,
     FloatField,
 )
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired
 from src.environment import Order
 from src.market.ref_data import buy, sell
 from src.forms.validators import Ticker, Location, FutureDate, PositiveFloat, TradingDay
@@ -30,9 +30,9 @@ class AddOrderForm(Form):
     """Form an order form object."""
 
     symbol = StringField(u"Ticker", [DataRequired(), Ticker(), Location()])
-    quantity = IntegerField(u"Order Quantity", [DataRequired()])
+    quantity = IntegerField(u"Order Quantity", [DataRequired(), PositiveFloat()])
     direction = SelectField(u"Direction", default=buy, choices=direction_choices)
-    cost = FloatField(u"Cost", [Optional(), PositiveFloat()], default=0)
+    cost = FloatField(u"Cost", [DataRequired(), PositiveFloat()], default=0)
     exec_datetime = DateTimeField(
         u"Order Date",
         [DataRequired(), FutureDate(), TradingDay()],
@@ -49,17 +49,17 @@ def generate_edit_order_form(order: Order) -> Form:
 
         symbol = StringField(
             u"Ticker",
-            [DataRequired(), Ticker()],
+            render_kw={"readonly": True},
             default=order.position.security.symbol,
         )
         quantity = IntegerField(
-            u"Order Quantity", [DataRequired()], default=order.quantity
+            u"Order Quantity", [DataRequired(), PositiveFloat()], default=order.quantity
         )
         direction = SelectField(
             u"Direction", default=order.direction, choices=direction_choices
         )
         cost = FloatField(
-            u"Cost", [Optional(), PositiveFloat()], default=order.cost.value
+            u"Cost", [DataRequired(), PositiveFloat()], default=order.cost.value
         )
         exec_datetime = DateTimeField(
             u"Order Date",
@@ -68,4 +68,4 @@ def generate_edit_order_form(order: Order) -> Form:
             format=date_time_format,
         )
 
-    return EditOrderForm()
+    return EditOrderForm

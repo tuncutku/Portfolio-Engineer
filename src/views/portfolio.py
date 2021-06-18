@@ -2,6 +2,7 @@
 
 from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
+from flask_wtf import FlaskForm
 
 from src.environment import Portfolio
 from src.market import Symbol, Currency, get_instrument
@@ -57,7 +58,8 @@ def edit_portfolio(portfolio_id):
     """Edit an existing portfolio."""
 
     port = Portfolio.find_by_id(portfolio_id)
-    form = generate_edit_portfolio_form(port)
+    edit_form = generate_edit_portfolio_form(port)
+    form: FlaskForm = edit_form()
     if form.validate_on_submit():
         symbol = Symbol(form.benchmark.data)
         security = get_instrument(symbol)

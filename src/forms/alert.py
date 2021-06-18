@@ -2,11 +2,11 @@
 # pylint: disable=arguments-differ, invalid-name, super-with-arguments
 
 
-from datetime import date
+from datetime import datetime
 
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, DateTimeField, FloatField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired
 
 from src.market import get_business_day
 from src.forms.validators import DateIfRequired, FutureDate, Underlying
@@ -37,7 +37,7 @@ class AddAlertForm(Form):
     target = FloatField(u"Target", [DataRequired()])
     start_date = DateTimeField(
         u"Limit Date",
-        [DateIfRequired(), Optional(), FutureDate()],
-        default=get_business_day(date.today()),
+        [DateIfRequired(), FutureDate()],
+        default=get_business_day(datetime.today()),
         format=date_time_format,
     )

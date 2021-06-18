@@ -36,7 +36,7 @@ class AddPortfolioForm(Form):
     benchmark = StringField(u"Benchmark", [DataRequired(), Ticker()], default="^GSPC")
 
 
-def generate_edit_portfolio_form(portfolio: Portfolio):
+def generate_edit_portfolio_form(portfolio: Portfolio) -> Form:
     """Function that generates an instance of EditPortfolioForm and sets default arguments."""
 
     class EditPortfolioForm(Form):
@@ -63,4 +63,4 @@ def generate_edit_portfolio_form(portfolio: Portfolio):
             default=portfolio.benchmark.symbol.symbol,
         )
 
-    return EditPortfolioForm()
+    return EditPortfolioForm
