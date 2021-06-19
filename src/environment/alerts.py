@@ -9,14 +9,31 @@ from typing import List, TYPE_CHECKING
 from flask import Markup
 from pandas import concat
 
-from src.environment.base import Alert
+from src.environment.base import Alert, BaseModel
 from src.extensions import db
+from src.market import Instrument
 from src.market.signal import Signal
 from src.analytics._return import periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
     from src.environment.user import User
+
+
+class WatchListInstrument(BaseModel):
+    """Symbol watch list."""
+
+    __tablename__ = "watchlist_instruments"
+
+    instrument: Instrument = db.Column(db.PickleType(), nullable=False)
+    user_id: int = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user: User = db.relationship("User", back_populates="watch_list")
+
+    def __init__(self, instrument: Instrument) -> None:
+        self.instrument = instrument
+
+    def __repr__(self):
+        return f"<Watchlist instrument: {self.instrument}.>"
 
 
 class DailyReport(Alert):
@@ -89,7 +106,7 @@ class DailyReport(Alert):
 class MarketAlert(Alert):
     """Price Alert."""
 
-    __tablename__ = "market_alert"
+    __tablename__ = "market_alerts"
 
     signal: Signal = db.Column(db.PickleType(), nullable=False)
 

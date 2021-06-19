@@ -7,7 +7,7 @@ from flask_login import UserMixin
 
 from src.environment.base import BaseModel
 from src.environment.portfolio import Portfolio
-from src.environment.alerts import MarketAlert
+from src.environment.alerts import MarketAlert, WatchListInstrument
 from src.extensions import db, bcrypt
 
 
@@ -20,6 +20,9 @@ class User(BaseModel, UserMixin):
     password: str = db.Column(db.LargeBinary())
     confirmed: bool = db.Column(db.Boolean(), default=False)
 
+    watch_list: List[WatchListInstrument] = db.relationship(
+        "WatchListInstrument", back_populates="user", cascade="all, delete-orphan"
+    )
     portfolios: List[Portfolio] = db.relationship(
         "Portfolio", back_populates="user", cascade="all, delete-orphan"
     )
@@ -73,3 +76,12 @@ class User(BaseModel, UserMixin):
         if save:
             alert.save_to_db()
         return alert
+
+    def add_watchlist_instrument(
+        self, instrument: WatchListInstrument, save: bool = True
+    ) -> WatchListInstrument:
+        """Add instrument to the watchlist."""
+        instrument.user = self
+        if save:
+            instrument.save_to_db()
+        return instrument

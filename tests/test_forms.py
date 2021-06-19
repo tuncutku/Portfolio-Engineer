@@ -14,6 +14,7 @@ from src.forms import (
     AddOrderForm,
     generate_edit_order_form,
     AddAlertForm,
+    AddMarketWatchInstrument,
 )
 
 
@@ -98,6 +99,18 @@ def test_add_alert_form(
     """Test add alert form."""
 
     form = AddAlertForm(**data)
+    assert form.validate() is status
+    for key, error in errors.items():
+        assert form.errors.get(key) == error
+
+
+@pytest.mark.parametrize("data, errors, status", request.add_market_watch_data)
+def test_market_watch_instrument_form(
+    client, _db, load_environment_data, login, data: dict, errors: dict, status: bool
+):
+    """Test add market watch instrument form."""
+
+    form = AddMarketWatchInstrument(**data)
     assert form.validate() is status
     for key, error in errors.items():
         assert form.errors.get(key) == error

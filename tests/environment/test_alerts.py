@@ -3,9 +3,9 @@
 
 import pytest
 
-from src.environment import Portfolio, DailyReport, MarketAlert
+from src.environment import Portfolio, DailyReport, MarketAlert, WatchListInstrument
 from src.market import SingleValue
-from src.market.ref_data import gspc, cad_ccy
+from src.market.ref_data import gspc, cad_ccy, aapl
 from tests.test_data import environment as env
 
 
@@ -60,3 +60,11 @@ def test_market_alert(client, _db, load_environment_data, mock_current_md):
 
     market_alert.deactivate()
     assert not market_alert.active
+
+
+def test_watchlist_instrument(client, _db, load_environment_data):
+    """Test watchlist instrument."""
+
+    watchlist_instrument = WatchListInstrument.find_by_id(1)
+    assert watchlist_instrument.instrument == aapl
+    assert str(watchlist_instrument) == "<Watchlist instrument: Equity AAPL.>"

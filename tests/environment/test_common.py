@@ -10,6 +10,7 @@ from src.environment import (
     DailyReport,
     MarketAlert,
     Alert,
+    WatchListInstrument,
 )
 
 
@@ -21,7 +22,15 @@ def test_relationships(client, _db, load_environment_data):
 
     user = User.find_by_id(1)
     user.delete_from_db()
-    for _object in [User, Portfolio, Position, Order, MarketAlert]:
+    for _object in [
+        User,
+        Portfolio,
+        Position,
+        Order,
+        MarketAlert,
+        WatchListInstrument,
+        DailyReport,
+    ]:
         assert not _object.find_all()
 
 
@@ -34,6 +43,7 @@ def test_object_number(client, _db, load_environment_data):
     assert len(Order.find_all()) == 6
     assert len(DailyReport.find_all()) == 1
     assert len(MarketAlert.find_all()) == 1
+    assert len(WatchListInstrument.find_all()) == 1
 
 
 def test_base_model(client, _db):

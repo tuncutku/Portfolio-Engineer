@@ -9,7 +9,14 @@ from wtforms import StringField, SelectField, DateTimeField, FloatField
 from wtforms.validators import DataRequired
 
 from src.market import get_business_day
-from src.forms.validators import DateIfRequired, FutureDate, Underlying
+from src.forms.validators import (
+    DateIfRequired,
+    FutureDate,
+    Underlying,
+    Ticker,
+    Location,
+    WatchlistTicker,
+)
 
 date_time_format = "%Y-%m-%d"
 operator_choices = [
@@ -29,7 +36,7 @@ signal_choices = [
 
 
 class AddAlertForm(Form):
-    """Form a limit return signal alert form object."""
+    """Form a signal alert form object."""
 
     signal = SelectField(u"Signal", default="Price Signal", choices=signal_choices)
     underlying = StringField(u"Underlying", [DataRequired(), Underlying()])
@@ -40,4 +47,12 @@ class AddAlertForm(Form):
         [DateIfRequired(), FutureDate()],
         default=get_business_day(datetime.today()),
         format=date_time_format,
+    )
+
+
+class AddMarketWatchInstrument(Form):
+    """Form an add marketwatch instrument form."""
+
+    symbol = StringField(
+        u"Ticker", [DataRequired(), Ticker(), Location(), WatchlistTicker()]
     )

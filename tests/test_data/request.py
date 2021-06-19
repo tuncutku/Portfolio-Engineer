@@ -19,6 +19,7 @@ ticker_location = ["Only US and Canadian securities are supported!"]
 invalid_trading_day = ["Given date is not a trading day."]
 invalid_portfolio_name = ["Portfolio name is not valid!"]
 missing_alert_date = ["Date must be provided when signal is limit signal!"]
+existing_ticker = ["Given ticker: AAPL already exists."]
 
 user_login_data = [
     (
@@ -396,4 +397,11 @@ add_alert_data = [
         ),
         False,
     ),
+]
+
+add_market_watch_data = [
+    (dict(symbol="TSLA"), dict(symbol=None), True),
+    (dict(symbol=None), dict(symbol=required_field), False),
+    (dict(symbol="THYAO.IS"), dict(symbol=ticker_location), False),
+    (dict(symbol="AAPL"), dict(symbol=existing_ticker), False),
 ]

@@ -181,3 +181,21 @@ class Authorized:
     def authenticate(user: User, password: str) -> bool:
         """Authenticate the user."""
         return bool(user and user.check_password(password) and user.confirmed)
+
+
+class WatchlistTicker:
+    """Validate given ticket does not exist in the database."""
+
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        user: User = current_user
+        if [
+            instrument
+            for instrument in user.watch_list
+            if instrument.instrument.symbol == Symbol(field.data)
+        ]:
+            if not self.message:
+                self.message = f"Given ticker: {field.data} already exists."
+            raise ValidationError(self.message)
