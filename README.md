@@ -113,7 +113,7 @@ If you do not provide a command argument, the `doit.sh` command returns a list o
 ## Docker commands
 
 * Build image: `docker build . -t tuncutku/portfolio_engineer:latest`
-* Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolio_engineer`
+* Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name portfolio_engineer portfolio_engineer`
 * Push image `docker push tuncutku/portfolio_engineer:latest`
 * Run docker compose: `docker-compose --env-file .env -f "docker-compose.yml" up -d --build`
 
