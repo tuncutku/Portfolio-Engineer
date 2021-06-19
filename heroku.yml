@@ -2,7 +2,8 @@ build:
   docker:
     web: Dockerfile
 #     worker: Dockerfile
-# run:
+run:
+  web: run_app.py
 #   worker: 
 #     command:
 #       - celery worker --app=main.celery
