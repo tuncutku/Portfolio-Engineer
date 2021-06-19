@@ -54,7 +54,8 @@ Alert coverage:
 ## Project Structure
 
 ```bash
-falcon/
+portfolio engineer/
+├── requirements/
 ├── src/
 │   ├── analytics/                # Analytics library
 │   ├── api/
@@ -76,8 +77,7 @@ falcon/
 ├── README.md
 ├── config.py
 ├── run_app.py
-├── run_celery.py
-└── requirements.txt
+└── run_celery.py
 ```
 
 
@@ -112,8 +112,9 @@ If you do not provide a command argument, the `doit.sh` command returns a list o
 
 ## Docker commands
 
-* Build image: `docker build -t portfolioengineer -f deploy/Dockerfile .`
-* Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolioengineer`
+* Build image: `docker build . -t tuncutku/portfolio_engineer:latest`
+* Run image in a container: `docker run -d -p 5001:5001 --env-file .env --name porteng portfolio_engineer`
+* Push image `docker push tuncutku/portfolio_engineer:latest`
 * Run docker compose: `docker-compose --env-file .env -f "docker-compose.yml" up -d --build`
 
 ## License

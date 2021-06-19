@@ -14,7 +14,7 @@ else
     activate
     echo "Installing requirements."
     pip3 install -q --upgrade pip
-    pip3 install -q -r requirements.txt
+    pip3 install -q -r requirements/development.txt
 fi
 
 if [ "$1" == 'run_tests' ]
@@ -31,4 +31,9 @@ then
     export FLASK_APP=run_app.py
     echo "Initiating_db"
     flask init_db
+fi
+
+if [ "$1" == 'run_app' ]
+then
+    python3
 fi
