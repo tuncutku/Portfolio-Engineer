@@ -25,6 +25,11 @@ jobs:
       image: docker://tuncutku/portfolio_engineer:latest
     steps:
     - uses: actions/checkout@v2
+    - name: Login to Docker
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Test with pytest
       run: pipenv run pytest tests/
     # - name: Push the image to Heroku and deploy
