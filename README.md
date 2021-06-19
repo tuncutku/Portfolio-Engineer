@@ -55,7 +55,6 @@ Alert coverage:
 
 ```bash
 portfolio engineer/
-├── requirements/
 ├── src/
 │   ├── analytics/                # Analytics library
 │   ├── api/
@@ -76,6 +75,7 @@ portfolio engineer/
 ├── doit.sh
 ├── README.md
 ├── config.py
+├── requirements.txt
 ├── run_app.py
 └── run_celery.py
 ```

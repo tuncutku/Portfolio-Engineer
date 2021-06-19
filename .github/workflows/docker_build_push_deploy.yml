@@ -21,6 +21,11 @@ jobs:
   test:
     # needs: [build]
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      MAIL_SERVER_EMAIL: ${{ secrets.MAIL_SERVER_EMAIL }}
+      MAIL_SERVER_PASSWORD: ${{ secrets.MAIL_SERVER_PASSWORD }}
+      SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
     container:
       image: tuncutku/portfolio_engineer:latest
       credentials:
@@ -28,7 +33,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     steps:
     - name: Test with pytest
-      run: pipenv run pytest tests/
+      run: pytest -n auto
     # - name: Push the image to Heroku and deploy
     #   env:
     #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
