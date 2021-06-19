@@ -19,10 +19,3 @@ jobs:
       run: docker push tuncutku/portfolio_engineer:latest
     - name: Run tests in a container
       run: docker push tuncutku/portfolio_engineer:latest
-
-    # - name: Push the image to Heroku and deploy
-    #   env:
-    #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-    #   run: |
-    #     heroku container:login
-    #     heroku container:push -a portfolioengineer web
