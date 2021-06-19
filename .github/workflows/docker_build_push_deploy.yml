@@ -17,11 +17,9 @@ jobs:
       run: docker build . -t tuncutku/portfolio_engineer:latest
     - name: Push the image to Docker
       run: docker push tuncutku/portfolio_engineer:latest
-    - name: Run tests in a container
-
-      run: docker push tuncutku/portfolio_engineer:latest
 
   test:
+    needs: [job_a]
     runs-on: ubuntu-latest
     container:
       image: docker://tuncutku/portfolio_engineer:latest
