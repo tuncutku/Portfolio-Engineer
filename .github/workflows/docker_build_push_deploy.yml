@@ -4,32 +4,29 @@ on:
   push:
     branches: [ master ]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Login to Docker
-      env:
-        DOCKER_USER: ${{ secrets.DOCKER_USER }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - name: Build the Docker image
-      run: docker build . -t tuncutku/portfolio_engineer:latest
-    - name: Push the image to Docker
-      run: docker push tuncutku/portfolio_engineer:latest
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Login to Docker
+  #     env:
+  #       DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  #       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #     run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  #   - name: Build the Docker image
+  #     run: docker build . -t tuncutku/portfolio_engineer:latest
+  #   - name: Push the image to Docker
+  #     run: docker push tuncutku/portfolio_engineer:latest
 
   test:
-    needs: [build]
+    # needs: [build]
     runs-on: ubuntu-latest
     container:
-      image: docker://tuncutku/portfolio_engineer:latest
+      image: tuncutku/portfolio_engineer:latest
+      credentials:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Login to Docker
-      env:
-        DOCKER_USER: ${{ secrets.DOCKER_USER }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Test with pytest
       run: pipenv run pytest tests/
     # - name: Push the image to Heroku and deploy
