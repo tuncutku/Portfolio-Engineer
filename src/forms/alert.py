@@ -2,7 +2,7 @@
 # pylint: disable=arguments-differ, invalid-name, super-with-arguments
 
 
-from datetime import date, datetime
+from datetime import date
 
 from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, FloatField, DateField
