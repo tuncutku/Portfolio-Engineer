@@ -5,9 +5,17 @@ import pytest
 from flask import template_rendered
 
 from src import create_app
-from src.environment import User, Portfolio, Position, Order, MarketAlert
+from src.environment import (
+    User,
+    Portfolio,
+    Position,
+    Order,
+    MarketAlert,
+    WatchListInstrument,
+)
 
 from src.extensions import db
+from src.market.ref_data import aapl
 from tests.test_data import environment as env
 from tests.test_data import market as mkt
 
@@ -43,9 +51,11 @@ def load_environment_data(client) -> User:
     order_5 = Order(**env.order_5_raw)
     order_6 = Order(**env.order_6_raw)
     price_alert = MarketAlert(mkt.price_signal)
+    instrument = WatchListInstrument(aapl)
 
     user.save_to_db()
     user.confirm_user()
+    user.add_watchlist_instrument(instrument)
     user.add_market_alert(price_alert)
     user.add_portfolio(portfolio)
     portfolio.daily_report.activate()

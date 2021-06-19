@@ -32,11 +32,12 @@ def test_cli(client):
     tables = get_table_names()
     assert tables == [
         "daily_report",
-        "market_alert",
+        "market_alerts",
         "orders",
         "portfolios",
         "positions",
         "users",
+        "watchlist_instruments",
     ]
 
     result = runner.invoke(seed_data)

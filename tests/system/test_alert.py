@@ -5,7 +5,7 @@ from datetime import date
 
 import pytest
 
-from src.environment import MarketAlert
+from src.environment import MarketAlert, WatchListInstrument
 from src.market.ref_data import aapl, up
 
 from tests.test_data.request import add_alert_data
@@ -57,7 +57,7 @@ def test_deactivate_alert(
 
 
 def test_delete_alert(client, _db, load_environment_data, login, captured_templates):
-    """Test endpoint that delete alerts."""
+    """Test endpoint that deletes alerts."""
 
     alert = MarketAlert.find_by_id(1)
     assert alert
@@ -96,3 +96,33 @@ def test_add_correct_alert(
     response = client.post("alert/add_alert", data=data, follow_redirects=True)
     assert response.status_code == 200
     assert not MarketAlert.find_by_id(3)
+
+
+def test_delete_watchlist_instrument(
+    client, _db, load_environment_data, login, captured_templates
+):
+    """Test endpoint that deletes watchlist instrument."""
+
+    instrument = WatchListInstrument.find_by_id(1)
+    assert instrument
+
+    response = client.get("/alert/delete_watchlist/1", follow_redirects=True)
+    assert response.status_code == 200
+
+    instrument = WatchListInstrument.find_by_id(1)
+    assert not instrument
+
+
+def test_watchlist(client, _db, load_environment_data, login, captured_templates):
+    """Test endpoint that displays and adds watchlist instrument."""
+
+    response = client.get("alert/watchlist")
+    assert response.status_code == 200
+
+    instrument = WatchListInstrument.find_by_id(2)
+    assert not instrument
+    data = {"symbol": "TSLA"}
+    response = client.post("alert/watchlist", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    instrument = WatchListInstrument.find_by_id(2)
+    assert instrument

@@ -4,8 +4,8 @@ from typing import Union
 from flask import Blueprint, url_for, render_template, redirect, flash
 from flask_login import login_required, current_user
 
-from src.forms import AddAlertForm
-from src.environment import User, MarketAlert
+from src.forms import AddAlertForm, AddMarketWatchInstrument
+from src.environment import User, MarketAlert, WatchListInstrument
 from src.market import Instrument, Symbol, get_instrument
 from src.market.ref_data import up, down, up_equal, down_equal
 from src.market.signal import (
@@ -83,6 +83,34 @@ def delete_alert(alert_id):
     alert = MarketAlert.find_by_id(alert_id)
     alert.delete_from_db()
     return redirect(url_for("alert.list_alerts"))
+
+
+@alert_blueprint.route("/watchlist", methods=["GET", "POST"])
+@login_required
+def list_watchlist():
+    """List alert."""
+
+    user: User = current_user
+    form = AddMarketWatchInstrument()
+
+    if form.validate_on_submit():
+        watchlist_inst = WatchListInstrument(get_instrument(Symbol(form.symbol.data)))
+        user.add_watchlist_instrument(watchlist_inst)
+        return redirect(url_for("alert.list_watchlist"))
+
+    return render_template(
+        "alert/watchlist.html", instruments=user.watch_list, form=form
+    )
+
+
+@alert_blueprint.route("/delete_watchlist/<int:inst_id>", methods=["GET"])
+@login_required
+def delete_watchlist_instrument(inst_id):
+    """Delete watchlist instrument."""
+
+    watchlist_inst = WatchListInstrument.find_by_id(inst_id)
+    watchlist_inst.delete_from_db()
+    return redirect(url_for("alert.list_watchlist"))
 
 
 def get_signal(

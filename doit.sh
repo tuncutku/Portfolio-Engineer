@@ -20,7 +20,7 @@ fi
 if [ "$1" == 'run_tests' ]
 then
     echo "Running pytests."
-    pytest --cov=src --cov-config=tests/.coveragerc --no-cov-on-fail
+    pytest --cov=src --cov-config=tests/.coveragerc --no-cov-on-fail -n auto
     echo "Running pylint on src/ and tests/"
     pylint src/
     pylint tests/
