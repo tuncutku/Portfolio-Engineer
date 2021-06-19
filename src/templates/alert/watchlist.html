@@ -1,0 +1,71 @@
+{% extends "base/portfolio.html" %}
+{% block content %}
+{% import 'alert/macro.html' as macro_file -%}
+
+<div class="container mt-5">
+    <h2 class="text-success">Watchlist:</h2>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
+<div class="container mt-4">
+
+    <div class="card">
+        <div class="row">
+            <div class="col-8">
+                <div class="container mt-4">
+                    {{ macro_file.get_watchlist_table(instruments) }}
+                </div>
+            </div>
+            <div class="col 4">
+                <div class="row justify-content-center mt-4 mb-4">
+                    <div class="col-10">
+                        <div class="card">
+                            <h5 class="card-header text-center bg-success text-white bg-gradient">
+                                Add new ticker:
+                            </h5>
+                            <div class="card-body">
+                                <div class="row justify-content-center">
+                                    <div class="col-12">
+                                        <form class="card p-3 bg-light" action="{{ url_for('alert.list_watchlist') }}"
+                                            method="post">
+
+                                            {{ form.hidden_tag() }}
+                                            {% for field in form %}
+                                            <div class="row 3 align-items-center mt-2">
+                                                {% if field.errors %}
+                                                {% for e in field.errors %}
+                                                <p class="help-block">{{ e }}</p>
+                                                {% endfor %}
+                                                {% endif %}
+                                                <div class="col-3">
+                                                    {% if field.widget.input_type != "hidden" %} {{ field.label }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-sm-1">
+                                                    {{ field }}
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                            <div>
+                                                <button type="submit" class="btn btn-success mt-2">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
