@@ -19,7 +19,7 @@ jobs:
       run: docker push tuncutku/portfolio_engineer:latest
 
   test:
-    # needs: [build]
+    needs: [build]
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
