@@ -19,7 +19,7 @@ jobs:
       run: docker push tuncutku/portfolio_engineer:latest
 
   test:
-    needs: [job_a]
+    needs: [build]
     runs-on: ubuntu-latest
     container:
       image: docker://tuncutku/portfolio_engineer:latest
