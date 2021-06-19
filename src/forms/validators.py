@@ -1,7 +1,7 @@
 """Form validation"""
 # pylint: disable=too-few-public-methods
 
-from datetime import datetime
+from datetime import date, datetime
 
 from flask_login import current_user
 from wtforms.validators import ValidationError
@@ -106,7 +106,8 @@ class FutureDate:
         self.message = message
 
     def __call__(self, form, field):
-        if field.data and field.data > datetime.now():
+        now = datetime.now() if isinstance(field.data, datetime) else date.today()
+        if field.data and field.data > now:
             if not self.message:
                 self.message = "Can not accept a future date!"
             raise ValidationError(self.message)

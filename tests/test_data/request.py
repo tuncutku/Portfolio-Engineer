@@ -324,7 +324,7 @@ add_alert_data = [
             underlying="AAPL",
             operator="Up",
             target=0.05,
-            start_date=datetime(2020, 1, 2),
+            start_date=date(2020, 1, 2),
         ),
         dict(signal=None, underlying=None, operator=None, target=None),
         True,
@@ -386,7 +386,7 @@ add_alert_data = [
             underlying="AAPL",
             operator="Up",
             target=100,
-            start_date=datetime(2027, 1, 2),
+            start_date=date(2027, 1, 2),
         ),
         dict(
             signal=None,
