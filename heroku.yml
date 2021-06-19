@@ -3,6 +3,10 @@ build:
     app: Dockerfile
     worker: Dockerfile
 run:
+  app: 
+    command:
+      - run_app.py
+    image: app
   worker: 
     command:
       - celery worker --app=main.celery
