@@ -43,7 +43,7 @@ class HerokuConfig(ConfigBase):
 
     CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
     RESULT_BACKEND = os.environ.get("CELERY_BROKER_URL")
-    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    # SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
 
 
 class DockerConfig(ConfigBase):
