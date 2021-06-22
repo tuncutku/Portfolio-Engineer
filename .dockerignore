@@ -16,5 +16,7 @@ pytest.ini
 runtime.txt
 .pylintrc
 
+export-env.sh
+
 celerybeat-schedule.db
 

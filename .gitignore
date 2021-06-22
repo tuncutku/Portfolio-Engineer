@@ -8,5 +8,6 @@ database.db
 .pytest_cache
 .coverage
 cov.xml
+export-env.sh
 
 celerybeat-schedule.db
