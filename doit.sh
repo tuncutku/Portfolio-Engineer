@@ -37,3 +37,13 @@ if [ "$1" == 'run_app' ]
 then
     python3
 fi
+
+
+if [ "$1" == 'load_dotenv' ]
+then
+if [ -f .env ]
+then
+    echo "Loading environment variables."
+    export $(cat .env | sed 's/#.*//g' | xargs)
+fi
+fi
