@@ -1,10 +1,7 @@
-"""Test basic analytics"""
+"""Test return analytics"""
 
 
-from src.analytics._return import (
-    periodic_return,
-    weighted_periodic_return,
-)
+from src.analytics import periodic_return, weighted_periodic_return
 
 from tests.test_data import analytics
 from tests.test_data.analytics import securities_df, quantities_df

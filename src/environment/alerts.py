@@ -13,7 +13,7 @@ from src.environment.base import Alert, BaseModel
 from src.extensions import db
 from src.market import Instrument
 from src.market.signal import Signal
-from src.analytics._return import periodic_return, weighted_periodic_return
+from src.analytics.returns import periodic_return, weighted_periodic_return
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
