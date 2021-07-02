@@ -1,37 +1,32 @@
 """Metrics"""
 
+# pylint: disable=invalid-name
+
+from pandas.core.series import Series
 from scipy.stats import linregress
+from numpy import sqrt, divide, maximum, isnan, Inf, cov
+from numpy.linalg import norm
+from pandas import DataFrame, concat
+
+from src.analytics.utils import PandasDataType
+from src.analytics.basic import exposure, remove_outliers, win_rate, volatility
 
 # ======= Basic Metrics =======
 
 
-def sharpe(returns, rf=0.0, periods=252, annualize=True, trading_year_days=252):
-    """
-    calculates the sharpe ratio of access returns
+def sharpe(
+    returns: PandasDataType, rf: float = 0.0, annualize=True, trading_year_days=252
+) -> PandasDataType:
+    """Calculates the sharpe ratio of access returns. Rf is assumed to
+    be expressed in yearly (annualized) terms"""
 
-    If rf is non-zero, you must specify periods.
-    In this case, rf is assumed to be expressed in yearly (annualized) terms
-
-    Args:
-        * returns (Series, DataFrame): Input return series
-        * rf (float): Risk-free rate expressed as a yearly (annualized) return
-        * periods (int): Freq. of returns (252/365 for daily, 12 for monthly)
-        * annualize: return annualize sharpe?
-    """
-
-    if rf != 0 and periods is None:
-        raise Exception("Must provide periods if rf != 0")
-
-    returns = _utils._prepare_returns(returns, rf, periods)
-    res = returns.mean() / returns.std()
-
-    if annualize:
-        return res * _np.sqrt(1 if trading_year_days is None else trading_year_days)
-
-    return res
+    res = (returns - rf).mean() / returns.std()
+    return res * sqrt(trading_year_days) if annualize else res
 
 
-def sortino(returns, rf=0, periods=252, annualize=True, trading_year_days=252):
+def sortino(
+    returns: PandasDataType, rf: float = 0, annualize=True, trading_year_days=252
+) -> PandasDataType:
     """
     calculates the sortino ratio of access returns
 
@@ -42,21 +37,16 @@ def sortino(returns, rf=0, periods=252, annualize=True, trading_year_days=252):
     http://www.redrockcapital.com/Sortino__A__Sharper__Ratio_Red_Rock_Capital.pdf
     """
 
-    if rf != 0 and periods is None:
-        raise Exception("Must provide periods if rf != 0")
-
-    returns = _utils._prepare_returns(returns, rf, periods)
-
+    returns = returns - rf
     downside = (returns[returns < 0] ** 2).sum() / len(returns)
-    res = returns.mean() / _np.sqrt(downside)
+    res = returns.mean() / sqrt(downside)
 
-    if annualize:
-        return res * _np.sqrt(1 if trading_year_days is None else trading_year_days)
-
-    return res
+    return res * sqrt(trading_year_days) if annualize else res
 
 
-def adjusted_sortino(returns, rf=0, periods=252, annualize=True, trading_year_days=252):
+def adjusted_sortino(
+    returns: PandasDataType, rf: float = 0, annualize=True, trading_year_days=252
+) -> PandasDataType:
     """
     Jack Schwager's version of the Sortino ratio allows for
     direct comparisons to the Sharpe. See here for more info:
@@ -64,34 +54,31 @@ def adjusted_sortino(returns, rf=0, periods=252, annualize=True, trading_year_da
     """
     data = sortino(
         returns,
-        rf=0,
-        periods=periods,
+        rf=rf,
         annualize=annualize,
         trading_year_days=trading_year_days,
     )
-    return data / _sqrt(2)
+    return data / sqrt(2)
 
 
-def gain_to_pain_ratio(returns, rf=0, resolution="D"):
+def gain_to_pain_ratio(
+    returns: PandasDataType, rf: float = 0, resolution="D"
+) -> PandasDataType:
     """
     Jack Schwager's GPR. See here for more info:
     https://archive.is/wip/2rwFW
     """
-    returns = _utils._prepare_returns(returns, rf).resample(resolution).sum()
+    returns = (returns - rf).resample(resolution).sum()
     downside = abs(returns[returns < 0].sum())
     return returns.sum() / downside
 
 
-def cagr(returns, rf=0.0, compounded=True):
+def cagr(returns: PandasDataType, compounded=True) -> PandasDataType:
     """
     calculates the communicative annualized growth return
     (CAGR%) of access returns
-
-    If rf is non-zero, you must specify periods.
-    In this case, rf is assumed to be expressed in yearly (annualized) terms
     """
 
-    total = _utils._prepare_returns(returns, rf)
     if compounded:
         total = comp(total)
     else:
@@ -101,121 +88,90 @@ def cagr(returns, rf=0.0, compounded=True):
 
     res = abs(total + 1.0) ** (1.0 / years) - 1
 
-    if isinstance(returns, _pd.DataFrame):
+    if isinstance(returns, DataFrame):
         res = _pd.Series(res)
         res.index = returns.columns
 
     return res
 
 
-def rar(returns, rf=0.0):
+def risk_adj_return(returns: PandasDataType) -> PandasDataType:
     """
     calculates the risk-adjusted return of access returns
     (CAGR / exposure. takes time into account.)
-
-    If rf is non-zero, you must specify periods.
-    In this case, rf is assumed to be expressed in yearly (annualized) terms
     """
-    returns = _utils._prepare_returns(returns, rf)
     return cagr(returns) / exposure(returns)
 
 
-def skew(returns):
+def skew(returns: PandasDataType) -> PandasDataType:
     """
     calculates returns' skewness
     (the degree of asymmetry of a distribution around its mean)
     """
-    return _utils._prepare_returns(returns).skew()
+    return returns.skew()
 
 
-def kurtosis(returns):
+def kurtosis(returns: PandasDataType) -> PandasDataType:
     """
     calculates returns' kurtosis
     (the degree to which a distribution peak compared to a normal distribution)
     """
-    return _utils._prepare_returns(returns).kurtosis()
+    return returns.kurtosis()
 
 
-def calmar(returns):
+def calmar(returns: PandasDataType) -> PandasDataType:
     """ calculates the calmar ratio (CAGR% / MaxDD%) """
-    returns = _utils._prepare_returns(returns)
-    cagr_ratio = cagr(returns)
-    max_dd = max_drawdown(returns)
-    return cagr_ratio / abs(max_dd)
+    return cagr(returns) / abs(max_drawdown(returns))
 
 
-def ulcer_index(returns, rf=0):
+def ulcer_index(returns: PandasDataType) -> PandasDataType:
     """ calculates the ulcer index score (downside risk measurment) """
-    returns = _utils._prepare_returns(returns, rf)
     dd = 1.0 - returns / returns.cummax()
-    return _np.sqrt(_np.divide((dd ** 2).sum(), returns.shape[0] - 1))
+    return sqrt(divide((dd ** 2).sum(), returns.shape[0] - 1))
 
 
-def ulcer_performance_index(returns, rf=0):
+def ulcer_performance_index(returns: PandasDataType) -> PandasDataType:
     """
     calculates the ulcer index score
     (downside risk measurment)
     """
-    returns = _utils._prepare_returns(returns, rf)
     dd = 1.0 - returns / returns.cummax()
-    ulcer = _np.sqrt(_np.divide((dd ** 2).sum(), returns.shape[0] - 1))
+    ulcer = sqrt(divide((dd ** 2).sum(), returns.shape[0] - 1))
     return returns.mean() / ulcer
 
 
-def upi(returns, rf=0):
-    """ shorthand for ulcer_performance_index() """
-    return ulcer_performance_index(returns, rf)
-
-
-def risk_of_ruin(returns):
+def risk_of_ruin(returns: PandasDataType) -> PandasDataType:
     """
     calculates the risk of ruin
     (the likelihood of losing all one's investment capital)
     """
-    returns = _utils._prepare_returns(returns)
     wins = win_rate(returns)
     return ((1 - wins) / (1 + wins)) ** len(returns)
 
 
-def ror(returns):
-    """ shorthand for risk_of_ruin() """
-    return risk_of_ruin(returns)
-
-
-def value_at_risk(returns, sigma=1, confidence=0.95):
+def value_at_risk(returns: PandasDataType, sigma=1, confidence=0.95) -> PandasDataType:
     """
     calculats the daily value-at-risk
     (variance-covariance calculation with confidence n)
     """
-    returns = _utils._prepare_returns(returns)
     mu = returns.mean()
     sigma *= returns.std()
 
     if confidence > 1:
         confidence = confidence / 100
 
-    return _norm.ppf(1 - confidence, mu, sigma)
+    return norm.ppf(1 - confidence, mu, sigma)
 
 
-def var(returns, sigma=1, confidence=0.95):
-    """ shorthand for value_at_risk() """
-    return value_at_risk(returns, sigma, confidence)
-
-
-def conditional_value_at_risk(returns, sigma=1, confidence=0.95):
+def conditional_value_at_risk(returns: PandasDataType, sigma=1, confidence=0.95):
     """
     calculats the conditional daily value-at-risk (aka expected shortfall)
     quantifies the amount of tail risk an investment
     """
-    returns = _utils._prepare_returns(returns)
+
     var = value_at_risk(returns, sigma, confidence)
     c_var = returns[returns < var].values.mean()
     return c_var if ~_np.isnan(c_var) else var
-
-
-def cvar(returns, sigma=1, confidence=0.95):
-    """ shorthand for conditional_value_at_risk() """
-    return conditional_value_at_risk(returns, sigma, confidence)
 
 
 def expected_shortfall(returns, sigma=1, confidence=0.95):
@@ -223,18 +179,16 @@ def expected_shortfall(returns, sigma=1, confidence=0.95):
     return conditional_value_at_risk(returns, sigma, confidence)
 
 
-def tail_ratio(returns, cutoff=0.95):
+def tail_ratio(returns: PandasDataType, cutoff=0.95) -> PandasDataType:
     """
     measures the ratio between the right
     (95%) and left tail (5%).
     """
-    returns = _utils._prepare_returns(returns)
     return abs(returns.quantile(cutoff) / returns.quantile(1 - cutoff))
 
 
-def payoff_ratio(returns):
+def payoff_ratio(returns: PandasDataType) -> PandasDataType:
     """ measures the payoff ratio (average win/average loss) """
-    returns = _utils._prepare_returns(returns)
     return avg_win(returns) / abs(avg_loss(returns))
 
 
@@ -243,9 +197,9 @@ def win_loss_ratio(returns):
     return payoff_ratio(returns)
 
 
-def profit_ratio(returns):
+def profit_ratio(returns: PandasDataType) -> PandasDataType:
     """ measures the profit ratio (win ratio / loss ratio) """
-    returns = _utils._prepare_returns(returns)
+
     wins = returns[returns >= 0]
     loss = returns[returns < 0]
 
@@ -253,77 +207,60 @@ def profit_ratio(returns):
     loss_ratio = abs(loss.mean() / loss.count())
     try:
         return win_ratio / loss_ratio
-    except Exception:
+    except ZeroDivisionError:
         return 0.0
 
 
-def profit_factor(returns):
+def profit_factor(returns: PandasDataType) -> PandasDataType:
     """ measures the profit ratio (wins/loss) """
-    returns = _utils._prepare_returns(returns)
     return abs(returns[returns >= 0].sum() / returns[returns < 0].sum())
 
 
-def cpc_index(returns):
+def cpc_index(returns: PandasDataType) -> PandasDataType:
     """
     measures the cpc ratio
     (profit factor * win % * win loss ratio)
     """
-    returns = _utils._prepare_returns(returns)
     return profit_factor(returns) * win_rate(returns) * win_loss_ratio(returns)
 
 
 def common_sense_ratio(returns):
     """ measures the common sense ratio (profit factor * tail ratio) """
-    returns = _utils._prepare_returns(returns)
     return profit_factor(returns) * tail_ratio(returns)
 
 
-def outlier_win_ratio(returns, quantile=0.99):
+def outlier_win_ratio(returns: PandasDataType, quantile=0.99) -> PandasDataType:
     """
     calculates the outlier winners ratio
     99th percentile of returns / mean positive return
     """
-    returns = _utils._prepare_returns(returns)
     return returns.quantile(quantile).mean() / returns[returns >= 0].mean()
 
 
-def outlier_loss_ratio(returns, quantile=0.01):
+def outlier_loss_ratio(returns: PandasDataType, quantile=0.01) -> PandasDataType:
     """
     calculates the outlier losers ratio
     1st percentile of returns / mean negative return
     """
-    returns = _utils._prepare_returns(returns)
     return returns.quantile(quantile).mean() / returns[returns < 0].mean()
 
 
-def recovery_factor(returns):
+def recovery_factor(returns: PandasDataType) -> PandasDataType:
     """ measures how fast the strategy recovers from drawdowns """
-    returns = _utils._prepare_returns(returns)
     total_returns = comp(returns)
     max_dd = max_drawdown(returns)
     return total_returns / abs(max_dd)
 
 
-def risk_return_ratio(returns):
-    """
-    calculates the return / risk ratio
-    (sharpe ratio without factoring in the risk-free rate)
-    """
-    returns = _utils._prepare_returns(returns)
-    return returns.mean() / returns.std()
-
-
-def max_drawdown(prices):
+def max_drawdown(values: PandasDataType) -> PandasDataType:
     """ calculates the maximum drawdown """
-    prices = _utils._prepare_prices(prices)
-    return (prices / prices.expanding(min_periods=0).max()).min() - 1
+    return (values / values.expanding(min_periods=0).max()).min() - 1
 
 
-def to_drawdown_series(prices):
+def to_drawdown_series(values: PandasDataType) -> PandasDataType:
     """ convert price series to drawdown series """
-    prices = _utils._prepare_prices(prices)
-    dd = prices / _np.maximum.accumulate(prices) - 1.0
-    return dd.replace([_np.inf, -_np.inf, -0], 0)
+    dd = values / maximum.accumulate(values) - 1.0
+    return dd.replace([Inf, -Inf, -0], 0)
 
 
 def drawdown_details(drawdown):
@@ -347,7 +284,7 @@ def drawdown_details(drawdown):
 
         # no drawdown :)
         if not starts:
-            return _pd.DataFrame(
+            return DataFrame(
                 index=[],
                 columns=(
                     "start",
@@ -383,7 +320,7 @@ def drawdown_details(drawdown):
                 )
             )
 
-        df = _pd.DataFrame(
+        df = DataFrame(
             data=data,
             columns=(
                 "start",
@@ -404,11 +341,11 @@ def drawdown_details(drawdown):
 
         return df
 
-    if isinstance(drawdown, _pd.DataFrame):
+    if isinstance(drawdown, DataFrame):
         _dfs = {}
         for col in drawdown.columns:
             _dfs[col] = _drawdown_details(drawdown[col])
-        return _pd.concat(_dfs, axis=1)
+        return concat(_dfs, axis=1)
 
     return _drawdown_details(drawdown)
 
@@ -419,7 +356,6 @@ def kelly_criterion(returns):
     should be allocated to the given strategy, based on the
     Kelly Criterion (http://en.wikipedia.org/wiki/Kelly_criterion)
     """
-    returns = _utils._prepare_returns(returns)
     win_loss_ratio = payoff_ratio(returns)
     win_prob = win_rate(returns)
     lose_prob = 1 - win_prob
@@ -430,68 +366,45 @@ def kelly_criterion(returns):
 # ==== VS. BENCHMARK ====
 
 
-def r_squared(values, benchmark):
-    """ measures the straight line fit of the equity curve """
-    _, _, r_val, _, _ = linregress(
-        _utils._prepare_returns(returns),
-        _utils._prepare_benchmark(benchmark, returns.index),
-    )
+def r_squared(returns: PandasDataType, benchmark: Series):
+    """Measures the straight line fit of the equity curve """
+    _, _, r_val, _, _ = linregress(returns, benchmark)
     return r_val ** 2
 
 
-def r2(returns, benchmark):
-    """ shorthand for r_squared() """
-    return r_squared(returns, benchmark)
-
-
-def information_ratio(returns, benchmark):
+def information_ratio(returns: PandasDataType, benchmark: Series) -> PandasDataType:
     """
     calculates the information ratio
     (basically the risk return ratio of the net profits)
     """
-    diff_rets = _utils._prepare_returns(returns) - _utils._prepare_benchmark(
-        benchmark, returns.index
-    )
-
+    diff_rets = returns - benchmark
     return diff_rets.mean() / diff_rets.std()
 
 
-def greeks(returns, benchmark, periods=252.0):
+def greeks(returns: PandasDataType, benchmark: Series, periods=252.0) -> Series:
     """ calculates alpha and beta of the portfolio """
 
     # find covariance
-    matrix = _np.cov(returns, benchmark)
+    matrix = cov(returns, benchmark)
     beta = matrix[0, 1] / matrix[1, 1]
 
     # calculates measures now
     alpha = returns.mean() - beta * benchmark.mean()
     alpha = alpha * periods
 
-    return _pd.Series(
-        {
-            "beta": beta,
-            "alpha": alpha,
-            # "vol": _np.sqrt(matrix[0, 0]) * _np.sqrt(periods)
-        }
-    ).fillna(0)
+    # vol
+    vol = volatility(matrix[0, 0])
+
+    return Series({"beta": beta, "alpha": alpha, "vol": vol}).fillna(0)
 
 
-def rolling_greeks(returns, benchmark, periods=252):
+def rolling_greeks(returns: PandasDataType, benchmark: Series, periods=252):
     """ calculates rolling alpha and beta of the portfolio """
-    df = _pd.DataFrame(
-        data={
-            "returns": _utils._prepare_returns(returns),
-            "benchmark": _utils._prepare_benchmark(benchmark, returns.index),
-        }
-    )
+    df = DataFrame(data={"returns": returns, "benchmark": benchmark})
     df = df.fillna(0)
     corr = df.rolling(int(periods)).corr().unstack()["returns"]["benchmark"]
     std = df.rolling(int(periods)).std()
     beta = corr * std["returns"] / std["benchmark"]
-
     alpha = df["returns"].mean() - beta * df["benchmark"].mean()
-
     # alpha = alpha * periods
-    return _pd.DataFrame(
-        index=returns.index, data={"beta": beta, "alpha": alpha}
-    ).fillna(0)
+    return DataFrame(index=returns.index, data={"beta": beta, "alpha": alpha}).fillna(0)

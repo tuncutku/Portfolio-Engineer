@@ -56,6 +56,11 @@ def periodic_return(
     return returns
 
 
+def final_cum_return(values: PandasDataType):
+    """Cumulative final return."""
+    values.prod()
+
+
 def weighted_periodic_return(
     security_values: DataFrame,
     security_quantities: DataFrame,
