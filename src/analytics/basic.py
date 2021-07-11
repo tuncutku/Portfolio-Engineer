@@ -1,147 +1,127 @@
 """Utility analytics functions."""
 
-# __all__ = ["mtd", "qtd"]
+# pylint: disable=line-too-long
 
-from datetime import datetime
 from math import ceil
 
-from numpy import isnan, sqrt
-from pandas import Series, DataFrame
+from pandas import Series
+from scipy.stats import linregress
 
-from src.analytics.utils import Period, PandasDataType
-
-
-def mtd(data: PandasDataType) -> PandasDataType:
-    """Filter given data to month to date."""
-    return data[data.index >= datetime.now().strftime("%Y-%m-01")]
+from src.analytics import utils
 
 
-def qtd(data: PandasDataType) -> PandasDataType:
-    """Filter given data to quarter to date."""
-    date = datetime.now()
-    for quarter in [1, 4, 7, 10]:
-        if date.month <= quarter:
-            return data[
-                data.index >= datetime(date.year, quarter, 1).strftime("%Y-%m-01")
-            ]
-    return data[data.index >= date.strftime("%Y-%m-01")]
+@utils.analytics_result
+def comp(returns: utils.PandasDataType) -> Series:
+    """Calculate total compounded returns """
 
-
-def ytd(data: PandasDataType) -> PandasDataType:
-    """Filter given data to year to date."""
-    return data[data.index >= datetime.now().strftime("%Y-01-01")]
-
-
-def get_outliers(data: PandasDataType, quantile=0.95) -> PandasDataType:
-    """Return values of outliers """
-    return data[data > data.quantile(quantile)].dropna(how="all")
-
-
-def remove_outliers(data: PandasDataType, quantile=0.95) -> PandasDataType:
-    """Returns values without outliers """
-    return data[data < data.quantile(quantile)].dropna(how="all")
-
-
-def compsum(returns: PandasDataType) -> PandasDataType:
-    """ Calculates rolling compounded returns """
-    return returns.add(1).cumprod().add(-1)
-
-
-def comp(returns: PandasDataType) -> Series:
-    """ Calculates total compounded returns """
-    return returns.add(1).prod() - 1
-
-
-def aggregate_values(
-    returns: PandasDataType, period: Period = Period.daily
-) -> PandasDataType:
-    """ Aggregates returns based on date periods."""
-    return returns.resample(period.value).last()
-
-
-def aggregate_returns(
-    returns: PandasDataType, period: Period = Period.daily
-) -> PandasDataType:
-    """ Aggregates returns based on date periods."""
-    return returns.resample(period.value).apply(comp)
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(lambda ret: utils.non_zero_returns(ret).add(1).prod() - 1)
 
 
 # TODO: display dates as well.
-def _count_consecutive(data: PandasDataType) -> PandasDataType:
+def _count_consecutive(returns: utils.PandasDataType) -> Series:
     """Counts consecutive dates (like cumsum() with reset on zeroes)."""
 
-    def _count(data: Series):
-        return data * (data.groupby((data != data.shift(1)).cumsum()).cumcount() + 1)
+    def _count(ret: Series):
+        return ret * (ret.groupby((ret != ret.shift(1)).cumsum()).cumcount() + 1)
 
-    if isinstance(data, DataFrame):
-        for col in data.columns:
-            data[col] = _count(data[col])
-        return data
-    return _count(data)
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(_count)
 
 
-def consecutive_wins(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def consecutive_wins(returns: utils.PandasDataType) -> Series:
     """Returns the maximum consecutive wins."""
+
     return _count_consecutive(returns > 0).max()
 
 
-def consecutive_losses(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def consecutive_losses(returns: utils.PandasDataType) -> Series:
     """Returns the maximum consecutive losses."""
+
     return _count_consecutive(returns < 0).max()
 
 
-def exposure(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def exposure(returns: utils.PandasDataType) -> utils.PandasDataType:
     """Returns the market exposure time (returns != 0)."""
 
-    def _exposure(ret: Series):
-        ex = len(ret[(~isnan(ret)) & (ret != 0)]) / len(ret)
+    def _exposure(ret: Series) -> Series:
+        ex = len(utils.non_zero_returns(ret)) / len(ret)
         return ceil(ex * 100) / 100
 
-    if isinstance(returns, DataFrame):
-        _df = {}
-        for col in returns.columns:
-            _df[col] = _exposure(returns[col])
-        return Series(_df)
-    return _exposure(returns)
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(_exposure)
 
 
-def win_rate(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def win_rate(returns: utils.PandasDataType) -> Series:
     """Calculates the win ratio for a period."""
 
-    def _win_rate(ret: Series):
-        try:
-            return round(len(ret[ret > 0]) / len(ret[ret != 0]), 5)
-        except ZeroDivisionError:
-            return 0.0
+    def _win_rate(ret: Series) -> Series:
+        return len(ret[ret > 0]) / len(utils.non_zero_returns(ret))
 
-    if isinstance(returns, DataFrame):
-        _df = {}
-        for col in returns.columns:
-            _df[col] = _win_rate(returns[col])
-        return Series(_df)
-    return _win_rate(returns)
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(_win_rate)
 
 
-def avg_return(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def avg_return(returns: utils.PandasDataType) -> utils.PandasDataType:
     """Calculates the average return/trade return for a period."""
-    return round(returns[returns != 0].dropna().mean(), 5)
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(lambda ret: ret[ret != 0].mean())
 
 
-def avg_win(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def avg_win(returns: utils.PandasDataType) -> Series:
     """Calculates the average winning return/trade return for a period."""
-    return round(returns[returns > 0].dropna().mean(), 5)
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(lambda ret: ret[ret > 0].mean())
 
 
-def avg_loss(returns: PandasDataType) -> PandasDataType:
+@utils.analytics_result
+def avg_loss(returns: utils.PandasDataType) -> Series:
     """Calculates the average low if return/trade return for a period."""
-    return round(returns[returns < 0].dropna().mean(), 5)
+
+    returns = utils.convert_series_to_df(returns)
+    return abs(returns.apply(lambda ret: ret[ret < 0].mean()))
 
 
-def volatility(
-    returns: PandasDataType, annualize: bool = True, trading_year_days=252
-) -> PandasDataType:
-    """Calculates the volatility of daily returns."""
-    std = returns.std()
-    if annualize:
-        return round(std * sqrt(trading_year_days), 5)
-    return round(std, 5)
+@utils.analytics_result
+def cagr(returns: utils.PandasDataType) -> Series:
+    """Calculates the cumulative annualized growth return (CAGR%) of access returns."""
+
+    returns = utils.convert_series_to_df(returns)
+    years = len(returns.index) / 252
+    return (comp(returns) + 1.0).pow(1.0 / years) - 1
+
+
+@utils.analytics_result
+def skew(returns: utils.PandasDataType) -> Series:
+    """Calculates skew. (the degree of asymmetry of a distribution around its mean)"""
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(lambda ret: utils.non_zero_returns(ret).skew())
+
+
+@utils.analytics_result
+def kurtosis(returns: utils.PandasDataType) -> Series:
+    """Calculate kurtosis. (the degree to which a distribution peak compared to a normal distribution)"""
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(lambda ret: utils.non_zero_returns(ret).kurtosis())
+
+
+@utils.analytics_result
+def r_squared(returns: utils.PandasDataType, benchmark: Series):
+    """Measures the straight line fit of the equity curve."""
+
+    def run_regression(ret: Series):
+        _, _, r_val, _, _ = linregress(ret, benchmark)
+        return r_val ** 2
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(run_regression)

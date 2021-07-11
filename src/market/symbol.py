@@ -6,10 +6,21 @@ from typing import Union
 from dataclasses import dataclass
 from functools import cached_property
 
+import requests
+
 from pandas import DataFrame, Series, bdate_range
 from pandas_datareader._utils import RemoteDataError
 from pandas_datareader.yahoo.daily import YahooDailyReader
 from pandas_datareader.yahoo.quotes import YahooQuotesReader
+
+USER_AGENT = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
+        " Chrome/91.0.4472.124 Safari/537.36"
+    )
+}
+sesh = requests.Session()
+sesh.headers.update(USER_AGENT)
 
 
 @dataclass
@@ -49,7 +60,7 @@ class Symbol:
     @cached_property
     def info(self) -> DataFrame:
         """Information of the symbol."""
-        provider = YahooQuotesReader(self.symbol)
+        provider = YahooQuotesReader(self.symbol, session=sesh)
         return provider.read()
 
     def get_info(self, request: str) -> Union[str, float]:
@@ -77,8 +88,12 @@ class Symbol:
         self, start: date, end: date, request: str = "Adj Close", bday: bool = True
     ) -> Series:
         """Underlying index of the symbol."""
-        provider = YahooDailyReader(self.symbol, start=start, end=end)
+        provider = YahooDailyReader(self.symbol, start=start, end=end, session=sesh)
         raw_data = provider.read()
+        # ticker = Ticker(self.symbol)
+        # raw_data = ticker.history(start=start, end=end)
+        # raw_data["Adj Close"] = raw_data["Close"]
+
         raw_index = raw_data[request]
         raw_index.rename(self.symbol, inplace=True)
         if bday:
