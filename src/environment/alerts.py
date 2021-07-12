@@ -13,7 +13,7 @@ from src.environment.base import Alert, BaseModel
 from src.extensions import db
 from src.market import Instrument
 from src.market.signal import Signal
-from src.analytics._return import periodic_return, weighted_periodic_return
+from src.analytics.returns import single_return, portfolio_return
 
 if TYPE_CHECKING:
     from src.environment.portfolio import Portfolio
@@ -75,15 +75,13 @@ class DailyReport(Alert):
         columns = ["Daily Return", "Weekly Return", "Monthly Return"]
 
         sec_ret = [
-            periodic_return(security_values, period).tail(1) for period in periods
+            single_return(security_values, period).tail(1) for period in periods
         ]
         bench_ret = [
-            periodic_return(benchmark_value, period).tail(1) for period in periods
+            single_return(benchmark_value, period).tail(1) for period in periods
         ]
         port_ret = [
-            weighted_periodic_return(security_values, position_quantities, period).tail(
-                1
-            )
+            portfolio_return(security_values, position_quantities, period).tail(1)
             for period in periods
         ]
 

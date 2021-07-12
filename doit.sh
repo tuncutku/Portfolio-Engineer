@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function activate { 
-    echo "Activating env."
+    echo "Activating env"
     source env/bin/activate
 }
 
@@ -9,10 +9,10 @@ if [ -d "env" ]
 then
     activate
 else
-    echo "Setting env up."
+    echo "Setting env up"
     python3 -m venv env
     activate
-    echo "Installing requirements."
+    echo "Installing requirements"
     pip3 install -q --upgrade pip
     pip3 install -q -r requirements.txt
 fi
@@ -21,9 +21,14 @@ if [ "$1" == 'run_tests' ]
 then
     echo "Running pytests."
     pytest --cov=src --cov-config=tests/.coveragerc --no-cov-on-fail -n auto
-    echo "Running pylint on src/ and tests/"
-    pylint src/
-    pylint tests/
+    if [ "$?" == 0 ]
+    then
+        echo "Tests passed, running pylint on src/ and tests/"
+        pylint src/
+        pylint tests/
+    else
+        echo "Tests didn't pass, not running pylint"
+    fi
 fi
 
 if [ "$1" == 'init_db' ]
@@ -43,7 +48,7 @@ if [ "$1" == 'load_dotenv' ]
 then
 if [ -f .env ]
 then
-    echo "Loading environment variables."
+    echo "Loading environment variables"
     export $(cat .env | sed 's/#.*//g' | xargs)
 fi
 fi

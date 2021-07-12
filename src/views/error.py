@@ -2,6 +2,8 @@
 
 # pylint: disable=invalid-name
 
+from pandas_datareader._utils import RemoteDataError
+
 
 # import json
 from flask import Blueprint
@@ -29,3 +31,12 @@ error_handler_blueprint = Blueprint(
 #     )
 #     response.content_type = "application/json"
 #     return response
+
+
+@error_handler_blueprint.errorhandler(RemoteDataError)
+def yfinance_exception(e):
+    """Yahoo finance connection handling."""
+
+    str(e)
+
+    return "YFinance access error."

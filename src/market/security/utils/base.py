@@ -20,19 +20,14 @@ class Instrument(ABC):
     asset_currency: Currency
     symbol: Symbol
 
-    # @classmethod
-    # @abstractmethod
-    # def generate_by_info(cls, info):
-    #     """Get security by symbol info."""
+    @abstractmethod
+    def __repr__(self):
+        """Instrument description."""
 
     @property
     def security_type(self) -> str:
         """Instrument type."""
         return self.__class__.__name__
-
-    @abstractmethod
-    def __repr__(self):
-        """Instrument description."""
 
     @property
     def name(self) -> str:
@@ -43,8 +38,8 @@ class Instrument(ABC):
         self, request: str = Info.price, raw: bool = False
     ) -> Union[SingleValue, float]:
         """Get current value of the underlying."""
-        price = self.symbol.get_info(request)
-        return price if raw else SingleValue(price, self.asset_currency)
+        value = self.symbol.get_info(request)
+        return value if raw else SingleValue(value, self.asset_currency)
 
     def index(
         self,
