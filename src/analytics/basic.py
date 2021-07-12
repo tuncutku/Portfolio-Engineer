@@ -60,7 +60,8 @@ def win_rate(returns: utils.PandasDataType) -> Series:
     """Calculates the win ratio for a period."""
 
     def _win_rate(ret: Series) -> Series:
-        return len(ret[ret > 0]) / len(utils.non_zero_returns(ret))
+        ret = utils.non_zero_returns(ret)
+        return len(ret[ret > 0]) / len(ret)
 
     returns = utils.convert_series_to_df(returns)
     return returns.apply(_win_rate)

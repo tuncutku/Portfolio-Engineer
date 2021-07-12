@@ -90,10 +90,6 @@ class Symbol:
         """Underlying index of the symbol."""
         provider = YahooDailyReader(self.symbol, start=start, end=end, session=sesh)
         raw_data = provider.read()
-        # ticker = Ticker(self.symbol)
-        # raw_data = ticker.history(start=start, end=end)
-        # raw_data["Adj Close"] = raw_data["Close"]
-
         raw_index = raw_data[request]
         raw_index.rename(self.symbol, inplace=True)
         if bday:
