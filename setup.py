@@ -1,4 +1,6 @@
-from setuptools import setup, find_packages
+"""Setup"""
+
+from setuptools import setup
 
 setup(
     name="Portfolio Engineer",
