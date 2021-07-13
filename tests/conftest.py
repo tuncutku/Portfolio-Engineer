@@ -105,3 +105,10 @@ def mock_current_md(mocker):
         new_callable=mocker.PropertyMock,
         return_value=1.2,
     )
+
+
+@pytest.fixture
+def runner(client):
+    """Runner for cli tests."""
+
+    return client.application.test_cli_runner()
