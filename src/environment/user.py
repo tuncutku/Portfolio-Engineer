@@ -30,9 +30,10 @@ class User(BaseModel, UserMixin):
         "MarketAlert", back_populates="user", cascade="all, delete-orphan"
     )
 
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self, email: str, password: str, confirmed: bool = False) -> None:
         self.email = email
         self.set_password(password)
+        self.confirmed = confirmed
 
     def __repr__(self):
         return f"<User {self.email}.>"
