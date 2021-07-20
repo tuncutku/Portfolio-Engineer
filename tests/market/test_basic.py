@@ -56,5 +56,6 @@ def test_symbol():
     assert isinstance(symbol.info, DataFrame)
     assert isinstance(symbol.get_info(Info.price), float)
     assert isinstance(symbol.index(date(2020, 1, 1), date.today()), Series)
+    assert isinstance(symbol.indices(date(2020, 1, 1), date.today()), DataFrame)
     assert symbol.is_trading_day(date(2020, 1, 3))
     assert not symbol.is_trading_day(date(2020, 1, 1))
