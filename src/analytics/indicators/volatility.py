@@ -1,8 +1,10 @@
 """Volatility indicators"""
 
 
-from numpy import zeros, nan, where
+from numpy import zeros, nan, where, sqrt
 from pandas import DataFrame, Series, concat
+
+from src.analytics.indicators.utils import true_range
 
 
 def bollinger_bands(close: Series, window: int = 20, window_dev: int = 2) -> DataFrame:
@@ -14,7 +16,6 @@ def bollinger_bands(close: Series, window: int = 20, window_dev: int = 2) -> Dat
         close(pandas.Series): dataset 'Close' column.
         window(int): n period.
         window_dev(int): n factor standard deviation
-        fillna(bool): if True, fill nan values.
     """
 
     mavg = close.rolling(window).mean()
@@ -46,13 +47,13 @@ def average_true_range(
         window(int): n period.
     """
 
-    true_range = _true_range(high, low, close.shift(1))
+    true_range_result = true_range(high, low, close.shift(1))
     atr = zeros(len(close))
     atr[:] = nan
-    atr[window - 1] = true_range[0:window].mean()
+    atr[window - 1] = true_range_result[0:window].mean()
     for i in range(window, len(atr)):
-        atr[i] = (atr[i - 1] * (window - 1) + true_range.iloc[i]) / float(window)
-    return Series(data=atr, index=true_range.index)
+        atr[i] = (atr[i - 1] * (window - 1) + true_range_result.iloc[i]) / float(window)
+    return Series(atr, index=true_range_result.index, name="Average true range")
 
 
 def keltner_channel(
@@ -110,9 +111,7 @@ def donchian_channel(
     low: Series,
     close: Series,
     window: int = 20,
-    offset: int = 0,
-    fillna: bool = False,
-):
+) -> DataFrame:
     """Donchian Channel
 
     https://www.investopedia.com/terms/d/donchianchannels.asp
@@ -124,77 +123,29 @@ def donchian_channel(
         window(int): n period.
     """
 
-    def _run(self):
-        self._min_periods = 1 if self._fillna else self._window
-        self._hband = self._high.rolling(
-            self._window, min_periods=self._min_periods
-        ).max()
-        self._lband = self._low.rolling(
-            self._window, min_periods=self._min_periods
-        ).min()
+    mavg = Series(close.rolling(window).mean(), name="mavg")
+    hband = Series(high.rolling(window).max(), name="hband")
+    lband = Series(low.rolling(window).min(), name="lband")
+    mband = Series(((hband - lband) / 2.0) + lband, name="mband")
+    wband = Series(((hband - lband) / mavg) * 100, name="wband")
+    pband = Series((close - lband) / (hband - lband), name="pband")
 
-    def donchian_channel_hband(self) -> Series:
-        """Donchian Channel High Band
-
-        Returns:
-            pandas.Series: New feature generated.
-        """
-        hband = self._check_fillna(self._hband, value=-1)
-        if self._offset != 0:
-            hband = hband.shift(self._offset)
-        return Series(hband, name="dchband")
-
-    def donchian_channel_lband(self) -> Series:
-        """Donchian Channel Low Band
-
-        Returns:
-            pandas.Series: New feature generated.
-        """
-        lband = self._check_fillna(self._lband, value=-1)
-        if self._offset != 0:
-            lband = lband.shift(self._offset)
-        return Series(lband, name="dclband")
-
-    def donchian_channel_mband(self) -> Series:
-        """Donchian Channel Middle Band
-
-        Returns:
-            pandas.Series: New feature generated.
-        """
-        mband = ((self._hband - self._lband) / 2.0) + self._lband
-        mband = self._check_fillna(mband, value=-1)
-        if self._offset != 0:
-            mband = mband.shift(self._offset)
-        return Series(mband, name="dcmband")
-
-    def donchian_channel_wband(self) -> Series:
-        """Donchian Channel Band Width
-
-        Returns:
-            pandas.Series: New feature generated.
-        """
-        mavg = self._close.rolling(self._window, min_periods=self._min_periods).mean()
-        wband = ((self._hband - self._lband) / mavg) * 100
-        wband = self._check_fillna(wband, value=0)
-        if self._offset != 0:
-            wband = wband.shift(self._offset)
-        return Series(wband, name="dcwband")
-
-    def donchian_channel_pband(self) -> Series:
-        """Donchian Channel Percentage Band
-
-        Returns:
-            pandas.Series: New feature generated.
-        """
-        pband = (self._close - self._lband) / (self._hband - self._lband)
-        pband = self._check_fillna(pband, value=0)
-        if self._offset != 0:
-            pband = pband.shift(self._offset)
-        return Series(pband, name="dcpband")
+    return concat([mband, hband, lband, pband, wband], axis=1)
 
 
-def _true_range(high: Series, low: Series, prev_close: Series) -> Series:
-    tr1 = high - low
-    tr2 = (high - prev_close).abs()
-    tr3 = (low - prev_close).abs()
-    return DataFrame(data={"tr1": tr1, "tr2": tr2, "tr3": tr3}).max(axis=1)
+def ulcer_index(close: Series, window: int = 20) -> Series:
+    """Ulcer Index
+
+    https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:ulcer_index
+
+    Args:
+        close(pandas.Series): dataset 'Close' column.
+        window(int): n period.
+    """
+
+    _ui_max = close.rolling(window, min_periods=1).max()
+    _r_i = 100 * (close - _ui_max) / _ui_max
+    _ui_function = lambda x: sqrt((x ** 2 / window).sum())
+
+    ulcer_idx = _r_i.rolling(window).apply(_ui_function, raw=True)
+    return Series(ulcer_idx, name="Ulcer index")
