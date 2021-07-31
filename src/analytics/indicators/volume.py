@@ -7,7 +7,9 @@ from pandas import DataFrame, Series, concat
 from src.analytics.indicators.utils import ema
 
 
-def acc_dist_index(high: Series, low: Series, close: Series, volume: Series) -> Series:
+def acc_dist_index(
+    high: Series, low: Series, close: Series, volume: Series
+) -> DataFrame:
     """Accumulation/Distribution Index (ADI)
 
     Acting as leading indicator of price movements.
@@ -23,7 +25,7 @@ def acc_dist_index(high: Series, low: Series, close: Series, volume: Series) -> 
 
     clv = ((close - low) - (high - close)) / (high - low)
     clv = clv.fillna(0.0)
-    return Series((clv * volume).cumsum(), name="acc dist index")
+    return Series((clv * volume).cumsum(), name="acc dist index").to_frame()
 
 
 def on_balance_volume(close: Series, volume: Series) -> Series:
@@ -40,12 +42,12 @@ def on_balance_volume(close: Series, volume: Series) -> Series:
     """
 
     obv = where(close < close.shift(1), -volume, volume)
-    return Series(obv, index=close.index, name="obv").cumsum()
+    return Series(obv, index=close.index, name="obv").cumsum().to_frame()
 
 
 def chaikin_money_flow(
     high: Series, low: Series, close: Series, volume: Series, window: int = 20
-) -> Series:
+) -> DataFrame:
     """Chaikin Money Flow (CMF)
 
     It measures the amount of Money Flow Volume over a specific period.
@@ -67,14 +69,14 @@ def chaikin_money_flow(
         mfv.rolling(window, min_periods=window).sum()
         / volume.rolling(window, min_periods=window).sum()
     )
-    return Series(cmf, name="cmf")
+    return Series(cmf, name="cmf").to_frame()
 
 
 def force_index(
     close: Series,
     volume: Series,
     window: int = 13,
-) -> Series:
+) -> DataFrame:
     """Force Index (FI)
 
     It illustrates how strong the actual buying or selling pressure is. High
@@ -90,7 +92,7 @@ def force_index(
     """
 
     fi_series = (close - close.shift(1)) * volume
-    return Series(ema(fi_series, window), name=f"fi_{window}")
+    return Series(ema(fi_series, window), name="force_index").to_frame()
 
 
 def ease_of_movement(
@@ -118,7 +120,7 @@ def ease_of_movement(
     return concat([eom, sma_eom], axis=1)
 
 
-def volume_price_trend(close: Series, volume: Series) -> Series:
+def volume_price_trend(close: Series, volume: Series) -> DataFrame:
     """Volume-price trend (VPT)
 
     Is based on a running cumulative volume that adds or substracts a multiple
@@ -137,10 +139,10 @@ def volume_price_trend(close: Series, volume: Series) -> Series:
         / close.shift(1, fill_value=close.mean())
     )
     vpt = vpt.shift(1, fill_value=vpt.mean()) + vpt
-    return Series(vpt, name="vpt")
+    return Series(vpt, name="vpt").to_frame()
 
 
-def negative_volume_index(close: Series, volume: Series) -> Series:
+def negative_volume_index(close: Series, volume: Series) -> DataFrame:
     """Negative Volume Index (NVI)
 
     http://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:negative_volume_inde
@@ -159,7 +161,7 @@ def negative_volume_index(close: Series, volume: Series) -> Series:
             nvi.iloc[i] = nvi.iloc[i - 1] * (1.0 + price_change.iloc[i])
         else:
             nvi.iloc[i] = nvi.iloc[i - 1]
-    return Series(nvi, name="nvi")
+    return Series(nvi, name="nvi").to_frame()
 
 
 def money_flow_index(
@@ -168,7 +170,7 @@ def money_flow_index(
     close: Series,
     volume: Series,
     window: int = 14,
-) -> Series:
+) -> DataFrame:
     """Money Flow Index (MFI)
 
     Uses both price and volume to measure buying and selling pressure. It is
@@ -210,7 +212,7 @@ def money_flow_index(
 
     # Money flow index
     mfi = n_positive_mf / n_negative_mf
-    return Series(100 - (100 / (1 + mfi)), name=f"mfi_{window}")
+    return Series(100 - (100 / (1 + mfi)), name="mfi").to_frame()
 
 
 def volume_weighted_average_price(
@@ -219,7 +221,7 @@ def volume_weighted_average_price(
     close: Series,
     volume: Series,
     window: int = 14,
-) -> Series:
+) -> DataFrame:
     """Volume Weighted Average Price (VWAP)
 
     VWAP equals the dollar value of all trading periods divided
@@ -247,4 +249,4 @@ def volume_weighted_average_price(
     # 4 total volume
     total_volume = volume.rolling(window, min_periods=window).sum()
 
-    return Series(total_pv / total_volume, name=f"vwap_{window}")
+    return Series(total_pv / total_volume, name="vwap").to_frame()

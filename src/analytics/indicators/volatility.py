@@ -1,4 +1,5 @@
 """Volatility indicators"""
+# pylint: disable=invalid-name
 
 
 from numpy import zeros, nan, where, sqrt
@@ -53,7 +54,7 @@ def average_true_range(
     atr[window - 1] = true_range_result[0:window].mean()
     for i in range(window, len(atr)):
         atr[i] = (atr[i - 1] * (window - 1) + true_range_result.iloc[i]) / float(window)
-    return Series(atr, index=true_range_result.index, name="Average true range")
+    return Series(atr, index=true_range_result.index, name="atr").to_frame()
 
 
 def keltner_channel(
@@ -91,6 +92,7 @@ def keltner_channel(
         tp_low = roll_and_mean((((-2 * high) + (4 * low) + close) / 3.0))
     else:
         atr = average_true_range(high, low, close, window)
+        atr = atr["atr"]
         tp = close.ewm(span=window, min_periods=window, adjust=False).mean()
         tp_high = tp + (2 * atr)
         tp_low = tp - (2 * atr)
@@ -133,7 +135,7 @@ def donchian_channel(
     return concat([mband, hband, lband, pband, wband], axis=1)
 
 
-def ulcer_index(close: Series, window: int = 20) -> Series:
+def ulcer_index(close: Series, window: int = 20) -> DataFrame:
     """Ulcer Index
 
     https://stockcharts.com/school/doku.php?id=chart_school:technical_indicators:ulcer_index
@@ -148,4 +150,4 @@ def ulcer_index(close: Series, window: int = 20) -> Series:
     _ui_function = lambda x: sqrt((x ** 2 / window).sum())
 
     ulcer_idx = _r_i.rolling(window).apply(_ui_function, raw=True)
-    return Series(ulcer_idx, name="Ulcer index")
+    return Series(ulcer_idx, name="Ulcer index").to_frame()

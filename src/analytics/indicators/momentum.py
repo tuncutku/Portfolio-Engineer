@@ -9,7 +9,7 @@ from pandas import DataFrame, Series, concat
 from src.analytics.indicators.utils import true_range, ema
 
 
-def relative_strenght_index(close: Series, window: int = 14):
+def relative_strenght_index(close: Series, window: int = 14) -> DataFrame:
     """Relative Strength Index (RSI)
 
     Compares the magnitude of recent gains and losses over a specified time
@@ -34,14 +34,14 @@ def relative_strenght_index(close: Series, window: int = 14):
         where(emadn == 0, 100, 100 - (100 / (1 + relative_strength))),
         index=close.index,
         name="rsi",
-    )
+    ).to_frame()
 
 
 def true_strength_index(
     close: Series,
     window_slow: int = 20,
     window_fast: int = 10,
-):
+) -> DataFrame:
     """True strength index (TSI)
 
     Shows both trend direction and overbought/oversold conditions.
@@ -69,7 +69,7 @@ def true_strength_index(
         .mean()
     )
     tsi = smoothed / smoothed_abs
-    return Series(tsi * 100, name="tsi")
+    return Series(tsi * 100, name="tsi").to_frame()
 
 
 def ultimate_oscillator(
@@ -82,7 +82,7 @@ def ultimate_oscillator(
     weight1: float = 4.0,
     weight2: float = 2.0,
     weight3: float = 1.0,
-):
+) -> DataFrame:
     """Ultimate Oscillator
 
     Larry Williams' (1976) signal, a momentum oscillator designed to capture
@@ -132,7 +132,7 @@ def ultimate_oscillator(
         * ((weight1 * avg_s) + (weight2 * avg_m) + (weight3 * avg_l))
         / (weight1 + weight2 + weight3)
     )
-    return Series(uo, name="uo")
+    return Series(uo, name="uo").to_frame()
 
 
 def stochastic_oscillator(
@@ -169,12 +169,7 @@ def stochastic_oscillator(
     return concat([stoch_k, stoch_d], axis=1)
 
 
-def kama(
-    close: Series,
-    window: int = 10,
-    pow1: int = 2,
-    pow2: int = 30,
-):
+def kama(close: Series, window: int = 10, pow1: int = 2, pow2: int = 30) -> DataFrame:
     """Kaufman's Adaptive Moving Average (KAMA)
 
     Moving average designed to account for market noise or volatility. KAMA
@@ -220,10 +215,10 @@ def kama(
                 close_values[i] - _kama[i - 1]
             )
 
-    return Series(_kama, index=close.index, name="kama")
+    return Series(_kama, index=close.index, name="kama").to_frame()
 
 
-def rate_of_change(close: Series, window: int = 12):
+def rate_of_change(close: Series, window: int = 12) -> DataFrame:
     """Rate of Change (ROC)
 
     The Rate-of-Change (ROC) indicator, which is also referred to as simply
@@ -247,7 +242,7 @@ def rate_of_change(close: Series, window: int = 12):
     """
 
     roc = ((close - close.shift(window)) / close.shift(window)) * 100
-    return Series(roc, name="roc")
+    return Series(roc, name="roc").to_frame()
 
 
 def awesome_oscillator(
@@ -255,7 +250,7 @@ def awesome_oscillator(
     low: Series,
     window1: int = 5,
     window2: int = 34,
-):
+) -> DataFrame:
     """Awesome Oscillator
 
     From: https://www.tradingview.com/wiki/Awesome_Oscillator_(AO)
@@ -293,7 +288,7 @@ def awesome_oscillator(
         median_price.rolling(window1, min_periods=window1).mean()
         - median_price.rolling(window2, min_periods=window2).mean()
     )
-    return Series(ao, name="ao")
+    return Series(ao, name="ao").to_frame()
 
 
 def williams_r(
@@ -301,7 +296,7 @@ def williams_r(
     low: Series,
     close: Series,
     lbp: int = 14,
-):
+) -> DataFrame:
     """Williams %R
 
     Developed by Larry Williams, Williams %R is a momentum indicator that is
@@ -343,7 +338,7 @@ def williams_r(
     # lowest low over lookback period lbp
     lowest_low = low.rolling(lbp, min_periods=lbp).min()
     wr = (highest_high - close) / (highest_high - lowest_low) * -100
-    return Series(wr, name="wr")
+    return Series(wr, name="wr").to_frame()
 
 
 def stochastic_rsi(
@@ -370,6 +365,7 @@ def stochastic_rsi(
     """
 
     rsi_index = relative_strenght_index(close, window)
+    rsi_index = rsi_index["rsi"]
     lowest_low_rsi = rsi_index.rolling(window).min()
     stochrsi = Series(
         (rsi_index - lowest_low_rsi)
@@ -386,7 +382,7 @@ def percentage_price_oscillator(
     window_slow: int = 26,
     window_fast: int = 12,
     window_sign: int = 9,
-):
+) -> DataFrame:
     """
     The Percentage Price Oscillator (PPO) is a momentum oscillator that measures
     the difference between two moving averages as a percentage of the larger moving average.
@@ -409,7 +405,7 @@ def percentage_price_oscillator(
     ppo = Series(ppo, name=f"PPO_{window_fast}_{window_slow}")
     ppo_signal = Series(ppo_signal, name=f"PPO_sign_{window_fast}_{window_slow}")
     ppo_hist = Series(ppo_hist, name=f"PPO_hist_{window_fast}_{window_slow}")
-    return ppo, ppo_signal, ppo_hist
+    return concat([ppo, ppo_signal, ppo_hist], axis=1)
 
 
 def percentage_volume_oscillator(
@@ -417,7 +413,7 @@ def percentage_volume_oscillator(
     window_slow: int = 26,
     window_fast: int = 12,
     window_sign: int = 9,
-):
+) -> DataFrame:
     """
     The Percentage Volume Oscillator (PVO) is a momentum oscillator for volume.
     The PVO measures the difference between two volume-based moving averages as a
@@ -442,4 +438,4 @@ def percentage_volume_oscillator(
     pvo_signal = Series(pvo_signal, name=f"PVO_sign_{window_fast}_{window_slow}")
     pvo_hist = Series(pvo_hist, name=f"PVO_hist_{window_fast}_{window_slow}")
 
-    return pvo, pvo_signal, pvo_hist
+    return concat([pvo, pvo_signal, pvo_hist], axis=1)
