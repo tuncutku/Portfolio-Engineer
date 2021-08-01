@@ -59,7 +59,7 @@ def hpm(returns: Series, threshold: float, order: int = 1) -> Series:
 @utils.analytics_result
 def var(returns: utils.PandasDataType, sigma=1, confidence=0.95) -> Series:
     """
-    calculats the daily value-at-risk
+    calculates the daily value-at-risk
     (variance-covariance calculation with confidence n)
     """
     # Historical VaR

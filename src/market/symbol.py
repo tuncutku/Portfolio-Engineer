@@ -4,7 +4,7 @@
 from datetime import date, timedelta
 from typing import Union
 from dataclasses import dataclass
-from functools import cached_property
+from functools import cached_property, lru_cache
 
 import requests
 
@@ -57,16 +57,14 @@ class Symbol:
             return self.symbol == other
         raise ValueError(f"Cannot compare {other}.")
 
+    def __hash__(self) -> int:
+        return hash((self.symbol))
+
     @cached_property
     def info(self) -> DataFrame:
         """Information of the symbol."""
         provider = YahooQuotesReader(self.symbol, session=sesh)
         return provider.read()
-
-    def get_info(self, request: str) -> Union[str, float]:
-        """Get a specific request from info."""
-        raw_info = self.info[request]
-        return raw_info.item()
 
     @property
     def is_valid(self) -> bool:
@@ -77,6 +75,16 @@ class Symbol:
         except (IndexError, RemoteDataError):
             return False
 
+    @lru_cache
+    def raw_historical_values(self, start: date, end: date) -> DataFrame:
+        """Raw index."""
+        return YahooDailyReader(self.symbol, start=start, end=end, session=sesh).read()
+
+    def get_info(self, request: str) -> Union[str, float]:
+        """Get a specific request from info."""
+        raw_info = self.info[request]
+        return raw_info.item()
+
     def is_trading_day(self, trade_date: date) -> bool:
         """Validate if the date is a trading date."""
         start = trade_date - timedelta(3)
@@ -84,12 +92,18 @@ class Symbol:
         index = self.index(start, end, bday=False)
         return trade_date.strftime("%Y-%m-%d") in index
 
+    def indices(self, start: date, end: date, bday: bool = True) -> DataFrame:
+        """Underlying indices."""
+        raw_data = self.raw_historical_values(start, end)
+        if bday:
+            raw_data = raw_data.reindex(bdate_range(start, end), method="ffill").bfill()
+        return raw_data
+
     def index(
         self, start: date, end: date, request: str = "Adj Close", bday: bool = True
     ) -> Series:
         """Underlying index of the symbol."""
-        provider = YahooDailyReader(self.symbol, start=start, end=end, session=sesh)
-        raw_data = provider.read()
+        raw_data = self.raw_historical_values(start, end)
         raw_index = raw_data[request]
         raw_index.rename(self.symbol, inplace=True)
         if bday:

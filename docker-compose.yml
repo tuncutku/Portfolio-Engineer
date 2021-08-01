@@ -54,7 +54,8 @@ services:
       - main
   
   worker:
-    image: app-image
+    build: .
+    image: app-worker
     environment:
       FLASK_CONFIG: docker
       SECRET_KEY: ${SECRET_KEY}
@@ -73,7 +74,8 @@ services:
       - main
 
   celery_beat:
-    image: app-image
+    build: .
+    image: app-beat
     environment:
       FLASK_CONFIG: docker
       SECRET_KEY: ${SECRET_KEY}
