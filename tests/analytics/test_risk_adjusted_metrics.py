@@ -1,6 +1,5 @@
 """Test risk adjusted return analytics"""
 
-import pytest
 from pandas import DataFrame, Series
 
 from src import analytics as core
