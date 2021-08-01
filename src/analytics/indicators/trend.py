@@ -1,6 +1,6 @@
 """Trend indicators"""
 
-# pylint: disable=too-many-locals, too-many-arguments, too-many-statements, too-many-branches
+# pylint: disable=too-many-locals, too-many-arguments, too-many-statements, too-many-branches, line-too-long
 
 from numpy import argmax, argmin, mean
 
