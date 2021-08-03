@@ -45,6 +45,23 @@ class Period(Enum):
     year = 252
 
 
+class Sector(Enum):
+    """Form sectors with regards to The Global Industry Classification Standard."""
+
+    energy = "Energy"
+    materials = "Materials"
+    industrials = "Industrials"
+    consumer_discretionary = "Consumer discretionary"
+    consumer_staples = "Consumer staples"
+    healthcare = "Healthcare"
+    financials = "Financials"
+    information_technology = "Information techonolgy"
+    communication_services = "Communication services"
+    utilities = "Utilities"
+    real_estate = "Real estate"
+    other = "other"
+
+
 class Exchange:
     """List of exchanges."""
 

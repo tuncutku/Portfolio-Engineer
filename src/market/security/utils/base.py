@@ -6,8 +6,9 @@ from datetime import date
 from dataclasses import dataclass
 from typing import Union
 
-from pandas.core.series import Series
+from pandas import Series
 
+from src.market.types import Sector
 from src.market.basic import Currency
 from src.market.symbol import Symbol, Info
 from src.market.security.utils.value import SingleValue, IndexValue
@@ -19,6 +20,7 @@ class Instrument(ABC):
 
     asset_currency: Currency
     symbol: Symbol
+    sector: Sector = Sector.other
 
     @abstractmethod
     def __repr__(self):
