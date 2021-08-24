@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from src.market.security.utils.base import Instrument
+from src.market.types import SecurityType
 
 
 @dataclass
@@ -10,6 +11,10 @@ class Index(Instrument):
 
     def __repr__(self):
         return "Index {}".format(self.symbol.symbol)
+
+    @property
+    def security_type(self) -> str:
+        return SecurityType.index
 
     # @property
     # def industry(self):

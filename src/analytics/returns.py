@@ -5,7 +5,7 @@
 from pandas import Series, DataFrame
 
 from src.analytics.utils import PandasDataType
-from src.analytics.value_adjustments import compsum
+from src.analytics.adjustments import compsum
 
 
 def single_return(

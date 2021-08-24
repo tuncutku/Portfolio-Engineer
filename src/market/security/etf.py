@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from src.market.security.utils.base import Instrument
+from src.market.types import SecurityType
 
 
 @dataclass
@@ -10,6 +11,10 @@ class ETF(Instrument):
 
     def __repr__(self):
         return "ETF {}".format(self.symbol.symbol)
+
+    @property
+    def security_type(self) -> str:
+        return SecurityType.etf
 
     # @property
     # def industry(self):

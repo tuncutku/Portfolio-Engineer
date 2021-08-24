@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from typing import Union
 
 from pandas import Series
-
 from src.market.types import Sector
 from src.market.basic import Currency
 from src.market.symbol import Symbol, Info
@@ -20,16 +19,16 @@ class Instrument(ABC):
 
     asset_currency: Currency
     symbol: Symbol
-    sector: Sector = Sector.other
+    sector: str = Sector.other
 
     @abstractmethod
     def __repr__(self):
         """Instrument description."""
 
     @property
+    @abstractmethod
     def security_type(self) -> str:
-        """Instrument type."""
-        return self.__class__.__name__
+        """Security type."""
 
     @property
     def name(self) -> str:
