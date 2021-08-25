@@ -255,7 +255,7 @@ class MeanRiskOptimizer(Optimizer):
         # Problem risk Constraints
         if self.limit_constraints.upperdev is not None:
             constraints += [risk1 <= self.limit_constraints.upperdev * self.k]
-            constraints += self.mv_risk.constraints
+            constraints += devconstraints
 
         if self.limit_constraints.uppermad is not None:
             constraints += [risk2 <= self.limit_constraints.uppermad * self.k / 2]
