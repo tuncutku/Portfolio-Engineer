@@ -117,16 +117,6 @@ class MeanRiskOptimizer(Optimizer):
         B = self.asset_constraints.B * 1000
         return [A @ self.w - B @ self.k >= 0]
 
-    @property
-    def mv_risk(self):
-        """MV risk and variables."""
-
-        g = cv.Variable(nonneg=True)
-        G = sqrtm(self.sigma)
-        risk1 = g
-        devconstraints = [cv.SOC(g, G.T @ self.w)]
-        return Risk(devconstraints, risk1)
-
     # @Optimizer.catch_error
     def solve(self) -> OptimalResult:
         """Solve the optimization problem."""
