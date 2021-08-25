@@ -361,7 +361,7 @@ class MeanRiskOptimizer(Optimizer):
         elif self.risk == "UCI":
             risk = risk11
             drawdown = True
-            l = self.settings.l / 1000
+            self.settings.l = self.settings.l / 1000
         elif self.risk == "EVaR":
             risk = risk12
             if self.limit_constraints.upperEVaR is None:
@@ -383,7 +383,7 @@ class MeanRiskOptimizer(Optimizer):
         constraints += self.objective.constraint(
             self.mu, self.w, self.settings.rf, self.k
         )
-        objective = self.objective.function(risk, l, self.ret)
+        objective = self.objective.function(risk, self.settings.l, self.ret)
 
         # for solver in self.solvers:
         problem = cv.Problem(objective, constraints)
