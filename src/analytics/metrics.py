@@ -4,7 +4,138 @@
 
 
 from pandas import Series
-from src.analytics import basic, utils, risk_metrics as rm
+from numpy import cov
+from scipy.stats import norm
+
+from src.analytics import basic, utils
+
+
+###### Basic metrıcs ######
+
+
+@utils.analytics_result
+def volatility(returns: utils.PandasDataType) -> Series:
+    """Volatility of daily returns."""
+
+    return utils.convert_series_to_df(returns).std()
+
+
+@utils.analytics_result
+def alpha(returns: utils.PandasDataType, benchmark: Series) -> Series:
+    """Calculate alpha."""
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.mean() - beta(returns, benchmark) * benchmark.mean()
+
+
+@utils.analytics_result
+def beta(returns: utils.PandasDataType, benchmark: Series) -> Series:
+    """Beta of daily returns."""
+
+    def get_beta(ret: Series):
+        concat_df = utils.combine_return_and_benchmark(ret, benchmark)
+        matrix = cov(concat_df.iloc[:, 0], concat_df.iloc[:, 1])
+        return matrix[0, 1] / matrix[1, 1]
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(get_beta)
+
+
+@utils.analytics_result
+def lpm(returns: Series, threshold: float, order: int = 1) -> Series:
+    """Lower partial moment of the returns. Link:
+    https://breakingdownfinance.com/finance-topics/performance-measurement/lower-partial-moment/
+    """
+
+    returns = utils.convert_series_to_df(returns)
+    diff = threshold - returns
+    diff = diff.clip(lower=0)
+    return (diff ** order).sum() / len(returns)
+
+
+@utils.analytics_result
+def hpm(returns: Series, threshold: float, order: int = 1) -> Series:
+    """Higher partial moment of the returns."""
+
+    returns = utils.convert_series_to_df(returns)
+    diff = returns - threshold
+    diff = diff.clip(lower=0)
+    return (diff ** order).sum() / len(returns)
+
+
+@utils.analytics_result
+def var(returns: utils.PandasDataType, sigma=1, confidence=0.95) -> Series:
+    """
+    calculates the daily value-at-risk
+    (variance-covariance calculation with confidence n)
+    """
+    # Historical VaR
+    # def var(returns, alpha):
+    #     sorted_returns = sort(returns)
+    #     index = int(alpha * len(sorted_returns))
+    #     return abs(sorted_returns[index])
+
+    def get_var(ret: Series):
+        ret = utils.non_zero_returns(ret)
+        return norm.ppf(1 - confidence, ret.mean(), sigma * ret.std())
+
+    returns = utils.convert_series_to_df(returns)
+    return returns.apply(get_var)
+
+
+@utils.analytics_result
+def cvar(returns: utils.PandasDataType, sigma=1, confidence=0.95) -> Series:
+    """Conditional daily value-at-risk (aka expected shortfall) which
+    quantifies the amount of tail risk an investment"""
+
+    # This method calculates the condition VaR of the returns
+    # def cvar(returns, alpha):
+    #     sorted_returns = numpy.sort(returns)
+    #     index = int(alpha * len(sorted_returns))
+    #     sum_var = sorted_returns[0]
+    #     for i in range(1, index):
+    #         sum_var += sorted_returns[i]
+    #     return abs(sum_var / index)
+
+    returns = utils.convert_series_to_df(returns)
+    value_at_risk = var(returns, sigma, confidence)
+
+    def get_cvar(ret: Series):
+        ret = utils.non_zero_returns(ret)
+        return ret[ret < value_at_risk[ret.name]].mean()
+
+    return returns.apply(get_cvar)
+
+
+def drawdown(returns: utils.PandasDataType) -> Series:
+    """Calculate drawdown."""
+
+    values = (returns + 1).cumprod()
+    return (values / values.expanding(min_periods=0).max()) - 1
+
+
+@utils.analytics_result
+def max_drawdown(returns: utils.PandasDataType) -> Series:
+    """Calculate the maximum drawdown."""
+
+    returns = utils.convert_series_to_df(returns)
+    return drawdown(returns).min()
+
+
+@utils.analytics_result
+def avg_drawdown(returns: utils.PandasDataType) -> Series:
+    """Calculate the average drawdown."""
+
+    returns = utils.convert_series_to_df(returns)
+    return drawdown(returns).mean()
+
+
+@utils.analytics_result
+def avg_squared_drawdown(returns: utils.PandasDataType) -> Series:
+    """Calculate the average squared drawdown."""
+
+    returns = utils.convert_series_to_df(returns)
+    return drawdown(returns).pow(2).mean().round(5)
 
 
 ###### Risk-adjusted returns based on Volatility ######
@@ -15,7 +146,7 @@ def sharpe_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate daily sharpe ratio from daily returns."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.volatility(returns)
+    return (returns - rf).mean() / volatility(returns)
 
 
 @utils.analytics_result
@@ -25,7 +156,7 @@ def modigliani_ratio(
     """Calculate modigliani ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return sharpe_ratio(returns, rf) * float(rm.volatility(benchmark)) + rf
+    return sharpe_ratio(returns, rf) * float(volatility(benchmark)) + rf
 
 
 @utils.analytics_result
@@ -35,7 +166,7 @@ def treynor_ratio(
     """Calculate daily treynor ratio from daily returns."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.beta(returns, benchmark)
+    return (returns - rf).mean() / beta(returns, benchmark)
 
 
 @utils.analytics_result
@@ -44,7 +175,7 @@ def information_ratio(returns: utils.PandasDataType, benchmark: Series) -> Serie
 
     returns = utils.convert_series_to_df(returns)
     diff_rets = returns.sub(benchmark, axis=0)
-    return diff_rets.mean() / rm.volatility(diff_rets)  # Denomiator is tracking error.
+    return diff_rets.mean() / volatility(diff_rets)  # Denomiator is tracking error.
 
 
 ###### Risk-adjusted returns based on Value-at-Risk ######
@@ -55,7 +186,7 @@ def excess_var_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate Excess return VaR."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.var(returns)
+    return (returns - rf).mean() / var(returns)
 
 
 @utils.analytics_result
@@ -63,7 +194,7 @@ def conditional_sharpe_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> 
     """Calculate conditional sharpe ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.cvar(returns)
+    return (returns - rf).mean() / cvar(returns)
 
 
 ###### Risk-adjusted returns based on partial moments ######
@@ -74,7 +205,7 @@ def omega_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate Omega ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.lpm(returns, rf, 1)
+    return (returns - rf).mean() / lpm(returns, rf, 1)
 
 
 @utils.analytics_result
@@ -82,7 +213,7 @@ def sortino_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate Sortino ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.lpm(returns, rf, 2).pow(0.5)
+    return (returns - rf).mean() / lpm(returns, rf, 2).pow(0.5)
 
 
 @utils.analytics_result
@@ -90,7 +221,7 @@ def kappa_three_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate Kappa three ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.lpm(returns, rf, 3).pow(1 / 3)
+    return (returns - rf).mean() / lpm(returns, rf, 3).pow(1 / 3)
 
 
 @utils.analytics_result
@@ -98,7 +229,7 @@ def gain_loss_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate gain loss ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return rm.hpm(returns, rf, 1) / rm.lpm(returns, rf, 1)
+    return hpm(returns, rf, 1) / lpm(returns, rf, 1)
 
 
 @utils.analytics_result
@@ -106,7 +237,7 @@ def upside_potential_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Se
     """Calculate upside potential ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return rm.hpm(returns, rf, 1) / rm.lpm(returns, rf, 2).pow(0.5)
+    return hpm(returns, rf, 1) / lpm(returns, rf, 2).pow(0.5)
 
 
 ###### Risk-adjusted returns based on drawdown risk ######
@@ -117,7 +248,7 @@ def calmar_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate calmar ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.max_drawdown(returns)
+    return (returns - rf).mean() / max_drawdown(returns)
 
 
 @utils.analytics_result
@@ -125,7 +256,7 @@ def sterling_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate average drawdown ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.avg_drawdown(returns)
+    return (returns - rf).mean() / avg_drawdown(returns)
 
 
 @utils.analytics_result
@@ -133,7 +264,7 @@ def burke_ratio(returns: utils.PandasDataType, rf: float = 0.0) -> Series:
     """Calculate burke ratio."""
 
     returns = utils.convert_series_to_df(returns)
-    return (returns - rf).mean() / rm.avg_squared_drawdown(returns).pow(0.5)
+    return (returns - rf).mean() / avg_squared_drawdown(returns).pow(0.5)
 
 
 @utils.analytics_result
@@ -141,7 +272,7 @@ def recovery_factor(returns: utils.PandasDataType) -> utils.PandasDataType:
     """Calculate recovery factor which shows how fast the strategy recovers from drawdowns."""
 
     returns = utils.convert_series_to_df(returns)
-    return basic.comp(returns) / abs(rm.max_drawdown(returns))
+    return basic.comp(returns) / abs(max_drawdown(returns))
 
 
 ###### Other ratios ######

@@ -1,6 +1,6 @@
 """Market data types"""
 
-# pylint: disable=no-member, invalid-name, too-few-public-methods
+# pylint: disable=no-member, invalid-name, too-few-public-methods, too-many-instance-attributes
 
 
 from dataclasses import dataclass
@@ -45,6 +45,35 @@ class Period(Enum):
     year = 252
 
 
+@dataclass
+class SecurityType:
+    """Security Types."""
+
+    equity = "Equity"
+    etf = "ETF"
+    option = "Option"
+    index = "Index"
+
+
+@dataclass
+class Sector:
+    """Form sectors with regards to The Global Industry Classification Standard."""
+
+    energy = "Energy"
+    materials = "Materials"
+    industrials = "Industrials"
+    consumer_discretionary = "Consumer discretionary"
+    consumer_staples = "Consumer staples"
+    healthcare = "Healthcare"
+    financials = "Financials"
+    information_technology = "Information techonolgy"
+    communication_services = "Communication services"
+    utilities = "Utilities"
+    real_estate = "Real estate"
+    other = "other"
+
+
+@dataclass
 class Exchange:
     """List of exchanges."""
 
@@ -54,6 +83,7 @@ class Exchange:
     EUREX = "EUREX"
 
 
+@dataclass
 class OptionType:
     """List of option payoff types."""
 

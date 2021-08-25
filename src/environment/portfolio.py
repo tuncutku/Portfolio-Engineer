@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from typing import List, TYPE_CHECKING
-from datetime import date, datetime
+from datetime import datetime
 from pandas import concat, DataFrame
 
 from src.extensions import db
@@ -152,3 +152,14 @@ class Portfolio(BaseModel):
         if save:
             position.save_to_db()
         return position
+
+    def get_security_sector_info(self) -> dict:
+        """Get basic information of the underlying instruments."""
+        positions = self.get_open_positions()
+        sectors = dict()
+        for position in positions:
+            sectors[position.security.symbol.symbol] = position.security.sector
+        return sectors
+
+    def optimizer(self, start, end):
+        """Get optimizer."""

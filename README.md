@@ -54,30 +54,35 @@ Alert coverage:
 ## Project Structure
 
 ```bash
-portfolio engineer/
-├── src/
-│   ├── analytics/                # Analytics library
-│   ├── api/
-│   ├── dashapp/
-│   ├── environment/
-│   ├── forms/
-│   ├── market/                   # Instruments and other market components
-│   ├── tasks/
-│   ├── templates/
-│   ├── views/
-│   ├── cli.py
-│   └── extensions.py/
-├── tests/
-│   └── conftest.py
-│       ...
-├── docker-compose.yml
+.
 ├── Dockerfile
-├── doit.sh
+├── License
 ├── README.md
+├── celerybeat-schedule.db
 ├── config.py
+├── docker-compose.yml
+├── doit.sh
+├── heroku.yml
 ├── requirements.txt
 ├── run_app.py
-└── run_celery.py
+├── run_celery.py
+├── setup.py
+├── src
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── analytics
+│   ├── api
+│   ├── cli.py
+│   ├── dashapp
+│   ├── environment
+│   ├── extensions.py
+│   ├── forms
+│   ├── market
+│   ├── static
+│   ├── tasks
+│   ├── templates
+│   └── views
+└── tests
 ```
 
 
